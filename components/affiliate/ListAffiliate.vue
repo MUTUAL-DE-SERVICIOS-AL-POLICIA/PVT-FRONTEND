@@ -64,13 +64,13 @@
                       icon
                       small
                       v-on="on"
-                      :to="`PageAffiliate/${item.id_affiliate}`"
+                      to="#"
                       color="success"
                       ><v-icon>mdi-account-eye</v-icon>
                     </v-btn>
                   </nuxt-link>
                 </template>
-                <span>Ver información afiliado {{affiliates.id_affiliate}}</span>
+                <span>Ver información afiliado</span>
               </v-tooltip>
             </template>
 

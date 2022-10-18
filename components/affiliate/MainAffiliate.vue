@@ -18,6 +18,19 @@
                   dark
                   v-bind="attrs"
                   v-on="on"
+                   @click="getState_cellphone()"
+                  color="success"
+                >
+                  <v-toolbar-title v-if="!editable"> ASIGNAR CREDENCIALES</v-toolbar-title>
+                </v-btn>
+              </template>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  dark
+                  v-bind="attrs"
+                  v-on="on"
                   @click.stop="saveAffiliate()"
                   :color="editable ? 'success' : 'secondary'"
                 >
@@ -25,7 +38,6 @@
                   <v-toolbar-title v-else> Confirmar</v-toolbar-title>
                 </v-btn>
               </template>
-              <span>EDITAR</span>
             </v-tooltip>
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
@@ -35,7 +47,7 @@
                   v-bind="attrs"
                   v-on="on"
                   v-show="editable"
-                  @click.stop="editable=false"
+                  @click.stop="resetForm()"
                 >
                   <v-toolbar-title> cancelar</v-toolbar-title>
                 </v-btn>
@@ -53,8 +65,8 @@
           <v-card-text>
             <v-row>
               <v-col cols="12" md="12" align="center">
-                <h4>DATOS DEL AFILIADO</h4> <br>
-                <b>C.I.:  </b> {{affiliate.identity_card}}
+                <h2> {{affiliate.full_name}}</h2><br>
+                <strong>C.I.:  </strong> {{affiliate.identity_card}}
               </v-col>
             </v-row>
           </v-card-text>
@@ -99,6 +111,7 @@
               <Profile
                 :affiliate.sync="affiliate"
                 :editable.sync="editable"
+                
               />
             </v-card-text>
           </v-card>
@@ -128,6 +141,36 @@
           </v-card>
         </v-tab-item>
       </v-tabs>
+                        <v-dialog
+                    v-model="dialog_send_credential"
+                    width="500">
+                      <v-card>
+                        <v-card-title>
+                          <v-toolbar-title>Confirmar</v-toolbar-title>
+                        </v-card-title>
+                        <v-spacer></v-spacer>
+                        <v-card-text>
+                          <v-container v-if="state_cellphone">
+                            {{options.response_message}}
+                          </v-container>
+                          <v-container v-else>
+                            Por favor actualice el numero de celular
+                          </v-container>
+                        </v-card-text>
+                        <v-card-actions>
+                          <v-spacer></v-spacer>
+                          <v-btn color="error" text @click="resetForm()">
+                            cerrar
+                          </v-btn>
+                          <v-btn v-if="watch_button_send && state_cellphone"
+                          color="success"
+                          @click="getCredential()"
+                          >
+                            ENVIAR
+                          </v-btn>
+                        </v-card-actions>
+                      </v-card>
+                    </v-dialog>
       </v-card-text>
     </v-card>
   </v-container>
@@ -152,95 +195,68 @@ export default {
     }
   },
   data: () => ({
-    view: 'v-a',
     affiliate:{
-      id: null,
-      user_id: null,
-      ffiliate_state_id: null,
-      city_identity_card_id: null,
-      city_birth_id: null,
-      degree_id: null,
-      unit_id: null,
-      category_id: null,
-      pension_entity_id: null,
-      identity_card: null,
-      registration: null,
-      type: null,
-      last_name: null,
-      mothers_last_name: null,
       first_name: null,
-      second_name: null,
-      surname_husband: null,
-      gender: null,
-      civil_status: null,
-      birth_date: null,
-      date_entry: null,
-      date_death: null,
-      reason_death: null,
-      date_derelict: null,
-      reason_derelict: null,
-      phone_number: null,
-      cell_phone_number: null,
-      nua: null,
-      created_at: null,
-      updated_at: null,
-      deleted_at: null,
-      service_years: null,
-      service_months: null,
-      death_certificate_number: null,
-      due_date: null,
-      is_duedate_undefined: null,
-      account_number: null,
-      financial_entity_id: null,
-      sigep_status: null,
-      unit_police_description: null,
-      id_person_senasir: null,
-      full_name: null,
-      civil_status_gender: null,
-      identity_card_ext: null,
-      category: {
-        id: null,
-        from: null,
-        to: null,
-        name: null,
-        percentage: null
-      },
-      degree: {
-        id: null,
-        hierarchy_id: null,
-        code: null,
-        name: null,
-        shortened: null,
-        correlative: null
-      },
-      unit: {
-        id: null,
-        breakdown_id: null,
-        district: null,
-        code: null,
-        name: null,
-        shortened: null,
-        created_at: null,
-        updated_at: null,
-        deleted_at: null
-      },
-      addresses: [],
+      second_name:null,
+      last_name: null,
+      mothers_last_name:null,
+      identity_card:null,
+      birth_date:null,
+      date_death:null,
+      reason_death:null,
+      phone_number:null,
+      cell_phone_number:null,
+      city_identity_card_id:null,
+      date_entry:null,
+      date_derelict:null,
+      unit_name:null,
+      affiliate_state_id: null,
     },
     editable:false,
     vertical:false,
     icons: true,
-    loading_affiliate:false
+    loading_affiliate:false,
+    watch_button_send:false,
+    options: {
+        response_message: 'Esta seguro de enviar los credenciales',
+      },
+
+    dialog_send_credential :false,
+    state_cellphone:false,
   }),
   mounted(){
+    this.resetForm()
     this.getAffiliate(this.affiliate_id)
+    this.editable = false
+  },
+  watch:{
+    /*status_credential: {
+      deep: true,
+      handler(val) {
+        this.getAffiliate(this.affiliate_id)
+      }
+    },*/
+    'status_credential.status': function (newVal, oldVal){
+      this.getAffiliate(this.affiliate_id)
+    }
   },
   methods: {
+    resetForm() {
+      this.getAffiliate(this.$route.params.id)
+      this.editable = false
+      this.dialog_send_credential  = false
+      //this.reload = true
+      this.$nextTick(() => {
+      //this.reload = false
+      })
+    },
     async getAffiliate(id) {
       try {
         this.loading_affiliate=true
         let res = await this.$axios.get(`/affiliate/affiliate/${id}`)
         console.log(res)
         this.affiliate= res
+        this.getStateCredential()
       } catch (e) {
         console.log(e)
       }finally {
@@ -248,20 +264,57 @@ export default {
       }
     },
     async saveAffiliate(){
-      console.log(this.editable)
       try {
         if (!this.editable) {
           this.editable=true
         }
         else{
-          await this.$axios.patch(`affiliate/affiliate/${this.affiliate.id}`,{
-            cell_phone_number: this.affiliate.cell_phone_number
-          })
-
+          await this.$axios.patch(`affiliate/affiliate/${this.affiliate.id}`,this.affiliate)
+          this.$toast.success('Se actualizao correctamente los datos del afiliado')
+          this.editable=false
         }
-      } catch (error) {
+      } catch (e) {
+        this.editable=false
+        this.$toast.error('Ocurrio un error durante la actualización')
       }
     },
+        getState_cellphone(){
+      this.dialog_send_credential=true
+      console.log(this.affiliate.cell_phone_number[0])
+      if (this.affiliate.cell_phone_number[0].length>0) {
+        this.state_cellphone=true;
+        this.state_button_send=true;
+      }
+      else{
+        this.state_cellphone =false;
+        this.state_button_send=false;
+      }
+      console.log( this.state_cellphone)
+    },
+
+    getStateCredential(){
+      if (this.affiliate.credential_status =='No asignadas'){
+        this.watch_button_send=true
+      }
+      else{
+        this.watch_button_send=false
+        this.options.response_message='El afiliado y cuenta con credencialea asignados como: '+ this.affiliate.credential_status
+      }
+    },
+    async getCredential(){
+      try {
+        if (this.affiliate.credential_status =='No asignadas'){
+          let res = await this.$axios.post(`/affiliate/store/${this.affiliate.id}`)
+          this.options.response_message=res.message+' su usuario es: '+res.payload.user+' su password es '+res.payload.pin;
+          this.watch_button_send = false
+        }
+        else{
+          this.$toast.info('ya cuenta con credenciales')
+        }
+      } catch (e) {
+        console.log(e)
+      }
+    }
   }
 }
 </script>

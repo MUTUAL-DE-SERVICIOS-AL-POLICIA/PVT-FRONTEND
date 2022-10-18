@@ -67,57 +67,13 @@
             <v-row>
               <v-col cols="12">
                <v-toolbar-title>OFICINA VIRTUAL</v-toolbar-title>
-               <v-card color="info_card " shaped class="elevation-1" >
+               
+               <v-card color="info_card" shaped class="elevation-1" >
                 <v-card-title>Credenciales</v-card-title>
-                  <v-card-text>
-                    <h2 style="text-align: center">{{listen_h}}</h2>
-                    <v-tooltip bottom v-if="state_credential">
-                      <template v-slot:activator="{ on }">
-                        <v-btn
-                          fab
-                          color="success"
-                          small
-                          right
-                          absolute
-                          v-on="on"
-                          @click="dialog_send_credential=true"
-                        >
-                          <v-icon>mdi-comment-processing-outline</v-icon>
-                        </v-btn>
-                      </template>
-                      <span>EDITAR</span>
-                    </v-tooltip>
-                    <v-dialog
-                    v-model="dialog_send_credential"
-                    width="500">
-                      <v-card>
-                        <v-card-title>
-                          <v-toolbar-title>Confirmar</v-toolbar-title>
-                        </v-card-title>
-                        <v-spacer></v-spacer>
-                        <v-card-text>
-                          <v-container v-if="state_cellphone">
-                            {{options.response_message}}
-                          </v-container>
-                          <v-container v-else>
-                            Por favor actualice el numero de celular
-                          </v-container>
-                        </v-card-text>
-                        <v-card-actions>
-                          <v-spacer></v-spacer>
-                          <v-btn color="error" text @click="dialog_send_credential  = false">
-                            CANCELAR
-                          </v-btn>
-                          <v-btn v-if="state_button_send"
-                          color="success"
-                          @click="sendCredential()"
-                          >
-                            ENVIAR
-                          </v-btn>
-                        </v-card-actions>
-                      </v-card>
-                    </v-dialog>
-                  </v-card-text>
+                <v-card-text>
+                  <strong>Estado:</strong> {{affiliate.credential_status}}<br>
+                  <strong>Fecha de creación:</strong> {{affiliate.credential_status}}
+                </v-card-text>
                 </v-card>
               </v-col>
             </v-row>
@@ -139,7 +95,7 @@ export default {
     editable:{
       type: Boolean,
       require :true,
-    }
+    },
   },
 
   data: () => ({
@@ -150,71 +106,20 @@ export default {
       { text: "Activo", align: "left", value: "" },
       { text: "Acciones", align: "center" },
         ],
-    status_credential:'hola',
-    state_credential:true,
-    state_button_send:false,
-    options: {
-        response_message: 'Esta seguro de enviar los credenciales',
-      },
-    response_message_credential: null,
-    dialog_send_credential :false,
-    state_cellphone:false,
+
+
   }),
   watch :{
-    options: function(newVal, oldVal) {
-        console.log("newval "+newVal.response_message+" oldval "+oldVal.response_message)
-      },
-    status_credential: function (newVal, oldVal){
-      console.log("newval "+newVal+" oldval "+oldVal)
-    }
-    },
-    state_button_send: function(newVal, oldVal){
-      console.log("newval "+newVal+" oldval "+oldVal)
+
     },
     computed:{
-      listen_h(){
-        this.getStateCredential()
-        let status_credential=this.status_credential
-        return status_credential
-      }
     },
   mounted(){
-   this.getState_cellphone();
-   this.getStateCredential();
+   
   },
   methods: {
-    async getState_cellphone(){
 
-      if (this.affiliate.cell_phone_number[0].length>0) {
-        this.state_cellphone=true;
-        this.state_button_send=true;
-      }
-      else{
-        this.state_cellphone =false;
-        this.state_button_send=false;
-      }
-      console.log( this.state_cellphone)
-    },
-    async getStateCredential(){
-      this.status_credential=this.affiliate.credential_status
-      if (this.affiliate.credential_status!='No asignadas')
-      {this.state_credential=false}
-      console.log(this.state_credential);
-    },
-    async sendCredential(){
-      try {
-        let res = await this.$axios.post(`/affiliate/store/${this.affiliate.id}`)
-        this.getStateCredential();
-       this.options.response_message=res.message+' su usuario es: '+res.payload.user+' su password es '+res.payload.pin;
-       this.state_button_send=false
-        console.log(this.options.response_message+this.state_cellphone);
-      } catch (e) {
-        console.log(e)
-      }
-    },
-    async changestate(){
-      this.options.response_message='holitas van holitas vienen'
-    },
+
   }
 }
 </script>

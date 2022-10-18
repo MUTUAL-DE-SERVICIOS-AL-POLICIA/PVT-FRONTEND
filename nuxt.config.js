@@ -81,10 +81,10 @@ export default {
           success: colors.green.accent3
         },
         light: {
-          primary: '#385F73',
-          secondary: '#0AADB3',
+          primary: '#00838F',
+          secondary: '#3a332d',
           tertiary: '#CFD8DC',
-          accent: '#EEEEEE',
+          accent: '#948870',
           error: '#DD2C00',
           warning: '#FFAB00',
           info: '#0288D1',
@@ -92,12 +92,12 @@ export default {
           danger: '#ff6d00',
           normal: '#757575',
           background: '#EDF2F4',
-          table: '#ab987a',
+          table: '#3da6a9',
           inputsearch: '#fef0e0',
           textPrimary:'#ffffff',
           textSecondary:'#ff533e',
           backgroundTab:'#FAFAFA',
-          backgroundCard: '#BDBDBD'
+          backgroundCard: '#ECEFF1',
         }
       }
     }

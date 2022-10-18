@@ -5,7 +5,7 @@
     permanent
     clipped
     :expand-on-hover="!expanded"
-    class="secondary"
+    class="tertiary"
   >
     <v-list
       nav

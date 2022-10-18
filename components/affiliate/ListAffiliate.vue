@@ -64,6 +64,7 @@
                       icon
                       small
                       v-on="on"
+                      :to="`PageAffiliate/${item.id_affiliate}`"
                       color="success"
                       ><v-icon>mdi-account-eye</v-icon>
                     </v-btn>

@@ -16,9 +16,6 @@
   </v-app>
 </template>
 
-
-
-
 <script>
 import { mapGetters } from "vuex";
 import Appbar from "@/components/layout/Appbar.vue";

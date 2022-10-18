@@ -3,7 +3,7 @@
     <div>
       <v-row >
         <v-col md="12" >
-          <v-card-text class="background" >
+          <v-card-text  >
             <v-form ref="forLogin" >
               <div
                 class="

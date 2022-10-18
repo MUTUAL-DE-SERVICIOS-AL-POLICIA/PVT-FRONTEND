@@ -28,19 +28,6 @@
                 <strong>{{ rol.display_name }}</strong>
               </v-chip>
             </v-hover>
-            <!--<v-card
-              class="rounded-pill"
-              outlined
-              @click="clickRole(rol)"
-              style="cursor: pointer; border: thin solid rgba(0, 0, 0, 0.5)"
-              elevation="2"
-            >
-              <v-card-text class="py-1">
-                <v-icon color="teal">mdi-account-circle</v-icon>&nbsp;
-                <span class="teal--text font-weight-bold text-center">{{rol.display_name}}</span
-                ><br />
-              </v-card-text>
-            </v-card>-->
           </v-col>
         </v-row>
       </v-col>

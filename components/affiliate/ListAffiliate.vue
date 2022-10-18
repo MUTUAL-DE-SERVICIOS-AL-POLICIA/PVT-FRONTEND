@@ -23,15 +23,15 @@
           </v-tooltip>
         </v-toolbar>
       </v-card-title>
-      <v-card-text> 
+      <v-card-text>
         <v-data-table
           dense
-          class="plomoAzul"
+          class="inputSearch"
           :headers="headers"
           :items="affiliates"
           :options.sync="options"
           :item-class="hovertable"
-          :server-items-length="totalaffiliates"
+          :server-items-length="total_affiliates"
           :footer-props="{ itemsPerPageOptions: [8, 15, 50,100] }"
           :loading = loading_table
         >
@@ -54,24 +54,27 @@
 
           <template v-slot:[`header.name_affiliate_state`]="{ header }">
             <span :class="searching.name_affiliate_state? 'primary--text' : ''">{{ header.text }}</span>
-          </template>
+         </template>
           <!--Fin de estilos de busqueda-->
             <template v-slot:[`item.actions`]="{ item }">
-              <v-tooltip bottom>
+              <v-tooltip bottom >
                 <template v-slot:activator="{ on }">
-                  <v-btn
-                    icon
-                    small
-                    v-on="on"
-                    color="success"
-                    ><v-icon>mdi-account-eye</v-icon>
-                  </v-btn>
+                   <nuxt-link :to="`PageAffiliate/${item.id_affiliate}`" class="button is-primary">
+                    <v-btn
+                      icon
+                      small
+                      v-on="on"
+                      to="#"
+                      color="success"
+                      ><v-icon>mdi-account-eye</v-icon>
+                    </v-btn>
+                  </nuxt-link>
                 </template>
                 <span>Ver información afiliado</span>
               </v-tooltip>
             </template>
 
-          
+
 
           <!-- Vista de los filtros -->
           <template slot="body.prepend">
@@ -92,13 +95,17 @@
 </template>
 
 <script>
+
+import Add from '@/components/affiliate/AdditionalInformation';
 import GlobalBreadCrumb from "@/components/common/GlobalBreadCrumb.vue";
 import GlobalLoading from "@/components/common/GlobalLoading.vue";
+
 export default {
   name: "MainListAffiliate",
   components: {
     GlobalBreadCrumb,
     GlobalLoading,
+    Add
   },
   data: () => ({
     // Cabeceras de la tabla
@@ -122,20 +129,20 @@ export default {
     affiliates: [],
     options: {
       page: 1,
-      itemsPerPage: 8,
+      items_per_page: 8,
       sortDesc: [false],
     },
-    totalaffiliates: 0,
+    total_affiliates: 0,
     loading_table: false,
     show_filter:true,
-    refreshKardexTable: 0,
+    refresh_table: 0,
 
   }),
   watch: {
     options: function (newVal, oldVal) {
       if (
         newVal.page != oldVal.page ||
-        newVal.itemsPerPage != oldVal.itemsPerPage ||
+        newVal.items_per_page != oldVal.items_per_page ||
         newVal.sortDesc != oldVal.sortDesc
       ) {
         this.getListAffiliates()
@@ -148,7 +155,7 @@ export default {
       }
     },
     // undefined newVal y oldVal
-    
+
   },
   mounted() {
     this.getListAffiliates()
@@ -167,16 +174,17 @@ export default {
             full_name_affiliate: this.searching.full_name_affiliate,
             name_affiliate_state: this.searching.name_affiliate_state,
             page: this.options.page,
-            per_page: this.options.itemsPerPage,
+            per_page: this.options.items_per_page,
             sortDesc: this.options.sortDesc,
           },
         });
         this.affiliates = res.payload.affiliates.data
-        this.totalaffiliates = res.payload.affiliates.total
+        console.log(this.affiliates)
+        this.total_affiliates = res.payload.affiliates.total
         /*delete res.data["data"]*/
         this.options.page = res.payload.affiliates.current_page
 
-        this.options.itemsPerPage = parseInt(res.payload.affiliates.per_page)
+        this.options.items_per_page = parseInt(res.payload.affiliates.per_page)
         this.loading_table = false
       } catch (e) {
         console.log(e)
@@ -214,7 +222,6 @@ export default {
   padding: 5px;
   margin: 0px;
   font-size: 0.8em;
-  border-color: teal;
 }
 .filter-text{
   font-size: 12px;
@@ -223,14 +230,7 @@ export default {
   padding: 0;
   width: 100%;
 }
-.v-data-table tr:hover:not(.v-data-table__expanded__content) {
-  background: #bdedf8 !important;
-} 
-</style>
-<style>
-.row-white {
-    background-color: #ffffff;
-  }
+
 </style>
 
 

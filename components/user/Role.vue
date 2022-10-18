@@ -5,7 +5,7 @@
       color="secondary"
     ></v-progress-linear>
     <v-tabs v-model="selectedModule" vertical>
-      <v-tab v-for="modulo in modules" :key="modulo.id" class="grey lighten-5">
+      <v-tab v-for="modulo in modules" :key="modulo.id" class="backgroundTab">
         {{ modulo.display_name }}
       </v-tab>
       <v-tabs-items v-model="selectedModule" class="px-5" >

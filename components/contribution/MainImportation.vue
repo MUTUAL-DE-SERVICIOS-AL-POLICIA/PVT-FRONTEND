@@ -27,6 +27,7 @@
             dense
             outlined
             class="select-year"
+            close-on-click
           ></v-select>
           <v-tooltip top>
             <template v-slot:activator="{ on }">
@@ -64,13 +65,13 @@
         :key="i"
       >
         <template v-if="item.state_importation">
-          <v-card-title class="teal">
+          <v-card-title class="accent">
             <v-row justify="center">
               <h3 class="white--text">{{ item.period_month_name }}</h3></v-row
             >
           </v-card-title>
           <v-divider inset></v-divider>
-          <v-card-text class="blue-grey lighten-5">
+          <v-card-text class="backgroundCard">
             <v-row>
               <v-col cols="12" md="12" class="py-0">
                 <b>{{ type_import.name }} <v-icon small>mdi-home-analytics</v-icon></b>
@@ -170,7 +171,7 @@
                   <strong>Porcentaje de Importación: {{progress.percentage}}%</strong>
                 </v-progress-linear>
                 <v-stepper-content step="1">
-                  <v-card class="mb-12" color="grey lighten-1">
+                  <v-card class="mb-12" >
                     <v-card-text>
                       <v-card color="white" class="pa-2">
                         <v-form ref="forStep1">

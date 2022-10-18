@@ -38,11 +38,13 @@
   {
     "title": "Listado de afiliados",
     "icon": "mdi-account-group",
-    "href": "/affiliate/PageListAffiliate"
+    "href": "/affiliate/PageListAffiliate",
+    "permission": "show-affiliate"
   },
   {
     "title": "Notificaciones",
     "icon": "mdi-send",
+    "permission": "show-notification",
     "group":[
       {
         "href": "/notification/PageNotification",

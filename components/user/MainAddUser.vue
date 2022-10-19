@@ -53,6 +53,7 @@
                   item-value="id"
                   label="Seleccione departamento"
                   v-model="city_id"
+                  close-on-click
                 >
                 </v-select>
                 <v-btn

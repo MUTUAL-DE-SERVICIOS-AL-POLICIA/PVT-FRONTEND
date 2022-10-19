@@ -1,13 +1,13 @@
 <template>
-    <MainListAffiliate />
+    <ListAffiliate />
 </template>
 
 <script>
-import MainListAffiliate from "@/components/affiliate/MainListAffiliate.vue";
+import ListAffiliate from "@/components/affiliate/ListAffiliate.vue";
 export default {
   name: "PageListAffiliate",
   components: {
-    MainListAffiliate,
+    ListAffiliate,
   },
 };
 </script>

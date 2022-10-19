@@ -26,6 +26,7 @@
             dense
             outlined
             class="select-year"
+            close-on-click
           ></v-select>
         </v-toolbar>
       </v-card-title>
@@ -39,13 +40,13 @@
 
     <v-row justify="center" class="py-0 mt-2" v-if="!loading_circular">
       <v-card
-        :class="item.state_importation ? 'headline font-weight-bold ma-2 blue-grey lighten-5' : 'headline font-weight-bold ma-2'"
+        :class="item.state_importation ? 'headline font-weight-bold ma-2 backgroundCard' : 'headline font-weight-bold ma-2'"
         max-width="250px"
         v-for="(item, i) in list_months"
         :key="i"
       >
         <template v-if="item.state_validated_payroll">
-          <v-card-title :class="item.state_importation ? 'teal' : 'normal'">
+          <v-card-title :class="item.state_importation ? 'accent' : 'normal'">
             <v-row justify="center">
               <h3 class="white--text">{{ item.period_month_name }}</h3>
             </v-row>
@@ -62,7 +63,7 @@
                 <v-tooltip top>
                     <template v-slot:activator="{ on }">
                       <v-btn 
-                        class="ma-2 teal white--text btn-period" 
+                        class="ma-2 accent white--text btn-period" 
                         v-on="on"
                         @click="confirmImportContribution(item.period_month, true)"
                         :disabled="item.state_importation"

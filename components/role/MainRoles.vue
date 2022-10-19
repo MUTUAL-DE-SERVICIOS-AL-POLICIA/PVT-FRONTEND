@@ -25,6 +25,7 @@
                   outlined
                   shaped
                   solo
+                  close-on-click
                 ></v-select>
               </v-col>
               <v-col cols="12" md="6">

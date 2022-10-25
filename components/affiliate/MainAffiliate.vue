@@ -5,7 +5,7 @@
         <v-toolbar dense color="tertiary" class="caption">
           <v-row>
             <v-col cols="12" class="pa-0">
-              Listado de afiliados
+              Datos del afiliado
             </v-col>
             <v-col cols="12" class="pa-0">
               <v-icon>mdi-arrow-right-bold-box</v-icon>
@@ -15,33 +15,36 @@
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
+                  small
                   dark
                   v-bind="attrs"
                   v-on="on"
                    @click="getState_cellphone()"
                   color="success"
                 >
-                  <v-toolbar-title v-if="!editable"> ASIGNAR CREDENCIALES</v-toolbar-title>
+                  <span v-if="!editable"> ASIGNAR CREDENCIALES</span>
                 </v-btn>
               </template>
             </v-tooltip>
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
+                  small
                   dark
                   v-bind="attrs"
                   v-on="on"
                   @click.stop="saveAffiliate()"
                   :color="editable ? 'success' : 'secondary'"
                 >
-                  <v-toolbar-title v-if="!editable"> EDITAR</v-toolbar-title>
-                  <v-toolbar-title v-else> Confirmar</v-toolbar-title>
+                  <span v-if="!editable"> EDITAR</span>
+                  <span v-else> Confirmar</span>
                 </v-btn>
               </template>
             </v-tooltip>
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
+                  small
                   color="error"
                   dark
                   v-bind="attrs"
@@ -49,7 +52,7 @@
                   v-show="editable"
                   @click.stop="resetForm()"
                 >
-                  <v-toolbar-title> cancelar</v-toolbar-title>
+                  <span> cancelar</span>
                 </v-btn>
             </template>
             <span>EDITAR</span>
@@ -146,7 +149,7 @@
                     width="500">
                       <v-card>
                         <v-card-title>
-                          <v-toolbar-title>Confirmar</v-toolbar-title>
+                          <span>Confirmar</span>
                         </v-card-title>
                         <v-spacer></v-spacer>
                         <v-card-text>

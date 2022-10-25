@@ -97,7 +97,7 @@ export default {
           textPrimary:'#ffffff',
           textSecondary:'#ff533e',
           backgroundTab:'#FAFAFA',
-          backgroundCard: '#ECEFF1',
+          backgroundCard: '#EEEEEE',
         }
       }
     }

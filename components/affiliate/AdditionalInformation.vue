@@ -7,21 +7,26 @@
             <v-toolbar-title>DOMICILIO</v-toolbar-title>
           </v-col>
           <v-col cols="12">
-            <v-data-table
-              :headers="headers"
-              :items="affiliate.addresses"
-              hide-default-footer
-              class="elevation-1"
-              >
-              <template v-slot:item="props">
-                <tr>
-                  <td>{{props.item.city.name}}</td>
-                  <td>{{ props.item.description }}</td>
-                  <td></td>
-                  <td></td>
-                </tr>
-              </template>
-            </v-data-table>
+            <Address
+              :affiliate.sync="affiliate" />
+            <!-- <v-data-table -->
+              <!-- :headers="headers" -->
+              <!-- :items="affiliate.addresses" -->
+              <!-- hide-default-footer -->
+              <!-- class="elevation-1" -->
+              <!-- > -->
+              <!-- <template v-slot:item="props"> -->
+                <!-- <tr> -->
+                  <!-- <td>{{props.item.city.name}}</td> -->
+                  <!-- <td>{{props.item.city.name}}</td> -->
+                  <!-- <td>{{props.item.city.name}}</td> -->
+                  <!-- <td>{{props.item.city.name}}</td> -->
+                  <!-- <td>{{ props.item.description }}</td> -->
+                  <!-- <td></td> -->
+                  <!-- <td></td> -->
+                <!-- </tr> -->
+              <!-- </template> -->
+            <!-- </v-data-table> -->
           </v-col>
         </v-col>
         <v-col cols="12" md="6">
@@ -86,7 +91,13 @@
 
 <script>
 
+import Address from '@/components/affiliate/Address'
+
 export default {
+  name: "AdditionalInformationAffiliate",
+  components: {
+    Address
+  },
   props: {
     affiliate :{
       type: Object,
@@ -100,12 +111,7 @@ export default {
 
   data: () => ({
 
-    headers: [
-      { text: "Ciudad", align: "left", value: "city_address_id" },
-      { text: "Zona", align: "left", value: "description" },
-      { text: "Activo", align: "left", value: "" },
-      { text: "Acciones", align: "center" },
-        ],
+
 
 
   }),

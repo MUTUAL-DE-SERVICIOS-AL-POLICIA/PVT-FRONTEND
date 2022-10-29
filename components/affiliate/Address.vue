@@ -7,35 +7,36 @@
   >
     <template v-slot:item="props">
       <tr>
-        <td>
-          {{ city_name(props.item) }}
-        </td>
-        <td>{{props.item.zone}}</td>
-         <td>{{props.item.street}}</td>
-          <td>{{props.item.number_address}}</td>
+        <td>{{ city_name(props.item) }}</td>
+        <td>{{ props.item.zone }}</td>
+        <td>{{ props.item.street }}</td>
+        <td>{{ props.item.number_address }}</td>
         <td>{{ props.item.description }}</td>
         <td>
           <v-radio-group
             :value="id_street"
-            @change="
-              (v) => {
-                $emit('update:id_street', v);
-              }
-            "
+            @change="id_street = props.item.id"
+            :disabled="!editable"
           >
             <v-radio :value="props.item.id"></v-radio>
           </v-radio-group>
         </td>
 
         <td>
-          <v-icon small color="info" class="mr-2" @click="editItem(props.item)">
+          <v-icon
+            small
+            color="info"
+            class="mr-2"
+            :disabled="!editable"
+            @click="editItem(props.item)"
+          >
             mdi-pencil
           </v-icon>
           <v-icon
             small
             color="error"
             @click="deleteItem(props.item)"
-            :disabled="props.item.id === id_street"
+            :disabled="props.item.id === id_street || !editable"
           >
             mdi-delete
           </v-icon>
@@ -48,7 +49,14 @@
         <v-spacer></v-spacer>
         <v-dialog v-model="dialog" max-width="500px">
           <template v-slot:activator="{ on, attrs }">
-            <v-btn color="info" dark class="mb-2" v-bind="attrs" v-on="on">
+            <v-btn
+              color="info"
+              dark
+              class="mb-2"
+              :disabled="!editable"
+              v-bind="attrs"
+              v-on="on"
+            >
               Nuevo
             </v-btn>
           </template>
@@ -107,8 +115,7 @@
         </v-dialog>
         <v-dialog v-model="dialogDelete" max-width="500px">
           <v-card>
-            <v-card-title class="text-h5"
-              >Esta seguro de eliminar el registro?</v-card-title
+            <v-card-title class="text-h5">Esta seguro de eliminar el registro?</v-card-title
             >
             <v-card-actions>
               <v-spacer></v-spacer>
@@ -132,14 +139,17 @@ export default {
       type: Object,
       require: true,
     },
-    addresses: {
-      type: Array,
-      required: true,
+    obj_address: {
+      tyoe: Object,
+      require: true,
     },
-    id_street: {
-      type: Number,
-      required: true,
-      default: 0,
+    editable: {
+      type: Boolean,
+      require: true,
+    },
+    cancel: {
+      type: Boolean,
+      require: true,
     },
   },
   data: () => ({
@@ -170,6 +180,9 @@ export default {
     },
     cities: [],
     editedIndexPerRef: -1,
+    id_street: 0,
+    addresses: [],
+    addresses_aux: [],
   }),
 
   computed: {
@@ -187,10 +200,17 @@ export default {
       val || this.closeDelete();
       console.log(val);
     },
+    id_street(newVal, oldVal) {
+      if (newVal != oldVal) {
+        this.obj_address.addresses = this.addresses;
+        this.obj_address.id_street = this.id_street;
+      }
+    },
   },
 
   mounted() {
     this.getCities();
+    this.getAddress(this.$route.params.id);
   },
 
   methods: {
@@ -253,19 +273,15 @@ export default {
           this.addresses.push(res);
           console.log(this.editedIndex);
         }
+        this.obj_address.addresses = this.addresses;
+        this.obj_address.id_street = this.id_street;
+
         this.close();
+        console.log(this.obj_address);
       } catch (e) {
         console.log(e);
       }
     },
-    city_name(item) {
-      let city_item = this.cities.find((o) => o.id == item.city_address_id);
-      let object_city_item = Object.assign({}, city_item);
-      return object_city_item.name;
-    },
-
-
-
     async getCities() {
       try {
         this.loading = true;
@@ -275,6 +291,30 @@ export default {
       } catch (e) {
         console.log(e);
       }
+    },
+    async getAddress(id) {
+      try {
+        this.loading = true;
+        let res = await this.$axios.get(`/affiliate/affiliate/${id}/address`);
+        this.obj_address.addresses_aux = res;
+        this.addresses = res;
+        console.log(this.obj_address.addresses_aux);
+        if (this.addresses.length > 0) {
+          // Verificar si existe información de dirección
+          // Obtener la dirección activa
+          let address = this.addresses.find((item) => item.pivot.validated);
+          this.id_street = address.id;
+        }
+      } catch (e) {
+        console.log(e);
+      } finally {
+        this.loading = false;
+      }
+    },
+    city_name(item) {
+      let city_item = this.cities.find((o) => o.id == item.city_address_id);
+      let object_city_item = Object.assign({}, city_item);
+      return object_city_item.name;
     },
   },
 };

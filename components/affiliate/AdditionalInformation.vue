@@ -9,27 +9,10 @@
           <v-col cols="12">
             <Address
               :affiliate.sync="affiliate"
-              :addresses.sync="addresses"
-              :id_street.sync="id_street"
+              :obj_address.sync="obj_address"
+              :editable.sync="editable"
+              :cancel.sync="cancel"
             />
-            <!-- <v-data-table -->
-              <!-- :headers="headers" -->
-              <!-- :items="affiliate.addresses" -->
-              <!-- hide-default-footer -->
-              <!-- class="elevation-1" -->
-              <!-- > -->
-              <!-- <template v-slot:item="props"> -->
-                <!-- <tr> -->
-                  <!-- <td>{{props.item.city.name}}</td> -->
-                  <!-- <td>{{props.item.city.name}}</td> -->
-                  <!-- <td>{{props.item.city.name}}</td> -->
-                  <!-- <td>{{props.item.city.name}}</td> -->
-                  <!-- <td>{{ props.item.description }}</td> -->
-                  <!-- <td></td> -->
-                  <!-- <td></td> -->
-                <!-- </tr> -->
-              <!-- </template> -->
-            <!-- </v-data-table> -->
           </v-col>
         </v-col>
         <v-col cols="12" md="6">
@@ -50,22 +33,22 @@
                 ></v-text-field>
               </v-col>
               <v-col cols="12" md="4">
-                 <v-text-field
-                    v-model="affiliate.cell_phone_number[1]"
-                    dense
-                    :disabled="!editable"
-                    :outlined="editable"
-                    label="Celular2"
-                    v-mask="'(###)-#####'"
-                  ></v-text-field>
+                <v-text-field
+                  v-model="affiliate.cell_phone_number[1]"
+                  dense
+                  :disabled="!editable"
+                  :outlined="editable"
+                  label="Celular2"
+                  v-mask="'(###)-#####'"
+                ></v-text-field>
               </v-col>
               <v-col cols="12" md="4">
-                 <v-text-field
-                    v-model="affiliate.phone_number"
-                    dense
-                    label="Telefono"
-                    v-mask="'(#) ###-###'"
-                  ></v-text-field>
+                <v-text-field
+                  v-model="affiliate.phone_number"
+                  dense
+                  label="Telefono"
+                  v-mask="'(#) ###-###'"
+                ></v-text-field>
               </v-col>
             </v-row>
           </v-container>
@@ -74,14 +57,16 @@
           <v-container>
             <v-row>
               <v-col cols="12">
-               <v-toolbar-title>OFICINA VIRTUAL</v-toolbar-title>
-               
-               <v-card color="info_card" shaped class="elevation-1" >
-                <v-card-title>Credenciales</v-card-title>
-                <v-card-text>
-                  <strong>Estado:</strong> {{affiliate.credential_status}}<br>
-                  <strong>Fecha de creación:</strong> {{affiliate.credential_status}}
-                </v-card-text>
+                <v-toolbar-title>OFICINA VIRTUAL</v-toolbar-title>
+
+                <v-card color="info_card" shaped class="elevation-1">
+                  <v-card-title>Credenciales</v-card-title>
+                  <v-card-text>
+                    <strong>Estado:</strong> {{ affiliate.credential_status.original.payload.credential_status
+                    }}<br />
+                    <strong>Fecha de creación:</strong>
+                    {{ affiliate.credential_status.original.payload.created_at }}
+                  </v-card-text>
                 </v-card>
               </v-col>
             </v-row>
@@ -93,51 +78,36 @@
 </template>
 
 <script>
-
-import Address from '@/components/affiliate/Address'
+import Address from "@/components/affiliate/Address";
 
 export default {
   name: "AdditionalInformationAffiliate",
   components: {
-    Address
+    Address,
   },
   props: {
-    affiliate :{
+    affiliate: {
       type: Object,
-      require :true,
+      require: true,
     },
-    editable:{
+    editable: {
       type: Boolean,
-      require :true,
+      require: true,
     },
-    addresses: {
-      type: Array,
-      required: true
+    obj_address: {
+      type: Object,
+      require: true,
     },
-    id_street: {
-      type: Number,
-      required: true,
-      default: 0,
+    cancel: {
+      type: Boolean,
+      require: true,
     },
   },
 
-  data: () => ({
-
-
-
-
-  }),
-  watch :{
-
-    },
-    computed:{
-    },
-  mounted(){
-   
-  },
-  methods: {
-
-
-  }
-}
+  data: () => ({}),
+  watch: {},
+  computed: {},
+  mounted() {},
+  methods: {},
+};
 </script>

@@ -127,6 +127,8 @@
               <AdditionalInformation
                 :affiliate.sync="affiliate"
                 :editable.sync="editable"
+                :id_street.sync="id_street"
+                :addresses.sync="addresses"
               />
             </v-card-text>
           </v-card>
@@ -226,10 +228,13 @@ export default {
 
     dialog_send_credential :false,
     state_cellphone:false,
+    id_street: 0,
+    addresses: [],
   }),
   mounted(){
     this.resetForm()
     this.getAffiliate(this.affiliate_id)
+    this.getAddress(this.$route.params.id);
     this.editable = false
   },
   watch:{
@@ -317,7 +322,24 @@ export default {
       } catch (e) {
         console.log(e)
       }
-    }
+    },
+    async getAddress(id) {
+      try {
+        this.loading = true;
+        let res = await this.$axios.get(`/affiliate/affiliate/${id}/address`);
+        this.addresses = res;
+        if (this.addresses.length > 0) {
+          // Verificar si existe información de dirección
+          // Seteando el valor del address
+          let address = this.addresses.find((item) => item.pivot.validated);
+          this.id_street = address.id;
+        }
+      } catch (e) {
+        console.log(e);
+      } finally {
+        this.loading = false;
+      }
+    },
   }
 }
 </script>

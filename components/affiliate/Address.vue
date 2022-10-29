@@ -2,9 +2,47 @@
   <v-data-table
     :headers="headers"
     :items="addresses"
-    sort-by="calories"
+    sort-by="city_address_id"
     class="elevation-1"
   >
+    <template v-slot:item="props">
+      <tr>
+        <td>
+          {{ city_name(props.item) }}
+        </td>
+        <td>{{props.item.zone}}</td>
+         <td>{{props.item.street}}</td>
+          <td>{{props.item.number_address}}</td>
+        <td>{{ props.item.description }}</td>
+        <td>
+          <v-radio-group
+            :value="id_street"
+            @change="
+              (v) => {
+                $emit('update:id_street', v);
+              }
+            "
+          >
+            <v-radio :value="props.item.id"></v-radio>
+          </v-radio-group>
+        </td>
+
+        <td>
+          <v-icon small color="info" class="mr-2" @click="editItem(props.item)">
+            mdi-pencil
+          </v-icon>
+          <v-icon
+            small
+            color="error"
+            @click="deleteItem(props.item)"
+            :disabled="props.item.id === id_street"
+          >
+            mdi-delete
+          </v-icon>
+        </td>
+      </tr>
+    </template>
+
     <template v-slot:top>
       <v-toolbar flat>
         <v-spacer></v-spacer>
@@ -29,7 +67,7 @@
                       item-value="id"
                       label="Ciudad"
                       v-model="editedItem.city_address_id"
-                      >
+                    >
                     </v-select>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
@@ -74,9 +112,7 @@
             >
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="error" text @click="closeDelete"
-                >Cerrar</v-btn
-              >
+              <v-btn color="error" text @click="closeDelete">Cerrar</v-btn>
               <v-btn color="success" text @click="deleteItemConfirm"
                 >Confirmar</v-btn
               >
@@ -86,50 +122,54 @@
         </v-dialog>
       </v-toolbar>
     </template>
-    <template v-slot:item.actions="{ item }">
-      <v-icon small color="info" class="mr-2" @click="editItem(item)"> mdi-pencil </v-icon>
-      <v-icon small color="error" @click="deleteItem(item)"> mdi-delete </v-icon>
-    </template>
   </v-data-table>
 </template>
 
 <script>
 export default {
-  props:{
-    affiliate:{
+  props: {
+    affiliate: {
       type: Object,
-      require: true
-    }
+      require: true,
+    },
+    addresses: {
+      type: Array,
+      required: true,
+    },
+    id_street: {
+      type: Number,
+      required: true,
+      default: 0,
+    },
   },
   data: () => ({
     dialog: false,
     dialogDelete: false,
     headers: [
       { text: "Ciudad", align: "left", value: "city_address_id" },
-      { text: "Zona", align: "left", value: "zone"},
+      { text: "Zona", align: "left", value: "zone" },
       { text: "Calle", align: "left", value: "street" },
       { text: "Nro", align: "left", value: "number_address" },
       { text: "Descripción", align: "left", value: "description" },
       { text: "Acciones", value: "actions", sortable: false },
     ],
-    address_affiliate: [],
     editedIndex: -1,
     editedItem: {
-      city_address_id: "",
-      zone: "",
-      street: "",
-      number_address: "",
-      description: ""
+      city_address_id: null,
+      zone: null,
+      street: null,
+      number_address: null,
+      description: null,
     },
     defaultItem: {
-      city_address_id: "",
-      zone: "",
-      street: "",
-      number_address: "",
-      description: ""
+      city_address_id: null,
+      zone: null,
+      street: null,
+      number_address: null,
+      description: null,
     },
-    addresses: [],
-    cities:[]
+    cities: [],
+    editedIndexPerRef: -1,
   }),
 
   computed: {
@@ -141,37 +181,36 @@ export default {
   watch: {
     dialog(val) {
       val || this.close();
-      console.log(val)
+      console.log(val);
     },
     dialogDelete(val) {
       val || this.closeDelete();
-      console.log(val)
+      console.log(val);
     },
   },
 
   mounted() {
-    this.getAddress(this.$route.params.id);
-    this.getCities()
+    this.getCities();
   },
 
   methods: {
-
-    editItem(item) {
-      this.editedIndex = this.address_affiliate.indexOf(item);
-      console.log(this.editedIndex)
+    async editItem(item) {
+      this.editedIndex = this.addresses.indexOf(item);
+      console.log(this.editedIndex);
       this.editedItem = Object.assign({}, item);
-      console.log(this.editedItem)
+      console.log(this.editedItem);
       this.dialog = true;
     },
 
     deleteItem(item) {
-      this.editedIndex = this.address_affiliate.indexOf(item);
+      this.editedIndex = this.addresses.indexOf(item);
       this.editedItem = Object.assign({}, item);
       this.dialogDelete = true;
     },
 
-    deleteItemConfirm() {
-      this.address_affiliate.splice(this.editedIndex, 1);
+    async deleteItemConfirm() {
+      await this.$axios.delete(`/affiliate/address/${this.editedItem.id}`);
+      this.addresses.splice(this.editedIndex, 1);
       this.closeDelete();
     },
 
@@ -191,40 +230,50 @@ export default {
       });
     },
 
-    save() {
-      if (this.editedIndex > -1) {
-        Object.assign(this.address_affiliate[this.editedIndex], this.editedItem);
-      } else {
-        this.address_affiliate.push(this.editedItem);
-      }
-      this.close();
-    },
-    async getAddress(id) {
+    async save() {
       try {
-        this.loading = true;
-        let res = await this.$axios.get(`/affiliate/affiliate/${id}/address`);
-        this.addresses = res;
-        // if (this.addresses.length > 0) {
-         // Verificar si existe información de dirección
-          //Seteando el valor del address
-          // let address = this.addresses.find((item) => item.pivot.validated);
-          // this.id_street = address.id;
-        // }
+        if (this.editedIndex > -1) {
+          console.log(this.editedIndex);
+          Object.assign(this.addresses[this.editedIndex], this.editedItem);
+          console.log(this.editedItem);
+          let res = await this.$axios.patch(
+            `/affiliate/address/${this.editedItem.id}`
+          );
+          this.editedItem = res;
+          console.log("desde ruta");
+          console.log(this.editedItem);
+        } else {
+          let res = await this.$axios.post(`/affiliate/address`, {
+            city_address_id: this.editedItem.city_address_id,
+            zone: this.editedItem.zone,
+            street: this.editedItem.street,
+            number_address: this.editedItem.number_address,
+            description: this.editedItem.description,
+          });
+          this.addresses.push(res);
+          console.log(this.editedIndex);
+        }
+        this.close();
       } catch (e) {
         console.log(e);
-      } finally {
-        this.loading = false;
       }
     },
+    city_name(item) {
+      let city_item = this.cities.find((o) => o.id == item.city_address_id);
+      let object_city_item = Object.assign({}, city_item);
+      return object_city_item.name;
+    },
+
+
 
     async getCities() {
       try {
-        this.loading = true
-        let res = await this.$axios.get(`/global/city`)
-        this.cities = res
-        console.log(this.cities)
+        this.loading = true;
+        let res = await this.$axios.get(`/global/city`);
+        this.cities = res;
+        console.log(this.cities);
       } catch (e) {
-        console.log(e)
+        console.log(e);
       }
     },
   },

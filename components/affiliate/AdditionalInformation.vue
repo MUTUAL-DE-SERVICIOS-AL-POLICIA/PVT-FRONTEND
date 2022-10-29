@@ -2,13 +2,16 @@
   <v-container fluid>
     <v-form>
       <v-row justify="center">
-        <v-col cols="12" md="6">
+        <v-col cols="12" md="12">
           <v-col cols="12">
             <v-toolbar-title>DOMICILIO</v-toolbar-title>
           </v-col>
           <v-col cols="12">
             <Address
-              :affiliate.sync="affiliate" />
+              :affiliate.sync="affiliate"
+              :addresses.sync="addresses"
+              :id_street.sync="id_street"
+            />
             <!-- <v-data-table -->
               <!-- :headers="headers" -->
               <!-- :items="affiliate.addresses" -->
@@ -67,7 +70,7 @@
             </v-row>
           </v-container>
         </v-col>
-        <v-col cols="12" md="12">
+        <v-col cols="12" md="6">
           <v-container>
             <v-row>
               <v-col cols="12">
@@ -106,6 +109,15 @@ export default {
     editable:{
       type: Boolean,
       require :true,
+    },
+    addresses: {
+      type: Array,
+      required: true
+    },
+    id_street: {
+      type: Number,
+      required: true,
+      default: 0,
     },
   },
 

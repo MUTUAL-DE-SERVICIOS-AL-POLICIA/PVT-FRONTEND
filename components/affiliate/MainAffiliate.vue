@@ -81,6 +81,9 @@
           <v-tab class="backgroundTab" :href="`#tab-4`">
             INFORMACION CONYUGE
           </v-tab>
+          <v-tab class="backgroundTab" :href="`#tab-5`">
+            APORTES
+          </v-tab>
           <v-tab-item class="backgroundTab" :value="'tab-1'">
             <v-card flat tile>
               <v-card-text>
@@ -117,6 +120,13 @@
             <v-card flat tile>
               <v-card-text>
                 <Spouse :affiliate.sync="affiliate" :editable.sync="editable" />
+              </v-card-text>
+            </v-card>
+          </v-tab-item>
+          <v-tab-item :value="'tab-5'">
+            <v-card flat tile>
+              <v-card-text>
+                <Contribution :affiliate.sync="affiliate"/>
               </v-card-text>
             </v-card>
           </v-tab-item>
@@ -157,12 +167,14 @@ import AdditionalInformation from "@/components/affiliate/AdditionalInformation"
 import Dashboard from "@/components/affiliate/Dashboard";
 import Profile from "@/components/affiliate/Profile";
 import Spouse from "@/components/affiliate/Spouse.vue";
+import Contribution from "@/components/affiliate/Contribution.vue";
 export default {
   components: {
     AdditionalInformation,
     Dashboard,
     Profile,
     Spouse,
+    Contribution,
   },
   props: {
     affiliate_id: {

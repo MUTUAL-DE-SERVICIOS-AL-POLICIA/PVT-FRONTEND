@@ -62,10 +62,10 @@
                 <v-card color="info_card" shaped class="elevation-1">
                   <v-card-title>Credenciales</v-card-title>
                   <v-card-text>
-                    <strong>Estado:</strong> {{ affiliate.credential_status.original.payload.credential_status
+                    <strong>Estado:</strong> {{ affiliate.credential_status.access_status
                     }}<br />
                     <strong>Fecha de creación:</strong>
-                    {{ affiliate.credential_status.original.payload.created_at }}
+                    {{ $filters.date(affiliate.credential_status.created_at) }}
                   </v-card-text>
                 </v-card>
               </v-col>

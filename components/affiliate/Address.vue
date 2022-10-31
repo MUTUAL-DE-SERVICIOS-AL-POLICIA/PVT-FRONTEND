@@ -340,6 +340,7 @@ export default {
               }else{
                 console.log(address_new[i])
                 await this.$axios.delete(`/affiliate/address/${address_new[i]}`);
+                this.getAddress(this.$route.params.id)
               }
           }
           this.refreshAddressTable++

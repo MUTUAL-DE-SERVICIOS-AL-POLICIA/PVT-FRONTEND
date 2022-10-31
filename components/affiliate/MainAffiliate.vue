@@ -142,6 +142,7 @@
                 v-if="watch_button_send && state_cellphone"
                 color="success"
                 @click="getCredential()"
+                :loading="loading"
               >
                 ENVIAR
               </v-btn>
@@ -206,6 +207,7 @@ export default {
       addresses_aux: null,
     },
     cancel: false,
+    loading: false
   }),
   mounted() {
     this.getAffiliate(this.affiliate_id);
@@ -270,28 +272,32 @@ export default {
     },
 
     getStateCredential() {
-      if (this.affiliate.credential_status == "No asignadas") {
+
+      if (this.affiliate.credential_status.access_status == "No asignadas") {
         this.watch_button_send = true;
       } else {
         this.watch_button_send = false;
-        this.options.response_message =
-          "El afiliado y cuenta con credencialea asignados como: " +
-          this.affiliate.credential_status;
+        this.options.response_message ="El afiliado y cuenta con credencialea asignados como: " +
+          this.affiliate.credential_status.access_status;
       }
     },
     async getCredential() {
+      console.log(this.affiliate.credential_status.access_status)
+      this.loading= true
       try {
-        if (this.affiliate.credential_status == "No asignadas") {
-          let res = await this.$axios.post(
-            `/affiliate/store/${this.affiliate.id}`
+        if (this.affiliate.credential_status.access_status == "No asignadas") {
+          let res = await this.$axios.post(`/affiliate/store`,{
+            affiliate_id: this.affiliate.id
+          }
           );
           this.options.response_message =
             res.message +
             " su usuario es: " +
-            res.payload.user +
+            res.payload.username +
             " su password es " +
             res.payload.pin;
           this.watch_button_send = false;
+          this,loading= false
         } else {
           this.$toast.info("ya cuenta con credenciales");
         }
@@ -301,8 +307,7 @@ export default {
     },
     async getAffiliateAddress() {
       try {
-        let res = await this.$axios.patch(
-          `affiliate/affiliate/${this.$route.params.id}/address`,
+        let res = await this.$axios.patch(`affiliate/affiliate/${this.$route.params.id}/address`,
           {
             addresses: this.obj_address.addresses.map((o) => o.id),
             addresses_valid: this.obj_address.id_street,

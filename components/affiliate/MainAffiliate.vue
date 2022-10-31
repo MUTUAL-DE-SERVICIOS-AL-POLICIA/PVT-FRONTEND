@@ -208,33 +208,26 @@ export default {
     cancel: false,
   }),
   mounted() {
-    //this.resetForm()
     this.getAffiliate(this.affiliate_id);
-
     this.editable = false;
   },
   watch: {
-    cancel() {
-      if (this.cancel) {
-        this.verifyCancelAddress();
-      }
-    },
+
   },
   methods: {
     resetForm() {
+      this.cancel = true;
       this.getAffiliate(this.$route.params.id);
       this.editable = false;
       this.dialog_send_credential = false;
-      this.cancel = true;
       this.$nextTick(() => {
-        //this.reload = false
+        this.cancel = false
       });
     },
     async getAffiliate(id) {
       try {
         this.loading_affiliate = true;
         let res = await this.$axios.get(`/affiliate/affiliate/${id}`);
-        console.log(res);
         this.affiliate = res;
         this.getStateCredential();
       } catch (e) {
@@ -288,13 +281,19 @@ export default {
     },
     async getCredential() {
       try {
-        if (this.affiliate.credential_status =='No asignadas'){
-          let res = await this.$axios.post(`/affiliate/store/${this.affiliate.id}`)
-          this.options.response_message=res.message+' su usuario es: '+res.payload.user+' su password es '+res.payload.pin;
-          this.watch_button_send = false
-        }
-        else{
-          this.$toast.info('ya cuenta con credenciales')
+        if (this.affiliate.credential_status == "No asignadas") {
+          let res = await this.$axios.post(
+            `/affiliate/store/${this.affiliate.id}`
+          );
+          this.options.response_message =
+            res.message +
+            " su usuario es: " +
+            res.payload.user +
+            " su password es " +
+            res.payload.pin;
+          this.watch_button_send = false;
+        } else {
+          this.$toast.info("ya cuenta con credenciales");
         }
       } catch (e) {
         console.log(e);
@@ -302,7 +301,9 @@ export default {
     },
     async getAffiliateAddress() {
       try {
-        let res = await this.$axios.patch(`affiliate/affiliate/${this.$route.params.id}/address`,{
+        let res = await this.$axios.patch(
+          `affiliate/affiliate/${this.$route.params.id}/address`,
+          {
             addresses: this.obj_address.addresses.map((o) => o.id),
             addresses_valid: this.obj_address.id_street,
           }
@@ -311,35 +312,7 @@ export default {
         console.log();
       }
     },
-    verifyCancelAddress() {
-      if (this.cancel) {
-        console.log("entro por si");
-        let encuentra = false;
-        let actualizado = this.obj_address.addresses.map((o) => o.id);
-        let actual = this.obj_address.addresses_aux.map((o) => o.id);
-        console.log(actualizado);
-        console.log(actual);
-        for (var i = 0; i < actualizado.length; i++) {
-          encuentra = false;
-          for (var j = 0; j < actual.length; j++) {
-            if (actualizado[i] == actual[j]) {
-              encuentra = true;
-              break;
-            }
-          }
-          if (!encuentra) {
-            console.log("los arreglos no son iguales");
-            break;
-          }
-        }
-        if (encuentra) {
-          console.log("si son iguales");
-        }
-      } else {
-        console.log("no hizo cancel");
-      }
-      this.cancel = false;
-    },
+
   },
 };
 </script>

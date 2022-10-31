@@ -4,6 +4,7 @@
     :items="addresses"
     sort-by="city_address_id"
     class="elevation-1"
+    :key="refreshAddressTable"
   >
     <template v-slot:item="props">
       <tr>
@@ -21,7 +22,6 @@
             <v-radio :value="props.item.id"></v-radio>
           </v-radio-group>
         </td>
-
         <td>
           <v-icon
             small
@@ -182,7 +182,7 @@ export default {
     editedIndexPerRef: -1,
     id_street: 0,
     addresses: [],
-    addresses_aux: [],
+    refreshAddressTable: 0,
   }),
 
   computed: {
@@ -206,6 +206,18 @@ export default {
         this.obj_address.id_street = this.id_street;
       }
     },
+    cancel() {
+      if (this.cancel) {
+        console.log(this.cancel)
+        this.verifyCancelAddress();
+      }
+    },
+    refreshAddressTable(newVal, oldVal){
+      if(newVal != oldVal){
+      this.getAddress(this.$route.params.id);
+      }
+    }
+
   },
 
   mounted() {
@@ -256,28 +268,25 @@ export default {
           console.log(this.editedIndex);
           Object.assign(this.addresses[this.editedIndex], this.editedItem);
           console.log(this.editedItem);
-          let res = await this.$axios.patch(
-            `/affiliate/address/${this.editedItem.id}`
-          );
+          let res = await this.$axios.patch(`/affiliate/address/${this.editedItem.id}`);
           this.editedItem = res;
-          console.log("desde ruta");
           console.log(this.editedItem);
         } else {
-          let res = await this.$axios.post(`/affiliate/address`, {
+          let res1 = await this.$axios.post(`/affiliate/address`, {
             city_address_id: this.editedItem.city_address_id,
             zone: this.editedItem.zone,
             street: this.editedItem.street,
             number_address: this.editedItem.number_address,
             description: this.editedItem.description,
           });
-          this.addresses.push(res);
+          this.addresses.push(res1);
           console.log(this.editedIndex);
         }
         this.obj_address.addresses = this.addresses;
         this.obj_address.id_street = this.id_street;
 
         this.close();
-        console.log(this.obj_address);
+
       } catch (e) {
         console.log(e);
       }
@@ -296,15 +305,15 @@ export default {
       try {
         this.loading = true;
         let res = await this.$axios.get(`/affiliate/affiliate/${id}/address`);
-        this.obj_address.addresses_aux = res;
         this.addresses = res;
-        console.log(this.obj_address.addresses_aux);
         if (this.addresses.length > 0) {
           // Verificar si existe información de dirección
           // Obtener la dirección activa
           let address = this.addresses.find((item) => item.pivot.validated);
           this.id_street = address.id;
         }
+        let res2 = await this.$axios.get(`/affiliate/affiliate/${id}/address`);
+        this.obj_address.addresses_aux = res2
       } catch (e) {
         console.log(e);
       } finally {
@@ -315,6 +324,29 @@ export default {
       let city_item = this.cities.find((o) => o.id == item.city_address_id);
       let object_city_item = Object.assign({}, city_item);
       return object_city_item.name;
+    },
+    async verifyCancelAddress() {
+      try {
+        if (this.cancel) {
+          let address_new = this.obj_address.addresses.map((o) => o.id);
+          let address_origin = this.obj_address.addresses_aux.map((o) => o.id);
+          console.log(address_new);
+          console.log(address_origin);
+
+          for(let i=0;i<address_new.length;i++){
+              let element = address_new[i]
+              if(address_origin.includes(element)){
+                  console.log(`coincide '${element}'`)
+              }else{
+                console.log(address_new[i])
+                await this.$axios.delete(`/affiliate/address/${address_new[i]}`);
+              }
+          }
+          this.refreshAddressTable++
+        }
+      } catch (e) {
+        console.log();
+      }
     },
   },
 };

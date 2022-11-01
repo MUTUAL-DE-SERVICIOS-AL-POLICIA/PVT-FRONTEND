@@ -90,6 +90,7 @@
                 <Dashboard
                   :affiliate.sync="affiliate"
                   :loading_affiliate="loading_affiliate"
+                  :permission="permission"
                 />
               </v-card-text>
             </v-card>
@@ -100,6 +101,7 @@
                 <Profile
                   :affiliate.sync="affiliate"
                   :editable.sync="editable"
+                  :permission="permission"
                 />
               </v-card-text>
             </v-card>
@@ -112,6 +114,7 @@
                   :editable.sync="editable"
                   :obj_address.sync="obj_address"
                   :cancel.sync="cancel"
+                  :permission="permission"
                 />
               </v-card-text>
             </v-card>
@@ -119,14 +122,18 @@
           <v-tab-item :value="'tab-4'">
             <v-card flat tile>
               <v-card-text>
-                <Spouse :affiliate.sync="affiliate" :editable.sync="editable" />
+                <Spouse 
+                  :affiliate.sync="affiliate" 
+                  :editable.sync="editable" 
+                  :permission="permission" />
               </v-card-text>
             </v-card>
           </v-tab-item>
           <v-tab-item :value="'tab-5'">
             <v-card flat tile>
               <v-card-text>
-                <Contribution :affiliate.sync="affiliate"/>
+                <Contribution 
+                  :affiliate.sync="affiliate"/>
               </v-card-text>
             </v-card>
           </v-tab-item>
@@ -228,6 +235,34 @@ export default {
   watch: {
 
   },
+    computed: {
+    //permisos del selector global por rol
+    permissionSimpleSelected () {
+      return this.$store.getters.permissionSimpleSelected
+    },
+
+    permission() {
+      return {
+        primary: this.primaryPermission,
+        secondary: this.secondaryPermission
+      }
+    },
+    secondaryPermission() {
+      if (this.affiliate.id) {
+        return this.permissionSimpleSelected.includes('update-affiliate-secondary')
+      } else {
+        return this.permissionSimpleSelected.includes('create-affiliate')
+      }
+    },
+    primaryPermission() {
+      if (this.affiliate.id) {
+        return this.permissionSimpleSelected.includes('update-affiliate-primary')
+      } else {
+        return this.permissionSimpleSelected.includes('create-affiliate')
+      }
+    }
+  },
+  
   methods: {
     resetForm() {
       this.cancel = true;

@@ -401,11 +401,19 @@ export default {
           formatted: null,
           picker: false
         },
-        birthDate: {
+        dateEntry: {
+          formatted: null,
+          picker: false
+        },
+        dateDerelict: {
           formatted: null,
           picker: false
         },
         dateDeath: {
+          formatted: null,
+          picker: false
+        },
+        birthDate: {
           formatted: null,
           picker: false
         }

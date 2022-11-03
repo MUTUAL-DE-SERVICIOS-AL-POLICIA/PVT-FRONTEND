@@ -182,7 +182,6 @@
             </v-col>
               <v-col cols="12" md="6">
                 <v-select
-                  :error-messages="errors"
                   dense
                   :loading="loading"
                   :items="affiliateState"
@@ -517,9 +516,9 @@ export default {
         this.loading = false;
       }
     },
-
+    //En el caso que este fallecido
     Onchange() {
-      if (this.affiliate.affiliate_state.name == 'Fallecido') {
+      if (this.affiliate.affiliate_state_id == 4) {
         this.visible = true;
       } else {
         this.visible = false;

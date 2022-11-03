@@ -40,7 +40,7 @@
 
     <v-row justify="center" class="py-0 mt-2" v-if="!loading_circular">
       <v-card
-        :class="item.state_importation ? 'headline font-weight-bold ma-2 blue-grey lighten-5' : 'headline font-weight-bold ma-2'"
+        :class="item.state_importation ? 'headline font-weight-bold ma-2 backgroundCard' : 'headline font-weight-bold ma-2'"
         max-width="250px"
         v-for="(item, i) in list_months"
         :key="i"

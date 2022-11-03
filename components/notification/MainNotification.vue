@@ -107,7 +107,7 @@
                         <v-row class="ma-0 pa-0"    >
                             <v-file-input
                             accept="image/*"
-                            label="Cargar imagen"></v-file-input>
+                            label="Cargar archivo"></v-file-input>
                         </v-row>
                     </v-card>
                     <v-card>

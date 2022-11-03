@@ -71,7 +71,7 @@
             >
           </v-card-title>
           <v-divider inset></v-divider>
-          <v-card-text class="blue-grey lighten-5">
+          <v-card-text class="backgroundCard">
             <v-row>
               <v-col cols="12" md="12" class="py-0">
                 <b>{{ type_import.name }} <v-icon small>mdi-home-analytics</v-icon></b>
@@ -171,7 +171,7 @@
                   <strong>Porcentaje de Importación: {{progress.percentage}}%</strong>
                 </v-progress-linear>
                 <v-stepper-content step="1">
-                  <v-card class="mb-12" color="grey lighten-1">
+                  <v-card class="mb-12" >
                     <v-card-text>
                       <v-card color="white" class="pa-2">
                         <v-form ref="forStep1">

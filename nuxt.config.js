@@ -22,7 +22,7 @@ export default {
 
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [
-    '@mdi/font/css/materialdesignicons.min.css'
+    '@mdi/font/css/materialdesignicons.min.css',
   ],
   router: {
     middleware: ['rutas']
@@ -34,7 +34,8 @@ export default {
     { src: '~/plugins/auth.js' },
     { src: '~/plugins/utils.js' },
     { src: '~/plugins/rules.js' },
-    { src: '~/plugins/filters.js' }
+    { src: '~/plugins/filters.js' },
+    { src: '~/plugins/vue-the-mask.js' }
   ],
 
   build: {},
@@ -80,21 +81,23 @@ export default {
           success: colors.green.accent3
         },
         light: {
-          primary: '#0AADB3',
-          secondary: '#385F73',
+          primary: '#00838F',
+          secondary: '#3a332d',
           tertiary: '#CFD8DC',
-          accent: '#8D6E63',
+          accent: '#009688',
           error: '#DD2C00',
           warning: '#FFAB00',
           info: '#0288D1',
           success: '#43A047',
           danger: '#ff6d00',
           normal: '#757575',
-          teal: '#29617B',
           background: '#EDF2F4',
-          table: '#34495E',
-          plomoAzul: '#EFFBFE'
-          // #EEF1F5
+          table: '#948870',
+          inputsearch: '#fef0e0',
+          textPrimary:'#ffffff',
+          textSecondary:'#ff533e',
+          backgroundTab:'#FAFAFA',
+          backgroundCard: '#EEEEEE',
         }
       }
     }

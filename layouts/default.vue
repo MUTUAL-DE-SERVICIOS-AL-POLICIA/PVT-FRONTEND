@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <template v-if="isAuthenticated && currentRole">
+    <template v-if="isAuthenticated && currentRole" >
       <Navbar :expanded.sync="expandNavbar" />
     </template>
 
@@ -8,7 +8,7 @@
       <Appbar :expanded.sync="expandNavbar" />
     </template>
 
-    <v-main>
+    <v-main style="padding: 48px 0px 32px 56px">
       <Nuxt />
     </v-main>
 

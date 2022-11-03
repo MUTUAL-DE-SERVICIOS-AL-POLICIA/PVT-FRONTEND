@@ -2,75 +2,82 @@
   <v-container fluid>
     <v-form>
       <v-row justify="center">
-        <v-col cols="12" md="12">
-          <v-col cols="12">
-            <v-toolbar-title>DOMICILIO</v-toolbar-title>
-          </v-col>
-          <v-col cols="12">
-            <Address
-              :affiliate.sync="affiliate"
-              :obj_address.sync="obj_address"
-              :editable.sync="editable"
-              :cancel.sync="cancel"
-            />
-          </v-col>
+        <v-col cols="12" md="8">
+          <v-toolbar-title class="pb-2">DOMICILIO</v-toolbar-title>
+          <Address
+            :affiliate.sync="affiliate"
+            :obj_address.sync="obj_address"
+            :editable.sync="editable"
+            :cancel.sync="cancel"
+            :readonly="!editable || !permission.secondary"
+            :outlined="editable && permission.secondary"
+            :disabled="editable && !permission.secondary"
+          />
+        </v-col>
+        <v-col cols="12" md="4">
+          <v-toolbar-title  class="pb-2">TELÉFONOS</v-toolbar-title>
+          <v-text-field
+            v-model="affiliate.cell_phone_number[0]"
+            dense
+            label="Celular1"
+            v-mask="'(###)-#####'"
+            :readonly="!editable || !permission.secondary"
+            :outlined="editable && permission.secondary"
+            :disabled="editable && !permission.secondary"
+          ></v-text-field>
+          <v-text-field
+            v-model="affiliate.cell_phone_number[1]"
+            dense
+            label="Celular2"
+            v-mask="'(###)-#####'"
+            :readonly="!editable || !permission.secondary"
+            :outlined="editable && permission.secondary"
+            :disabled="editable && !permission.secondary"
+          ></v-text-field>
+          <v-text-field
+            v-model="affiliate.phone_number"
+            dense
+            label="Teléfono"
+            v-mask="'(#) ###-###'"
+            :readonly="!editable || !permission.secondary"
+            :outlined="editable && permission.secondary"
+            :disabled="editable && !permission.secondary"
+          ></v-text-field>
         </v-col>
         <v-col cols="12" md="6">
-          <v-container class="py-0">
-            <v-row>
-              <v-col cols="12">
-                <v-toolbar-title>TELÉFONOS</v-toolbar-title>
-              </v-col>
-              <v-col cols="12" md="4">
-                <v-text-field
-                  v-model="affiliate.cell_phone_number[0]"
-                  dense
-                  :readonly="!editable"
-                  :outlined="editable"
-                  :disabled="!editable"
-                  label="Celular1"
-                  v-mask="'(###)-#####'"
-                ></v-text-field>
-              </v-col>
-              <v-col cols="12" md="4">
-                <v-text-field
-                  v-model="affiliate.cell_phone_number[1]"
-                  dense
-                  :disabled="!editable"
-                  :outlined="editable"
-                  label="Celular2"
-                  v-mask="'(###)-#####'"
-                ></v-text-field>
-              </v-col>
-              <v-col cols="12" md="4">
-                <v-text-field
-                  v-model="affiliate.phone_number"
-                  dense
-                  label="Telefono"
-                  v-mask="'(#) ###-###'"
-                ></v-text-field>
-              </v-col>
-            </v-row>
-          </v-container>
+          <v-toolbar-title class="pb-5">DATOS FINANCIEROS </v-toolbar-title>
+          <v-select
+            :error-messages="errors"
+            dense
+            :loading="loading"
+            :items="entity"
+            item-text="name"
+            item-value="id"
+            label="Entidad Financiera"
+            v-model="affiliate.financial_entity_id"
+            :readonly="!editable || !permission.secondary"
+            :outlined="editable && permission.secondary"
+            :disabled="editable && !permission.secondary"
+          ></v-select>
+          <v-text-field
+            :error-messages="errors"
+            dense
+            v-model="affiliate.account_number"
+            label="Número de Cuenta SIGEP activa"
+            :readonly="!editable || !permission.secondary"
+            :outlined="editable && permission.secondary"
+            :disabled="editable && !permission.secondary"
+          ></v-text-field>
         </v-col>
         <v-col cols="12" md="6">
-          <v-container>
-            <v-row>
-              <v-col cols="12">
-                <v-toolbar-title>OFICINA VIRTUAL</v-toolbar-title>
-
-                <v-card color="info_card" shaped class="elevation-1">
-                  <v-card-title>Credenciales</v-card-title>
-                  <v-card-text>
-                    <strong>Estado:</strong> {{ affiliate.credential_status.access_status
-                    }}<br />
-                    <strong>Fecha de creación:</strong>
-                    {{ $filters.date(affiliate.credential_status.created_at) }}
-                  </v-card-text>
-                </v-card>
-              </v-col>
-            </v-row>
-          </v-container>
+        <v-toolbar-title class="pb-2">OFICINA VIRTUAL</v-toolbar-title>
+        <span><strong>Estado de credenciales: </strong> {{affiliate.credential_status.access_status}}</span><br />
+        <template v-if="affiliate.credential_status.access_status != 'No asignadas'">
+          <span>
+            <strong>Fecha de creación de credenciales: </strong>{{ $filters.date(affiliate.credential_status.created_at) }}</span><br />
+          <span>
+            <strong>Fecha de actualización de credenciales: </strong>{{ $filters.date(affiliate.credential_status.updated_at) }}</span>
+        </template>
         </v-col>
       </v-row>
     </v-form>
@@ -102,12 +109,37 @@ export default {
       type: Boolean,
       require: true,
     },
+    permission: {
+      type: Object,
+      required: true,
+    },
   },
 
-  data: () => ({}),
+  data: () => ({
+    entity: []
+  }),
   watch: {},
   computed: {},
-  mounted() {},
-  methods: {},
+  mounted() {
+    this.getFinancialEntity()
+  },
+  methods: {
+    async getFinancialEntity() {
+      try {
+        this.loading = true;
+        let res = await this.$axios.get(`global/financial_entity`);
+        this.entity = res;
+        this.entity.unshift({
+          id: null,
+          name: "-------"
+        })
+      } catch (e) {
+        this.dialog = false;
+        console.log(e);
+      } finally {
+        this.loading = false;
+      }
+    },
+  },
 };
 </script>

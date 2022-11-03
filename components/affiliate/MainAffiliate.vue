@@ -10,7 +10,7 @@
               Datos del afiliado
             </v-col>
           </v-row>
-          <v-tooltip bottom>
+          <v-tooltip>
             <template v-slot:activator="{ on, attrs }">
               <v-btn
                 small
@@ -19,6 +19,7 @@
                 v-on="on"
                 @click="getState_cellphone()"
                 color="success"
+                class="mr-4"
               >
                 <span v-if="!editable"> ASIGNAR CREDENCIALES</span>
               </v-btn>

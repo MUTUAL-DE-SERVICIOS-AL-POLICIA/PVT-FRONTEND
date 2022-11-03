@@ -1,13 +1,25 @@
 <template>
   <v-data-table
     :headers="headers"
-    :items="contribution_list"
+    :items="contributions"
     :loading="loading"
     single-expand
   >
     <template v-slot:item="props">
       <tr :class="props.isExpanded ? 'table white--text': ''">
         <td @click.stop="expand(props)">{{ props.item.year }}</td>
+        <td @click.stop="expand(props)">{{ Object.entries(props.item.contributions[0].detail).length !==0 ? props.item.contributions[0].detail.total: '0,00' }}</td>
+        <td @click.stop="expand(props)">{{ Object.entries(props.item.contributions[1].detail).length !==0 ? props.item.contributions[1].detail.total: '0,00' }}</td>
+        <td @click.stop="expand(props)">{{ Object.entries(props.item.contributions[2].detail).length !==0 ? props.item.contributions[2].detail.total: '0,00' }}</td>
+        <td @click.stop="expand(props)">{{ Object.entries(props.item.contributions[3].detail).length !==0 ? props.item.contributions[3].detail.total: '0,00' }}</td>
+        <td @click.stop="expand(props)">{{ Object.entries(props.item.contributions[4].detail).length !==0 ? props.item.contributions[4].detail.total: '0,00' }}</td>
+        <td @click.stop="expand(props)">{{ Object.entries(props.item.contributions[5].detail).length !==0 ? props.item.contributions[5].detail.total: '0,00' }}</td>
+        <td @click.stop="expand(props)">{{ Object.entries(props.item.contributions[6].detail).length !==0 ? props.item.contributions[6].detail.total: '0,00' }}</td>
+        <td @click.stop="expand(props)">{{ Object.entries(props.item.contributions[7].detail).length !==0 ? props.item.contributions[7].detail.total: '0,00' }}</td>
+        <td @click.stop="expand(props)">{{ Object.entries(props.item.contributions[8].detail).length !==0 ? props.item.contributions[8].detail.total: '0,00' }}</td>
+        <td @click.stop="expand(props)">{{ Object.entries(props.item.contributions[9].detail).length !==0 ? props.item.contributions[9].detail.total: '0,00' }}</td>
+        <td @click.stop="expand(props)">{{ Object.entries(props.item.contributions[10].detail).length !==0 ? props.item.contributions[10].detail.total: '0,00'}}</td>
+        <td @click.stop="expand(props)">{{ Object.entries(props.item.contributions[11].detail).length !==0 ? props.item.contributions[11].detail.total: '0,00'}}</td>
       </tr>
     </template>
     <template v-slot:expanded-item="{ item }">
@@ -21,7 +33,7 @@
                     {{ header.text }}
                   </td>
                   <td v-for="item in items" :key="item.id">
-                    {{ item[header.value] }}
+                    {{ Object.entries(item.detail).length !==0 ? item.detail[header.value]: '0,00'}}
                   </td>
                 </tr>
               </tbody>
@@ -47,7 +59,7 @@ export default {
     loading: true,
     search: "",
     active: true,
-    contribution_list: [],
+    contributions: [],
     headers: [
       {
         text: "Año",
@@ -190,14 +202,12 @@ export default {
     async getActiveAffiliateContribution(id) {
       try {
         this.loading = true;
-        let res = await this.$axios.post(
-          `/contribution/active_affiliate_contribution`,
-          {
+        let res = await this.$axios.post(`/contribution/active_affiliate_contribution`,{
             affiliate_id: id,
           }
         );
-        this.contribution_list = res.payload.contributions_total;
-        console.log(this.contribution_list);
+        this.contributions = res.payload.all_contributions;
+        console.log(this.contributions);
       } catch (e) {
         console.log(e);
       } finally {

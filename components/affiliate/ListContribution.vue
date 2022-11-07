@@ -1,5 +1,41 @@
 <template>
-  <v-data-table
+  <v-card>
+    <v-toolbar-title>APORTES ACTIVO</v-toolbar-title>
+    <v-row>
+      <v-col cols="12" sm="6" md="4">
+        <span
+          ><strong>Fecha de Ingreso a la Institucional Policial: </strong
+          >{{
+            affiliate.date_entry != null && affiliate.date_entry.trim() != ""
+              ? affiliate.date_entry
+              : "Sin Registro"
+          }}</span
+        ><br />
+      </v-col>
+      <v-col cols="12" sm="6" md="4">
+        <span
+          ><strong>Fecha de Desvinculación: </strong
+          >{{
+            affiliate.date_derelict != null &&
+            affiliate.date_derelict.trim() != ""
+              ? affiliate.date_derelict
+              : "Sin Registro"
+          }}</span
+        ><br />
+      </v-col>
+      <v-col cols="12" sm="6" md="4">
+        <span
+          ><strong>Último Periodo Según Listas de Revista: </strong
+          >{{
+            affiliate.date_last_contribution != null &&
+            affiliate.date_last_contribution.trim() != ""
+              ? affiliate.date_last_contribution
+              : "Sin Registro"
+          }}</span
+        ><br />
+      </v-col>
+    </v-row>
+    <v-data-table
     :headers="headers"
     :items="contributions"
     :loading="loading"
@@ -43,18 +79,20 @@
       </tr>
     </template>
   </v-data-table>
+  </v-card>
 </template>
+
 
 <script>
 export default {
-  name: "Contribution",
-  components: {
-  
+  name: "ListContribution",
+  props: {
+    affiliate: {
+      type: Object,
+      require: true,
+    },
   },
-  affiliate: {
-    type: Object,
-    require: true,
-  },
+  components: {},
   data: () => ({
     itemsPerPage: 0,
     loading: true,
@@ -63,7 +101,7 @@ export default {
     contributions: [],
     headers: [
       {
-        text: "Cuota Mortuoria",
+        text: "Año",
         value: "year",
         class: ["table", "white--text"],
         width: "16%",
@@ -74,84 +112,84 @@ export default {
         value: "year",
         class: ["table", "white--text"],
         width: "7%",
-        sortable: true,
+        sortable: false,
       },
       {
         text: "Febrero",
         value: "",
         class: ["table", "white--text"],
         width: "7%",
-        sortable: true,
+        sortable: false,
       },
       {
         text: "Marzo",
         value: "",
         class: ["table", "white--text"],
         width: "7%",
-        sortable: true,
+        sortable: false,
       },
       {
         text: "Abril",
         value: "",
         class: ["table", "white--text"],
         width: "7%",
-        sortable: true,
+        sortable: false,
       },
       {
         text: "Mayo",
         value: "",
         class: ["table", "white--text"],
         width: "7%",
-        sortable: true,
+        sortable: false,
       },
       {
         text: "Junio",
         value: "",
         class: ["table", "white--text"],
         width: "7%",
-        sortable: true,
+        sortable: false,
       },
       {
         text: "Julio",
         value: "",
         class: ["table", "white--text"],
         width: "7%",
-        sortable: true,
+        sortable: false,
       },
       {
         text: "Agosto",
         value: "",
         class: ["table", "white--text"],
         width: "7%",
-        sortable: true,
+        sortable: false,
       },
       {
         text: "Septiembre",
         value: "",
         class: ["table", "white--text"],
         width: "7%",
-        sortable: true,
+        sortable: false,
       },
       {
         text: "Octubre",
         value: "",
         class: ["table", "white--text"],
         width: "7%",
-        sortable: true,
+        sortable: false,
       },
       {
         text: "Noviembre",
         value: "",
         class: ["table", "white--text"],
         width: "7%",
-        sortable: true,
+        sortable: false,
       },
       {
         text: "Diciembre",
         value: "",
         class: ["table", "white--text"],
         width: "7%",
-        sortable: true,
+        sortable: false,
       },
     ],
 
@@ -203,7 +241,9 @@ export default {
     async getActiveAffiliateContribution(id) {
       try {
         this.loading = true;
-        let res = await this.$axios.post(`/contribution/active_affiliate_contribution`,{
+        let res = await this.$axios.post(
+          `/contribution/active_affiliate_contribution`,
+          {
             affiliate_id: id,
           }
         );

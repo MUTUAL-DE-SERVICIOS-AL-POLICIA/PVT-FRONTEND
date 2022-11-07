@@ -133,7 +133,7 @@
           <v-tab-item :value="'tab-5'">
             <v-card flat tile>
               <v-card-text>
-                <Contribution 
+                <ListContribution
                   :affiliate.sync="affiliate"/>
               </v-card-text>
             </v-card>
@@ -176,14 +176,14 @@ import AdditionalInformation from "@/components/affiliate/AdditionalInformation"
 import Dashboard from "@/components/affiliate/Dashboard";
 import Profile from "@/components/affiliate/Profile";
 import Spouse from "@/components/affiliate/Spouse.vue";
-import Contribution from "@/components/affiliate/Contribution.vue";
+import ListContribution from "@/components/affiliate/ListContribution.vue";
 export default {
   components: {
     AdditionalInformation,
     Dashboard,
     Profile,
     Spouse,
-    Contribution,
+    ListContribution,
   },
   props: {
     affiliate_id: {

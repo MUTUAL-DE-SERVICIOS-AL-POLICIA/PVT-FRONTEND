@@ -22,10 +22,10 @@
         <td @click.stop="expand(props)">{{ Object.entries(props.item.contributions[11].detail).length !==0 ? props.item.contributions[11].detail.total: '0,00'}}</td>
       </tr>
     </template>
-    <template v-slot:expanded-item="{ item }">
+    <template v-slot:expanded-item="{item}">
       <tr>
         <td :colspan="13" class="px-0">
-          <v-data-table :items="item.contributions" :hide-default-footer="true">
+          <v-data-table :items="item.contributions" :hide-default-footer="true" :itemsPerPage="12">
             <template v-slot:body="{ items }">
               <tbody>
                 <tr v-for="header in headersDetail" :key="header.id">
@@ -56,100 +56,101 @@ export default {
     require: true,
   },
   data: () => ({
+    itemsPerPage: 0,
     loading: true,
     search: "",
     active: true,
     contributions: [],
     headers: [
       {
-        text: "Año",
+        text: "Cuota Mortuoria",
         value: "year",
         class: ["table", "white--text"],
-        width: "10%",
+        width: "16%",
         sortable: true,
       },
       {
         text: "Enero",
         value: "year",
         class: ["table", "white--text"],
-        width: "10%",
+        width: "7%",
         sortable: true,
       },
       {
         text: "Febrero",
         value: "",
         class: ["table", "white--text"],
-        width: "10%",
+        width: "7%",
         sortable: true,
       },
       {
         text: "Marzo",
         value: "",
         class: ["table", "white--text"],
-        width: "10%",
+        width: "7%",
         sortable: true,
       },
       {
         text: "Abril",
         value: "",
         class: ["table", "white--text"],
-        width: "10%",
+        width: "7%",
         sortable: true,
       },
       {
         text: "Mayo",
         value: "",
         class: ["table", "white--text"],
-        width: "10%",
+        width: "7%",
         sortable: true,
       },
       {
         text: "Junio",
         value: "",
         class: ["table", "white--text"],
-        width: "10%",
+        width: "7%",
         sortable: true,
       },
       {
         text: "Julio",
         value: "",
         class: ["table", "white--text"],
-        width: "10%",
+        width: "7%",
         sortable: true,
       },
       {
         text: "Agosto",
         value: "",
         class: ["table", "white--text"],
-        width: "10%",
+        width: "7%",
         sortable: true,
       },
       {
         text: "Septiembre",
         value: "",
         class: ["table", "white--text"],
-        width: "10%",
+        width: "7%",
         sortable: true,
       },
       {
         text: "Octubre",
         value: "",
         class: ["table", "white--text"],
-        width: "10%",
+        width: "7%",
         sortable: true,
       },
       {
         text: "Noviembre",
         value: "",
         class: ["table", "white--text"],
-        width: "10%",
+        width: "7%",
         sortable: true,
       },
       {
         text: "Diciembre",
         value: "",
         class: ["table", "white--text"],
-        width: "10%",
+        width: "7%",
         sortable: true,
       },
     ],
@@ -159,35 +160,35 @@ export default {
         text: "Cotizable",
         value: "quotable",
         class: ["table", "white--text"],
-        width: "8%",
+        width: "16%",
         sortable: true,
       },
       {
         text: "Fondo de Retiro",
         value: "retirement_fund",
         class: ["table", "white--text"],
-        width: "8%",
+        width: "16%",
         sortable: true,
       },
       {
         text: "Cuota Mortuoria ",
         value: "mortuary_quota",
         class: ["table", "white--text"],
-        width: "8%",
+        width: "16%",
         sortable: true,
       },
       {
         text: "Aporte",
         value: "total",
         class: ["table", "white--text"],
-        width: "8%",
+        width: "16%",
         sortable: true,
       },
       {
         text: "Reintegro",
         value: "reimbursement_total",
         class: ["table", "white--text"],
-        width: "8%",
+        width: "16%",
         sortable: true,
       },
     ],

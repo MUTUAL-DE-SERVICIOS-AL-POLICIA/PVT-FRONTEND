@@ -35,55 +35,21 @@
         ><br />
       </v-col>
     </v-row>
-    <v-data-table
-    :headers="headers"
-    :items="contributions"
-    :loading="loading"
-    single-expand
-  >
-    <template v-slot:item="props">
-      <tr :class="props.isExpanded ? 'table white--text': ''">
-        <td @click.stop="expand(props)">{{ props.item.year }}</td>
-        <td @click.stop="expand(props)">{{ Object.entries(props.item.contributions[0].detail).length !==0 ? props.item.contributions[0].detail.total: '0,00' }}</td>
-        <td @click.stop="expand(props)">{{ Object.entries(props.item.contributions[1].detail).length !==0 ? props.item.contributions[1].detail.total: '0,00' }}</td>
-        <td @click.stop="expand(props)">{{ Object.entries(props.item.contributions[2].detail).length !==0 ? props.item.contributions[2].detail.total: '0,00' }}</td>
-        <td @click.stop="expand(props)">{{ Object.entries(props.item.contributions[3].detail).length !==0 ? props.item.contributions[3].detail.total: '0,00' }}</td>
-        <td @click.stop="expand(props)">{{ Object.entries(props.item.contributions[4].detail).length !==0 ? props.item.contributions[4].detail.total: '0,00' }}</td>
-        <td @click.stop="expand(props)">{{ Object.entries(props.item.contributions[5].detail).length !==0 ? props.item.contributions[5].detail.total: '0,00' }}</td>
-        <td @click.stop="expand(props)">{{ Object.entries(props.item.contributions[6].detail).length !==0 ? props.item.contributions[6].detail.total: '0,00' }}</td>
-        <td @click.stop="expand(props)">{{ Object.entries(props.item.contributions[7].detail).length !==0 ? props.item.contributions[7].detail.total: '0,00' }}</td>
-        <td @click.stop="expand(props)">{{ Object.entries(props.item.contributions[8].detail).length !==0 ? props.item.contributions[8].detail.total: '0,00' }}</td>
-        <td @click.stop="expand(props)">{{ Object.entries(props.item.contributions[9].detail).length !==0 ? props.item.contributions[9].detail.total: '0,00' }}</td>
-        <td @click.stop="expand(props)">{{ Object.entries(props.item.contributions[10].detail).length !==0 ? props.item.contributions[10].detail.total: '0,00'}}</td>
-        <td @click.stop="expand(props)">{{ Object.entries(props.item.contributions[11].detail).length !==0 ? props.item.contributions[11].detail.total: '0,00'}}</td>
-      </tr>
-    </template>
-    <template v-slot:expanded-item="{item}">
-      <tr>
-        <td :colspan="13" class="px-0">
-          <v-data-table :items="item.contributions" :hide-default-footer="true" :itemsPerPage="12">
-            <template v-slot:body="{ items }">
-              <tbody>
-                <tr v-for="header in headersDetail" :key="header.id">
-                  <td>
-                    {{ header.text }}
-                  </td>
-                  <td v-for="item in items" :key="item.id">
-                    {{ Object.entries(item.detail).length !==0 ? item.detail[header.value]: '0,00'}}
-                  </td>
-                </tr>
-              </tbody>
-            </template>
-          </v-data-table>
-        </td>
-      </tr>
-    </template>
-  </v-data-table>
+    <v-card>
+      <ListContributionActive :affiliate.sync="affiliate" />
+    </v-card>
+    <v-toolbar-title>APORTES PASIVO</v-toolbar-title>
+    <v-card>
+      <ListContributionPassive />
+    </v-card>
   </v-card>
 </template>
 
 
 <script>
+import ListContributionActive from "@/components/affiliate/ListContributionActive.vue";
+import ListContributionPassive from "@/components/affiliate/ListContributionPassive.vue";
+
 export default {
   name: "ListContribution",
   props: {
@@ -92,12 +58,16 @@ export default {
       require: true,
     },
   },
-  components: {},
+  components: {
+    ListContributionActive,
+    ListContributionPassive,
+  },
   data: () => ({
     itemsPerPage: 0,
     loading: true,
     search: "",
     active: true,
+    show_detail: false,
     contributions: [],
     headers: [
       {
@@ -254,6 +224,10 @@ export default {
       } finally {
         this.loading = false;
       }
+    },
+    showDetail() {
+      this.show_detail = true;
+      // this.show_detail_passive= true;
     },
   },
 };

@@ -35,13 +35,62 @@
         ><br />
       </v-col>
     </v-row>
-    <v-card>
-      <ListContributionActive :affiliate.sync="affiliate" />
-    </v-card>
+      <template v-if="!show_detail_active">
+        <v-card class="text-right">
+          <v-btn
+            small
+            dark
+            color="success"
+            class="mr-4" @click="showDetailActive()">
+            <span> Detalle</span>
+          </v-btn><br />
+        </v-card>
+        <ListContributionActive/>
+      </template>
+       <v-card>
+         <template v-if="show_detail_active">
+            <v-card class="text-right">
+              <v-btn
+                small
+                dark
+                color="success"
+                class="mr-4"
+                @click="showActive()">
+              <v-icon>mdi-arrow-left-bold </v-icon>
+              </v-btn><br/>
+            </v-card>
+            <ListContributionDetailActive/>
+         </template>
+       </v-card>
     <v-toolbar-title>APORTES PASIVO</v-toolbar-title>
     <v-card>
+       <template v-if="!show_detail">
+       <v-card class="text-right">
+          <v-btn
+            small
+            dark
+            color="success"
+            class="mr-4"
+            @click="showDetailPassive()">
+        <span> Detalle</span> </v-btn
+        ><br />
+        </v-card>
       <ListContributionPassive />
+       </template>
+      <template v-if="show_detail">
+          <v-card class="text-right">
+            <v-btn
+              small
+              dark
+              color="success"
+              class="mr-4"
+              @click="showPassive()">
+            <v-icon>mdi-arrow-left-bold </v-icon> </v-btn><br />
+          </v-card>
+            <ListContributionDetailPassive/>
+      </template>
     </v-card>
+
   </v-card>
 </template>
 
@@ -49,6 +98,8 @@
 <script>
 import ListContributionActive from "@/components/affiliate/ListContributionActive.vue";
 import ListContributionPassive from "@/components/affiliate/ListContributionPassive.vue";
+import ListContributionDetailPassive from "@/components/affiliate/ListContributionDetailPassive.vue";
+import ListContributionDetailActive from "@/components/affiliate/ListContributionDetailActive.vue";
 
 export default {
   name: "ListContribution",
@@ -61,6 +112,8 @@ export default {
   components: {
     ListContributionActive,
     ListContributionPassive,
+    ListContributionDetailPassive,
+    ListContributionDetailActive
   },
   data: () => ({
     itemsPerPage: 0,
@@ -68,166 +121,27 @@ export default {
     search: "",
     active: true,
     show_detail: false,
+    show_detail_active:false,
     contributions: [],
-    headers: [
-      {
-        text: "Año",
-        value: "year",
-        class: ["table", "white--text"],
-        width: "16%",
-        sortable: true,
-      },
-      {
-        text: "Enero",
-        value: "year",
-        class: ["table", "white--text"],
-        width: "7%",
-        sortable: false,
-      },
-      {
-        text: "Febrero",
-        value: "",
-        class: ["table", "white--text"],
-        width: "7%",
-        sortable: false,
-      },
-      {
-        text: "Marzo",
-        value: "",
-        class: ["table", "white--text"],
-        width: "7%",
-        sortable: false,
-      },
-      {
-        text: "Abril",
-        value: "",
-        class: ["table", "white--text"],
-        width: "7%",
-        sortable: false,
-      },
-      {
-        text: "Mayo",
-        value: "",
-        class: ["table", "white--text"],
-        width: "7%",
-        sortable: false,
-      },
-      {
-        text: "Junio",
-        value: "",
-        class: ["table", "white--text"],
-        width: "7%",
-        sortable: false,
-      },
-      {
-        text: "Julio",
-        value: "",
-        class: ["table", "white--text"],
-        width: "7%",
-        sortable: false,
-      },
-      {
-        text: "Agosto",
-        value: "",
-        class: ["table", "white--text"],
-        width: "7%",
-        sortable: false,
-      },
-      {
-        text: "Septiembre",
-        value: "",
-        class: ["table", "white--text"],
-        width: "7%",
-        sortable: false,
-      },
-      {
-        text: "Octubre",
-        value: "",
-        class: ["table", "white--text"],
-        width: "7%",
-        sortable: false,
-      },
-      {
-        text: "Noviembre",
-        value: "",
-        class: ["table", "white--text"],
-        width: "7%",
-        sortable: false,
-      },
-      {
-        text: "Diciembre",
-        value: "",
-        class: ["table", "white--text"],
-        width: "7%",
-        sortable: false,
-      },
-    ],
-
-    headersDetail: [
-      {
-        text: "Cotizable",
-        value: "quotable",
-        class: ["table", "white--text"],
-        width: "16%",
-        sortable: true,
-      },
-      {
-        text: "Fondo de Retiro",
-        value: "retirement_fund",
-        class: ["table", "white--text"],
-        width: "16%",
-        sortable: true,
-      },
-      {
-        text: "Cuota Mortuoria ",
-        value: "mortuary_quota",
-        class: ["table", "white--text"],
-        width: "16%",
-        sortable: true,
-      },
-      {
-        text: "Aporte",
-        value: "total",
-        class: ["table", "white--text"],
-        width: "16%",
-        sortable: true,
-      },
-      {
-        text: "Reintegro",
-        value: "reimbursement_total",
-        class: ["table", "white--text"],
-        width: "16%",
-        sortable: true,
-      },
-    ],
   }),
   mounted() {
-    this.getActiveAffiliateContribution(this.$route.params.id);
+     this.show_detail_active = false;
   },
   methods: {
     expand(props) {
       props.expand(!props.isExpanded && this.active);
     },
-    async getActiveAffiliateContribution(id) {
-      try {
-        this.loading = true;
-        let res = await this.$axios.post(
-          `/contribution/active_affiliate_contribution`,
-          {
-            affiliate_id: id,
-          }
-        );
-        this.contributions = res.payload.all_contributions;
-        console.log(this.contributions);
-      } catch (e) {
-        console.log(e);
-      } finally {
-        this.loading = false;
-      }
-    },
-    showDetail() {
+    showDetailPassive() {
       this.show_detail = true;
-      // this.show_detail_passive= true;
+    },
+    showPassive() {
+      this.show_detail = false;
+    },
+    showDetailActive(){
+    this.show_detail_active = true;
+    },
+     showActive() {
+      this.show_detail_active = false;
     },
   },
 };

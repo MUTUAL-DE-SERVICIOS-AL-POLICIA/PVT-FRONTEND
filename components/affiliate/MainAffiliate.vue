@@ -134,7 +134,8 @@
             <v-card flat tile>
               <v-card-text>
                 <ListContribution
-                  :affiliate.sync="affiliate"/>
+                  :affiliate.sync="affiliate"
+                  :show_contribution.sync="show_contribution"/>
               </v-card-text>
             </v-card>
           </v-tab-item>
@@ -211,6 +212,7 @@ export default {
       affiliate_state_id: null,
     },
     editable: false,
+    show_contribution:false,
     vertical: false,
     icons: true,
     loading_affiliate: false,

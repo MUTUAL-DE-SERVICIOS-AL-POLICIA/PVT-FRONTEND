@@ -1,5 +1,5 @@
 <template>
-  <v-card>
+  <v-card v-if="!state">
     <v-toolbar-title>APORTES ACTIVO</v-toolbar-title>
     <v-row>
       <v-col cols="12" sm="6" md="4">
@@ -35,65 +35,67 @@
         ><br />
       </v-col>
     </v-row>
-      <template v-if="!show_detail_active">
-        <v-card class="text-right">
-          <v-btn
-            small
-            dark
-            color="success"
-            class="mr-4" @click="showDetailActive()">
-            <span> Detalle</span>
-          </v-btn><br />
-        </v-card>
-        <ListContributionActive/>
-      </template>
-       <v-card>
-         <template v-if="show_detail_active">
-            <v-card class="text-right">
-              <v-btn
-                small
-                dark
-                color="success"
-                class="mr-4"
-                @click="showActive()">
-              <v-icon>mdi-arrow-left-bold </v-icon>
-              </v-btn><br/>
-            </v-card>
-            <ListContributionDetailActive/>
-         </template>
-       </v-card>
-    <v-toolbar-title>APORTES PASIVO</v-toolbar-title>
-    <v-card>
-       <template v-if="!show_detail">
-       <v-card class="text-right">
-          <v-btn
-            small
-            dark
-            color="success"
-            class="mr-4"
-            @click="showDetailPassive()">
+    <v-card class="text-right">
+      <v-btn
+        small
+        dark
+        color="success"
+        class="mr-4"
+        @click="showDetailActive()"
+      >
         <span> Detalle</span> </v-btn
-        ><br />
-        </v-card>
-      <ListContributionPassive />
-       </template>
-      <template v-if="show_detail">
-          <v-card class="text-right">
-            <v-btn
-              small
-              dark
-              color="success"
-              class="mr-4"
-              @click="showPassive()">
-            <v-icon>mdi-arrow-left-bold </v-icon> </v-btn><br />
-          </v-card>
-            <ListContributionDetailPassive/>
-      </template>
+      ><br />
     </v-card>
-
+    <ListContributionActive />
+    <v-toolbar-title>APORTES PASIVO</v-toolbar-title>
+    <v-card class="text-right">
+      <v-btn
+        small
+        dark
+        color="success"
+        class="mr-4"
+        @click="showDetailPassive()"
+      >
+        <span> Detalle</span> </v-btn
+      ><br />
+    </v-card>
+    <ListContributionPassive />
+  </v-card>
+  <v-card v-else-if="state">
+    <template v-if="show_detail.active">
+      <v-toolbar-title> DETALLE DE APORTES ACTIVO</v-toolbar-title>
+      <v-card class="text-right">
+        <v-btn
+          small
+          dark
+          v-model="show_detail.active"
+          color="success"
+          class="mr-4"
+          @click="showContribution()"
+        >
+          <v-icon>mdi-arrow-left-bold </v-icon> </v-btn
+        ><br />
+      </v-card>
+      <ListContributionDetailActive />
+    </template>
+    <template v-if="show_detail.passive">
+      <v-toolbar-title> DETALLE DE APORTES PASIVO</v-toolbar-title>
+      <v-card class="text-right">
+        <v-btn
+          small
+          dark
+          color="success"
+          v-model="show_detail.passive"
+          class="mr-4"
+          @click="showContribution()"
+        >
+          <v-icon>mdi-arrow-left-bold </v-icon> </v-btn
+        ><br />
+      </v-card>
+      <ListContributionDetailPassive />
+    </template>
   </v-card>
 </template>
-
 
 <script>
 import ListContributionActive from "@/components/affiliate/ListContributionActive.vue";
@@ -108,40 +110,49 @@ export default {
       type: Object,
       require: true,
     },
+    show_contribution: {
+      type: Boolean,
+      require: true,
+    },
   },
   components: {
     ListContributionActive,
     ListContributionPassive,
     ListContributionDetailPassive,
-    ListContributionDetailActive
+    ListContributionDetailActive,
   },
   data: () => ({
     itemsPerPage: 0,
     loading: true,
     search: "",
     active: true,
-    show_detail: false,
-    show_detail_active:false,
+    show_detail: {
+      passive: false,
+      active: false,
+    },
+    state: false,
     contributions: [],
   }),
   mounted() {
-     this.show_detail_active = false;
+    this.state = this.show_contribution
   },
   methods: {
     expand(props) {
-      props.expand(!props.isExpanded && this.active);
+      props.expand(!props.isExpanded)
     },
     showDetailPassive() {
-      this.show_detail = true;
+      this.state = true
+      this.show_detail.passive = true
+      this.show_detail.active = false
     },
-    showPassive() {
-      this.show_detail = false;
+    showDetailActive() {
+      this.show_detail.passive = false
+      this.state = true
+      this.show_detail.active = true
     },
-    showDetailActive(){
-    this.show_detail_active = true;
-    },
-     showActive() {
-      this.show_detail_active = false;
+    showContribution() {
+      if (this.show_detail.active == true || this.show_detail.passive == true)
+        this.state = false;
     },
   },
 };

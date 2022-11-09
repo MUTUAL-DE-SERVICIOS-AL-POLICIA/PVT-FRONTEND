@@ -1,5 +1,5 @@
 <template>
-  <v-data-table
+      <v-data-table
     :headers="headers"
     :items="contributions"
     :loading="loading"
@@ -45,165 +45,59 @@
   </v-data-table>
 </template>
 
+
 <script>
 export default {
-  name: "Contribution",
-  components: {
-  
+  name: "ListContributionPassive",
+  props: {
   },
-  affiliate: {
-    type: Object,
-    require: true,
-  },
+  components: {},
   data: () => ({
     itemsPerPage: 0,
     loading: true,
     search: "",
     active: true,
+    show_detail:false,
     contributions: [],
     headers: [
-      {
-        text: "Cuota Mortuoria",
-        value: "year",
-        class: ["table", "white--text"],
-        width: "16%",
-        sortable: true,
-      },
-      {
-        text: "Enero",
-        value: "year",
-        class: ["table", "white--text"],
-        width: "7%",
-        sortable: true,
-      },
-      {
-        text: "Febrero",
-        value: "",
-        class: ["table", "white--text"],
-        width: "7%",
-        sortable: true,
-      },
-      {
-        text: "Marzo",
-        value: "",
-        class: ["table", "white--text"],
-        width: "7%",
-        sortable: true,
-      },
-      {
-        text: "Abril",
-        value: "",
-        class: ["table", "white--text"],
-        width: "7%",
-        sortable: true,
-      },
-      {
-        text: "Mayo",
-        value: "",
-        class: ["table", "white--text"],
-        width: "7%",
-        sortable: true,
-      },
-      {
-        text: "Junio",
-        value: "",
-        class: ["table", "white--text"],
-        width: "7%",
-        sortable: true,
-      },
-      {
-        text: "Julio",
-        value: "",
-        class: ["table", "white--text"],
-        width: "7%",
-        sortable: true,
-      },
-      {
-        text: "Agosto",
-        value: "",
-        class: ["table", "white--text"],
-        width: "7%",
-        sortable: true,
-      },
-      {
-        text: "Septiembre",
-        value: "",
-        class: ["table", "white--text"],
-        width: "7%",
-        sortable: true,
-      },
-      {
-        text: "Octubre",
-        value: "",
-        class: ["table", "white--text"],
-        width: "7%",
-        sortable: true,
-      },
-      {
-        text: "Noviembre",
-        value: "",
-        class: ["table", "white--text"],
-        width: "7%",
-        sortable: true,
-      },
-      {
-        text: "Diciembre",
-        value: "",
-        class: ["table", "white--text"],
-        width: "7%",
-        sortable: true,
-      },
+      { text: "Año",value: "year", class: ["table", "white--text"], width: "16%", sortable: true,},
+      { text: "Enero",value: "", class: ["table", "white--text"], width: "7%", sortable: false,},
+      { text: "Febrero",value: "", class: ["table", "white--text"], width: "7%", sortable: false,},
+      { text: "Marzo",value: "", class: ["table", "white--text"], width: "7%", sortable: false,},
+      { text: "Abril",value: "", class: ["table", "white--text"], width: "7%", sortable: false,},
+      { text: "Mayo",value: "", class: ["table", "white--text"], width: "7%", sortable: false,},
+      { text: "Junio",value: "", class: ["table", "white--text"], width: "7%", sortable: false,},
+      { text: "Julio",value: "", class: ["table", "white--text"], width: "7%", sortable: false,},
+      { text: "Agosto",value: "", class: ["table", "white--text"], width: "7%",sortable: false,},
+      { text: "Septiembre",value: "", class: ["table", "white--text"], width: "7%",sortable: false,},
+      { text: "Octubre",value: "", class: ["table", "white--text"], width: "7%",sortable: false,},
+      { text: "Noviembre",value: "", class: ["table", "white--text"], width: "7%", sortable: false,},
+      { text: "Diciembre",value: "",class: ["table", "white--text"], width: "7%", sortable: false,},
     ],
-
     headersDetail: [
-      {
-        text: "Cotizable",
-        value: "quotable",
-        class: ["table", "white--text"],
-        width: "16%",
-        sortable: true,
-      },
-      {
-        text: "Fondo de Retiro",
-        value: "retirement_fund",
-        class: ["table", "white--text"],
-        width: "16%",
-        sortable: true,
-      },
-      {
-        text: "Cuota Mortuoria ",
-        value: "mortuary_quota",
-        class: ["table", "white--text"],
-        width: "16%",
-        sortable: true,
-      },
-      {
-        text: "Aporte",
-        value: "total",
-        class: ["table", "white--text"],
-        width: "16%",
-        sortable: true,
-      },
-      {
-        text: "Reintegro",
-        value: "reimbursement_total",
-        class: ["table", "white--text"],
-        width: "16%",
-        sortable: true,
-      },
+      { text: "Cotizable", value: "quotable", class: ["table", "white--text"], width: "16%", sortable: true,},
+      { text: "F.S. Vejez", value: "aps_total_fs", class: ["table", "white--text"], width: "16%", sortable: true,},
+      { text: "F.C. Cotización", value: "aps_total_cc", class: ["table", "white--text"], width: "16%", sortable: true,},
+      { text: "F.S. Acumulado", value: "aps_total_fsa", class: ["table", "white--text"], width: "16%", sortable: true,},
+      { text: "R. Invalidez", value: "aps_disability", class: ["table", "white--text"], width: "16%", sortable: true,},
+      { text: "R. por Muerte", value: "aps_total_death", class: ["table", "white--text"], width: "16%", sortable: true,},
+      { text: "Aporte", value: "total", class: ["table", "white--text"], width: "16%", sortable: true,},
+      { text: "Reintegro", value: "", class: ["table", "white--text"], width: "16%", sortable: true,},
     ],
   }),
   mounted() {
-    this.getActiveAffiliateContribution(this.$route.params.id);
+    this.getPassiveAffiliateContribution(this.$route.params.id);
   },
   methods: {
     expand(props) {
       props.expand(!props.isExpanded && this.active);
     },
-    async getActiveAffiliateContribution(id) {
+    async getPassiveAffiliateContribution(id) {
       try {
         this.loading = true;
-        let res = await this.$axios.post(`/contribution/active_affiliate_contribution`,{
+        let res = await this.$axios.post(
+          `/contribution/passive_affiliate_contribution`,
+          {
             affiliate_id: id,
           }
         );

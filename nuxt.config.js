@@ -54,6 +54,7 @@ export default {
     '@nuxtjs/axios',
     '@nuxtjs/moment',
     "vue-toastification/nuxt",
+    "nuxt-sweetalert2",
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
@@ -98,6 +99,8 @@ export default {
           textSecondary:'#ff533e',
           backgroundTab:'#FAFAFA',
           backgroundCard: '#EEEEEE',
+          backgroundCard: '#BDBDBD',
+          notificationCard: '#EAEDED'
         }
       }
     }

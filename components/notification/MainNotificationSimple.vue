@@ -1,12 +1,6 @@
 <template>
   <v-container fluid>
     <v-card flat>
-      <v-card-title>
-        <v-toolbar dense color="tertiary" class="caption">
-          <GlobalBreadCrumb />
-          <v-spacer></v-spacer>
-        </v-toolbar>
-      </v-card-title>
       <v-card-text>
         <v-form ref="forNotification">
           <v-row>

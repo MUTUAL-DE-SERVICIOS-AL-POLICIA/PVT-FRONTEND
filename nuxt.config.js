@@ -35,7 +35,8 @@ export default {
     { src: '~/plugins/utils.js' },
     { src: '~/plugins/rules.js' },
     { src: '~/plugins/filters.js' },
-    { src: '~/plugins/vue-the-mask.js' }
+    { src: '~/plugins/vue-the-mask.js' },
+    { src: '~/plugins/firebase-storage.js'},
   ],
 
   build: {},
@@ -98,9 +99,9 @@ export default {
           textPrimary:'#ffffff',
           textSecondary:'#ff533e',
           backgroundTab:'#FAFAFA',
-          backgroundCard: '#EEEEEE',
           backgroundCard: '#BDBDBD',
-          notificationCard: '#EAEDED'
+          notificationCard: '#EAEDED',
+          tableNotification: '#5f7f7a',          
         }
       }
     }

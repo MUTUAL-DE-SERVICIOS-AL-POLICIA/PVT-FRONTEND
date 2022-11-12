@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import MainNotification from "@/components/notification/MainNotificationSimple.vue";
+import MainNotification from "@/components/notification/MainNotification2.vue";
 export default {
   name: "PageNotification",
   components: {

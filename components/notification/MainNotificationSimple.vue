@@ -9,13 +9,11 @@
                 <v-text-field
                   dense
                   label="Titulo"
+                  disabled
                   outlined
                   clearable
                   v-model="form.title"
-                  :rules="[
-                    $rules.obligatoria('Titulo'),
-                    $rules.longitudMinima(4),
-                  ]"
+                  
                 >
                 </v-text-field>
 
@@ -23,12 +21,10 @@
                   dense
                   label="Mensaje"
                   outlined
+                  disabled
                   clearable
                   v-model="form.message"
-                  :rules="[
-                    $rules.obligatoria('Mensaje'),
-                    $rules.longitudMinima(4),
-                  ]"
+                 
                 >
                 </v-textarea>
 
@@ -44,7 +40,10 @@
                     Consideraciones para el archivo:<br />
                     - Debe tener el formato xls.<br />
                     - La primera columna debe contener el NUP del afiliado, sin
-                    encabezado.
+                    encabezado.<br />
+                    - La segunda columna debe contener el número de celular del
+                    afiliado. Ej. 65432100.<br />
+                    - La tercer columna debe contener el mensaje. (160 caracteres máx)<br />
                   </div>
                 </v-alert>
 
@@ -130,28 +129,32 @@ export default {
   methods: {
     async sendNotification() {
       try {
+        console.log("sms enviado")
         this.btn_send_notification = true;
         let formData = new FormData();
         formData.append("file", this.form.file);
-        formData.append("title", this.form.title);
-        formData.append("message", this.form.message);
-        formData.append("attached", this.form.attached);
+        formData.append("user_id", 1)
+        // formData.append("title", this.form.title);
+        // formData.append("message", this.form.message);
+        // formData.append("attached", this.form.attached);
 
         let res = await this.$axios.post(
-          "/notification/send_notifications",
+          "/notification/file",
           formData
         );
-        if (!res.error) {
+        if (!res.error) {          
           this.notification = res.data.delivered;
           this.btn_send_notification = false;
           this.dialog_send_notification = false;
           this.$toast.success(
             "Se ha enviado correctamente la notificación a " +
-              res.data.success_count +
-              " destinatarios"
+              res.data.delivereds.length +
+              " destinatarios\n" +
+            "No se ha enviado SMS a " + res.data.fails.length +
+              " destinatarios\n"         
           );
           this.clearInputs();
-        } else {
+        } else {          
           this.$toast.error(res.message);
         }
       } catch (e) {

@@ -18,10 +18,10 @@ export default (context, inject) => {
 
   const uploadFile = {
     upload(file) {
-        const storageRef = ref(storage, `/Imagenes/${file.name}`);
+      const storageRef = ref(storage, `/Imagenes/${file.name}`);
         uploadBytes(storageRef, file).then((snapshot) => {
           console.log('Se ha cargado el archivo!');
-        });      
+      });      
     },
     async getURL(file) {
       const storageRef = ref(storage, `/Imagenes/${file.name}`);

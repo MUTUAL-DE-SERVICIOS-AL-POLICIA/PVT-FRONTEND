@@ -7,12 +7,13 @@
           <v-col cols="12" md="3">
             <v-card class="px-5 py-6 elevation-0">
               <v-select
-                v-model="action"
+                v-model="form.action"
                 :items="actions"
                 item-text="shortened"
                 item-value="id"
                 label="Acción"
                 @change="(value) => changeStateAction(value)"
+                :rules="[$rules.obligatoria('Acción')]"
                 background-color="#E7F6FE"
                 color="#318058"
                 outlined
@@ -20,33 +21,47 @@
               ></v-select>
               <v-select
                 v-show="flag_payment_method"
-                v-model="payment_method"
+                v-model="form.payment_method"
                 :items="modalities_payment"
+                :disabled="form.action == ''"
                 item-text="name"
                 item-value="id"
                 label="Método de pago"
                 background-color="#E7F6FE"
                 color="#318058"
                 @change="(value) => changeStatePaymentMethod(value)"
+                :rules="[
+                  $rules.obligatoriaSiCondicion(
+                    form.action != 2,
+                    'Campo requerido cuando se selecciona Pago de complemento económico'
+                  ),
+                ]"
                 outlined
                 dense
               ></v-select>
               <v-select
                 v-show="flag_observation"
-                v-model="observation"
+                v-model="form.observation"
                 :items="observations"
+                :disabled="form.action == ''"
                 item-text="shortened"
                 item-value="id"
                 label="Tipo Observación"
                 background-color="#E7F6FE"
+                @change="() => changeStateObservation()"
+                :rules="[
+                  $rules.obligatoriaSiCondicion(
+                    form.action != 3,
+                    'Campo requerido cuando se selecciona Observación de trámite'
+                  ),
+                ]"
                 outlined
                 dense
-              ></v-select>
-              <!--  @change="(value) => changeStateObservation(value)"-->
+              ></v-select>              
               <v-select
-                v-model="semester"
+                v-model="form.semester"
                 :items="semesters"
-                :disabled="check || check_2"
+                :disabled="check || check_2 || form.action == ''"
                 item-text="period"
                 item-value="id"
                 :label="
@@ -61,24 +76,26 @@
                 outlined
                 item-color="purple"
                 background-color="#E7F6FE"
-                @change="(value) => changeStateObservation(value)"
+                @change="() => changeStateObservation()"
+                :rules="[
+                  $rules.obligatoria(!form.observation, 'Campo requerido'),
+                  $rules.obligatoriaSiCondicion(form.action != 3),
+                ]"
                 color="purple"
                 dense
               ></v-select>
               <v-select
-                v-model="beneficiary"
+                v-model="form.beneficiary"
                 :items="beneficiaries"
-                :disabled="check || check_3 || check_4"
+                :disabled="check || check_3 || check_4 || form.action == ''"
                 item-text="name"
                 item-value="id"
                 :label="
-                  check
-                    ? beneficiaries[0].name
-                    : check_3
-                    ? beneficiaries[0].name
+                  check || form.payment_method === 0
+                    ? beneficiaries[0].name                    
                     : 'Tipo beneficiario'
-                "
-                :hint="check ? 'Tipo beneficiario' : ''"
+                "                
+                :hint="check || form.payment_method === 0 ? 'Tipo beneficiario' : ''"
                 background-color="#E7F6FE"
                 @change="(value) => changeStateModality(value)"
                 persistent-hint
@@ -86,24 +103,26 @@
                 dense
               ></v-select>
               <v-select
-                v-model="hierarchie"
+                v-model="form.hierarchie"
                 :items="hierarchies"
-                :disabled="check || check_3 || beneficiary === 0 || check_4"
+                :disabled="
+                  check ||
+                  check_3 ||
+                  form.beneficiary === 0 ||
+                  form.beneficiary == '' ||
+                  check_4
+                "
                 item-text="name"
                 item-value="id"
                 :label="
-                  check
-                    ? hierarchies[0].name
-                    : check_3
-                    ? hierarchies[0].name
-                    : 'Nivel jerárquico'
+                  check || form.payment_method === 0 || form.beneficiary === 0 ? hierarchies[0].name : 'Nivel jerárquico'
                 "
                 outlined
                 dense
-                :hint="check ? 'Nivel jerárquico' : ''"
+                :hint="check || form.payment_method === 0  ? 'Nivel jerárquico' : ''"
                 background-color="#E7F6FE"
                 persistent-hint
-                @change="(value) => changeStateHierarchies(value)"
+                @change="() => changeStateHierarchies()"
               ></v-select>
             </v-card>
           </v-col>
@@ -133,7 +152,13 @@
                     no-resize
                     outlined
                     counter
-                    :rules="rules"
+                    :rules="[
+                      $rules.obligatoria(
+                        text,
+                        'El cuerpo del mensaje es requerido'
+                      ),
+                      $rules.longitudMaxima(1999),
+                    ]"
                     rows="5"
                   ></v-textarea>
                 </drop>
@@ -159,7 +184,7 @@
                     class="ml-2"
                     text
                     dense
-                    color="info"
+                    color="warning"
                     icon="mdi-information"
                     border="left"
                   >
@@ -251,7 +276,7 @@
             <v-icon> mdi-check-bold </v-icon>
           </v-btn>
         </template>
-        <span class="caption">Limpiar todos los filtros</span>
+        <span class="caption">Desmarcar / Marcar</span>
       </v-tooltip>
 
       <v-data-table
@@ -265,45 +290,6 @@
         :loading="loading_table"
         no-data-text="No hay datos disponibles"
       >
-        <!-- <template v-slot:[`header.affiliate_id`]="{ header }">
-          <span :class="searching.affiliate_id ? '#d1eff3' : ''">{{
-            header.text
-          }}</span>
-        </template> -->
-
-        <!-- <template v-slot:[`header.last_name`]="{ header }">
-          <span :class="searching.last_name ? 'primary--text' : ''">{{
-            header.text
-          }}</span>
-        </template> -->
-
-        <!-- <template v-slot:[`header.mothers_last_name`]="{ header }">
-          <span
-            :class="searching.mothers_last_name ? 'primary--text' : ''"
-            >{{ header.text }}</span
-          >
-        </template> -->
-
-        <!-- <template v-slot:[`header.first_name`]="{ header }">
-          <span
-            :class="searching.first_name ? 'primary--text' : ''"
-            >{{ header.text }}</span
-          >
-        </template> -->
-
-        <!-- <template v-slot:[`header.second_name`]="{ header }">
-          <span
-            :class="searching.second_name ? 'primary--text' : ''"
-            >{{ header.text }}</span
-          >
-        </template> -->
-
-        <!-- <template v-slot:[`header.identity_card`]="{ header }">
-          <span :class="searching.identity_card ? 'primary--text' : ''">{{
-            header.text
-          }}</span>
-        </template> -->
-
         <template v-slot:[`item.actions`]="{ item }">
           <v-checkbox
             v-model="item.send"
@@ -322,6 +308,7 @@
                 spellcheck="false"
                 class="filter-text"
                 v-model="searching.affiliate_id"
+                @input="applicationProcess(parameters, false)"
               ></v-text-field>
             </td>
             <td>
@@ -330,6 +317,7 @@
                 spellcheck="false"
                 class="filter-text"
                 v-model="searching.last_name"
+                @input="applicationProcess(parameters, false)"
               ></v-text-field>
             </td>
             <td>
@@ -338,6 +326,7 @@
                 spellcheck="false"
                 class="filter-text"
                 v-model="searching.mothers_last_name"
+                @input="applicationProcess(parameters, false)"
               ></v-text-field>
             </td>
             <td>
@@ -346,6 +335,7 @@
                 spellcheck="false"
                 class="filter-text"
                 v-model="searching.first_name"
+                @input="applicationProcess(parameters, false)"
               ></v-text-field>
             </td>
             <td>
@@ -354,6 +344,7 @@
                 spellcheck="false"
                 class="filter-text"
                 v-model="searching.second_name"
+                @input="applicationProcess(parameters, false)"
               ></v-text-field>
             </td>
             <td>
@@ -362,9 +353,12 @@
                 spellcheck="false"
                 class="filter-text"
                 v-model="searching.identity_card"
+                @input="applicationProcess(parameters, false)"
               ></v-text-field>
             </td>
-            <td><v-text-field disabled class="filter-text"></v-text-field></td>
+            <td>
+              <v-text-field disabled class="filter-text"></v-text-field>
+            </td>
           </tr>
         </template>
       </v-data-table>
@@ -390,13 +384,9 @@ export default {
     this.getBeneficiaries();
   },
   data: () => ({
-    scrollInoked: 0,
-    tab: null,
+    scrollInvoked: 0,    
     items: ["Notificación App", "SMS's"],
-    rules: [
-      (v) => v.length <= 1999 || "Cantidad máxima de caracteres sobrepasada!",
-    ],
-    id: 6,
+    id: 6, // habilitados para el pago de complemento económico
     module_id: 2, // id del modulo
     // ====================== filtros =======================
     actions: [],
@@ -424,7 +414,6 @@ export default {
         value: "{{fecha}}",
       },
     ],
-    copied: [],
     // ====================== tabla  ========================
     headers: [
       {
@@ -489,13 +478,18 @@ export default {
     // ==================== fin tabla =======================
 
     // values select (podemos volverlo un array)
-    action: "",
-    payment_method: "",
-    semester: "",
-    hierarchie: "",
-    observation: "",
-    beneficiary: "", // viudedad, orfandad, vejez
-
+    form: {
+      action: "",
+      payment_method: "",
+      semester: "",
+      hierarchie: "",
+      observation: "",
+      beneficiary: "",
+      // image: null,
+      // page: 1,
+      // per_page: 8,
+      // first: null,
+    },
     flag_payment_method: false,
     flag_observation: false,
 
@@ -514,11 +508,11 @@ export default {
     },
     total_affiliates: 0,
     loading_table: false,
-    all_affiliates: [],
-    aux: [],
+    all_affiliates: [],    
     check_all: true,
     file: null,
     url_file: null,
+    parameters: {},
   }),
   watch: {
     options: function (newVal, oldVal) {
@@ -526,20 +520,31 @@ export default {
         newVal.page != oldVal.page ||
         newVal.itemsPerPage != oldVal.itemsPerPage
       ) {
-        switch (this.action) {
-          case 1:
-            this.receiptOfRequirements(false);
-            break;
-          case 2:
-            this.paymentMethod(false);
-            this.modality(false);
-            this.hierarchies2(false);
-            break;
-          case 3:
-            this.observation22(false);
-            break;
-        }
+        this.parameters.page = this.options.page
+        this.parameters.per_page = this.options.itemsPerPage
+        this.parameters.first = false
+        this.applicationProcess(this.parameters, false)
+        // switch (this.form.action) {
+        //   case 1:
+        //     // this.receiptOfRequirements(false)
+        //     this.applicationProcess(this.parameters, false)
+        //     break;
+        //   case 2:
+        //     this.paymentMethod(false);
+        //     this.modality(false);
+        //     this.hierarchies2(false);
+        //     break;
+        //   case 3:
+        //     this.observation22(false);
+        //     break;
+        // }
       }
+    },
+    searching: {
+      deep: true,
+      handler(val) {
+        this.options.page = 1
+      },
     },
   },
   methods: {
@@ -573,7 +578,6 @@ export default {
           undefined
         );
         this.semesters = response.semesters;
-        // this.semesters.unshift({id: 0, period: "Todos"})
       } catch (e) {
         console.log(e);
       }
@@ -585,7 +589,7 @@ export default {
           undefined
         );
         this.hierarchies = response.hierarchies;
-        this.hierarchies.unshift({ id: 0, name: "TODOS" });
+        this.hierarchies.unshift({ id: 0, name: "Todos" });
       } catch (e) {
         console.log(e);
       }
@@ -608,193 +612,122 @@ export default {
           undefined
         );
         this.beneficiaries = response.beneficiary_type;
-        this.beneficiaries.unshift({ id: 0, name: "todos" });
+        this.beneficiaries.unshift({ id: 0, name: "Todos" });
       } catch (e) {
-        console.log(e);
-      }
-    },
-    async receiptOfRequirements(flag = true) {
-      try {
-        this.loading_table = true;
-        let response = await this.$axios.post("/notification/list_to_notify", {
-          action: this.action,
-          first: flag,
-          page: this.options.page,
-          image: this.url_file,
-          per_page: this.options.itemsPerPage,
-        });
-        this.all_affiliates = flag
-          ? this.preProcessData(response.all)
-          : this.all_affiliates;
-        this.dataSync(response);
-        this.total_affiliates = response.data.total;
-        this.options.page = response.data.current_page;
-        this.options.itemsPerPage = parseInt(response.data.per_page);
-        this.loading_table = false;
-      } catch (e) {
-        this.loading_table = false;
-        console.log(e);
-      }
-    },
-    async paymentMethod(flag = true) {
-      try {
-        this.loading_table = true;
-        let response = await this.$axios.post("/notification/list_to_notify", {
-          action: this.action,
-          payment_method: this.payment_method,
-          first: flag,
-          image: this.url_file,
-          page: this.options.page,
-          per_page: this.options.itemsPerPage,
-        });
-        this.all_affiliates = flag
-          ? this.preProcessData(response.all)
-          : this.all_affiliates;
-        this.dataSync(response);
-        this.total_affiliates = response.data.total;
-        this.options.page = response.data.current_page;
-        this.options.itemsPerPage = parseInt(response.data.per_page);
-        this.loading_table = false;
-      } catch (e) {
-        this.loading_table = false;
-        console.log(e);
-      }
-    },
-    async modality(flag = true) {
-      try {
-        this.loading_table = true;
-        let response = await this.$axios.post("/notification/list_to_notify", {
-          action: this.action,
-          payment_method: this.payment_method,
-          modality: this.beneficiary,
-          first: flag,
-          image: this.url_file,
-          page: this.options.page,
-          per_page: this.options.itemsPerPage,
-        });
-        this.all_affiliates = flag
-          ? this.preProcessData(response.all)
-          : this.all_affiliates;
-        this.dataSync(response);
-        this.total_affiliates = response.data.total;
-        this.options.page = response.data.current_page;
-        this.options.itemsPerPage = parseInt(response.data.per_page);
-        this.loading_table = false;
-      } catch (e) {
-        this.loading_table = false;
-        console.log(e);
-      }
-    },
-    async hierarchies2(flag = true) {
-      try {
-        this.loading_table = true;
-        let response = await this.$axios.post("/notification/list_to_notify", {
-          action: this.action,
-          payment_method: this.payment_method,
-          modality: this.beneficiary,
-          hierarchies: this.hierarchie,
-          first: flag,
-          image: this.url_file,
-          page: this.options.page,
-          per_page: this.options.itemsPerPage,
-        });
-        this.all_affiliates = flag
-          ? this.preProcessData(response.all)
-          : this.all_affiliates;
-        this.dataSync(response);
-        this.total_affiliates = response.data.total;
-        this.options.page = response.data.current_page;
-        this.options.itemsPerPage = parseInt(response.data.per_page);
-        this.loading_table = false;
-      } catch (e) {
-        this.loading_table = false;
-        console.log(e);
-      }
-    },
-    async observation22(flag = true) {
-      try {
-        if (this.semester != "") {
-          this.loading_table = true;
-          console.log("entra true");
-          let response = await this.$axios.post(
-            "/notification/list_to_notify",
-            {
-              action: this.action,
-              type_observation: this.observation,
-              semester_id: this.semester, // id
-              first: flag,
-              image: this.url_file,
-              page: this.options.page,
-              per_page: this.options.itemsPerPage,
-            }
-          );
-          this.all_affiliates = flag
-            ? this.preProcessData(response.all)
-            : this.all_affiliates;
-          this.dataSync(response);
-          //   console.log(this.all_affiliates)
-          this.total_affiliates = response.data.total;
-          this.options.page = response.data.current_page;
-          this.options.itemsPerPage = parseInt(response.data.per_page);
-          this.loading_table = false;
-        } else console.log("entra false");
-      } catch (e) {
-        this.loading_table = false;
         console.log(e);
       }
     },
     async notify() {
-      try {        
-        this.url_file = await this.$firebase.getURL(this.file);
-        console.log("url file")
-        console.log(this.url_file);
-        let response = await this.$axios.post(
-          "/notification/send_mass_notification",
-          {
-            title: "Complemento económico",
-            message: this.text,
-            user_id: 1,
-            image: this.url_file,
-            attached: "Comunicado",
-            sends: this.affiliates,
-          }
-        );
-        let error = response.data.error;
-        if (!error) {
-          let message = response.data.message;
-          let success_count = response.data.success_count;
-          this.$swal(
-            message,
-            `Se ha notificado exitosamente a ${success_count} afiliados`,
-            "success"
-          );
-        }
-        console.log(response);
+      try {                   
+          if(this.text != null && this.text != "" && this.all_affiliates.length) {
+            if(this.file != null) 
+              this.url_file = await this.$firebase.getURL(this.file);                        
+            this.$swal({
+              title: '¿Está seguro de enviar notificaciones?',
+              text: '¡Esto no se puede revertir!',                
+              type: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Confirmar'
+            }).then( async (result) => {                
+                if(result.value) {
+                  let response = await this.$axios.post(
+                    "/notification/send_mass_notification",
+                    {
+                      title: "Complemento económico",
+                      message: this.text,
+                      user_id: 1, // Esto modificar
+                      image: this.url_file,
+                      attached: "Comunicado",
+                      sends: this.all_affiliates,
+                    }
+                  );
+                  let error = response.data.error
+                  if (!error) {              
+                    let message = response.message            
+                    let success_count = response.data.success_count
+                    let cmp = success_count == 1 ? "afiliado" : "afiliados"
+                    this.$swal({
+                      position: 'top-end',
+                      type: 'success',
+                      title: message,
+                      text: `Se ha notificado exitosamente a ${success_count} ${cmp}`,
+                      showConfirmButton: false,
+                      timer: 2500
+                    })
+                  } else 
+                  if(this.text == null || this.text == "") 
+                    this.$swal({
+                      position: 'top-end',
+                      type: 'warning',
+                      title: 'ALgunos campos sin rellenar',
+                      text: `El cuerpo del mensaje no puede estar vacío`,
+                      showConfirmButton: false,
+                      timer: 2500
+                    }) 
+                  else this.$swal({
+                      position: 'top-end',
+                      type: 'warning',
+                      title: 'Sin datos',
+                      text: `No hay nadie a quien enviar`,
+                      showConfirmButton: false,
+                      timer: 2500
+                    }) 
+                }
+                
+              }) 
+              
+          }                           
       } catch (e) {
         console.log(e);
       }
+    },
+    async applicationProcess(obj, flag = true){
+      try {        
+        this.loading_table = true
+        obj.first = flag        
+        if(!this.isEmptyObjectValues(this.searching)) {
+          obj = {...obj, ...this.searching}             
+        }             
+        let response = await this.$axios.post("/notification/list_to_notify", obj)
+        this.all_affiliates = flag
+          ? this.preProcessData(response.all)
+          : this.all_affiliates
+        this.dataSync(response)          
+        this.total_affiliates = response.data.total
+        this.options.page = response.data.current_page
+        this.options.itemsPerPage = parseInt(response.data.per_page)
+        this.loading_table = false
+        // this.check_all = true
+      } catch(e) {
+        this.loading_table = false
+        console.log(e)
+      }
+    },
+    isEmptyObjectValues(obj) {      
+      let values = Object.values(obj)
+      for(const val of values) {
+        if(val != "") return false
+      }      
+      return true
     },
     onScroll() {
       this.scrollInvoked++;
     },
     onCopyDrop(e) {
-      this.text += " " + e.data.value + " ";
-      this.copied.push(e.data);
+      this.text += " " + e.data.value + " ";      
     },
     async show() {
-      let res = await this.$firebase.upload(this.file);
-      console.log(res);
+      let res = await this.$firebase.upload(this.file);      
       this.url_file = await this.$firebase.getURL(this.file);
-      console.log(this.url_file);
-      // this.$swal("Notificado!", "Se ha notificado con exito!", "success");
     },
     resetValues() {
-      this.payment_method =
-        this.semester =
-        this.hierarchie =
-        this.observation =
-        this.beneficiary =
-          "";
+      this.form.payment_method =
+      this.form.semester =
+      this.form.hierarchie =
+      this.form.observation =
+      this.form.beneficiary = "";
     },
     changeStateAction(value) {
       switch (value) {
@@ -804,8 +737,14 @@ export default {
           this.flag_observation = false;
           this.check = true;
           this.check_2 = false;
-          this.check_4 = false;
-          this.receiptOfRequirements();
+          this.check_4 = false;          
+          this.parameters = {
+            action: this.form.action,
+            first: true,
+            page: this.options.page,
+            per_page: this.options.itemsPerPage,
+          }          
+          this.applicationProcess(this.parameters)
           break;
         case 2: // si es pago de complemento económico
           this.resetValues();
@@ -813,7 +752,7 @@ export default {
           this.flag_observation = false;
           this.check = false;
           this.check_2 = true;
-          this.semester = this.semesters[this.semesters.length - 1].id;
+          this.form.semester = this.semesters[this.semesters.length - 1].id;
           this.check_4 = false;
           break;
         case 3: // Si es observaciones
@@ -827,34 +766,68 @@ export default {
       }
     },
     changeStatePaymentMethod(value) {
-      if (value == 0) {
-        this.hierarchie = this.observation = this.beneficiary = "";
+      this.form.hierarchie = this.form.beneficiary = ""
+      this.form.observation = ""
+      if (value == 0) {        
         this.check_3 = true;
       } else {
         this.check_3 = false;
       }
-      this.paymentMethod();
+      this.parameters = {
+          action: this.form.action,
+          payment_method: this.form.payment_method,
+          first: true,
+          page: this.options.page,
+          per_page: this.options.itemsPerPage,
+      }      
+      this.applicationProcess(this.parameters)
     },
     changeStateModality(value) {
-      if (value === 0) this.hierarchie = "";
-      this.modality();
+      if (value === 0) this.form.hierarchie = "";
+      this.parameters = {
+          action: this.form.action,
+          payment_method: this.form.payment_method,
+          modality: this.form.beneficiary,
+          first: true,
+          page: this.options.page,
+          per_page: this.options.itemsPerPage,
+      }      
+      this.applicationProcess(this.parameters)
     },
-    changeStateHierarchies(value) {
-      this.hierarchies2();
+    changeStateHierarchies() {
+      this.parameters = {
+          action: this.form.action,
+          payment_method: this.form.payment_method,
+          modality: this.form.beneficiary,
+          hierarchies: this.form.hierarchie,
+          first: true,
+          page: this.options.page,
+          per_page: this.options.itemsPerPage,
+      }      
+      this.applicationProcess(this.parameters)
     },
-    changeStateObservation(value) {
-      console.log("semestre " + this.semester);
-      console.log("observación " + this.observation);
-      this.beneficiary = this.hierarchie = "";
-      this.observation22();
+    changeStateObservation() {
+      if(this.form.semester !== "") {            
+        this.form.beneficiary = this.form.hierarchie = "";
+        this.parameters = {
+          action: this.form.action,
+          type_observation: this.form.observation,
+          semester_id: this.form.semester, // id
+          first: true,
+          page: this.options.page,
+          per_page: this.options.itemsPerPage,
+        }        
+        this.applicationProcess(this.parameters)
+      }
     },
     updateStateSend(send, affiliate_id) {
       this.all_affiliates.some((element) => {
         if (element.affiliate_id == affiliate_id) {
-          element.send = send ?? false;
-          return;
+          element.send = send ?? false
+          return
         }
-      });
+      })
+      console.log(this.all_affiliates)
     },
     preProcessData(array) {
       array.forEach((element) => {
@@ -862,38 +835,44 @@ export default {
       });
       return array;
     },
-    dataSync(response) {
-      this.affiliates = this.preProcessData(response.data.data);
+    dataSync(response) {      
+      this.affiliates = this.preProcessData(response.data.data)      
       if (this.all_affiliates.length) {
         this.affiliates.forEach((element) => {
-          this.all_affiliates.filter(function (key) {
+          this.all_affiliates.filter((key) => {
             if (key.affiliate_id == element.affiliate_id) {
-              element.send = key.send;
+              element.send = key.send
             }
-          });
-        });
-      }
-      // console.log(this.all_affiliates)
+          })
+        })
+      }      
     },
     clearAllFilters() {
-      this.searching.affiliate_id = "";
-      this.searching.last_name = "";
-      this.searching.mothers_last_name = "";
-      this.searching.first_name = "";
-      this.searching.second_name = "";
-      this.searching.identity_card = "";
+      this.searching.affiliate_id = ""
+      this.searching.last_name = ""
+      this.searching.mothers_last_name = ""
+      this.searching.first_name = ""
+      this.searching.second_name = ""
+      this.searching.identity_card = ""
+      const {affiliate_id, last_name, mothers_last_name, first_name, second_name, identity_card, ...think} = this.parameters  // más eficiente 
+      // this.applicationProcess(this.parameters, false)    
+      this.applicationProcess(think, false) 
     },
-    checkAll() {
-      console.log(this.check_all);
-      this.check_all = !this.check_all;
-      this.affiliates.forEach((element) => {
-        element.send = this.check_all;
-      });
-      // hay que sincronizar otra vez el send hay que sincronizar
+    checkAll() {      
+      this.check_all = !this.check_all
+      console.log(this.check_all)
+      this.all_affiliates.forEach((element) => {
+        element.send = this.check_all
+        this.affiliates.filter((key) => {
+          if(key.affiliate_id == element.affiliate_id) {
+            key.send = element.send
+          }
+        })
+      })      
     },
-    fileUpload() {      
+    fileUpload() {
       console.log(this.$firebase.upload(this.file));
-    }
+    },
   },
 };
 </script>

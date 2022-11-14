@@ -129,7 +129,7 @@ export default {
     affiliates: [],
     options: {
       page: 1,
-      items_per_page: 8,
+      itemsPerPage: 8,
       sortDesc: [false],
     },
     total_affiliates: 0,
@@ -142,9 +142,8 @@ export default {
     options: function (newVal, oldVal) {
       if (
         newVal.page != oldVal.page ||
-        newVal.items_per_page != oldVal.items_per_page ||
-        newVal.sortDesc != oldVal.sortDesc
-      ) {
+        newVal.itemsPerPage != oldVal.itemsPerPage ||
+        newVal.sortDesc != oldVal.sortDesc) {
         this.getListAffiliates()
       }
     },
@@ -174,7 +173,7 @@ export default {
             full_name_affiliate: this.searching.full_name_affiliate,
             name_affiliate_state: this.searching.name_affiliate_state,
             page: this.options.page,
-            per_page: this.options.items_per_page,
+            per_page: this.options.itemsPerPage,
             sortDesc: this.options.sortDesc,
           },
         });
@@ -184,7 +183,7 @@ export default {
         /*delete res.data["data"]*/
         this.options.page = res.payload.affiliates.current_page
 
-        this.options.items_per_page = parseInt(res.payload.affiliates.per_page)
+        this.options.itemsPerPage = parseInt(res.payload.affiliates.per_page)
         this.loading_table = false
       } catch (e) {
         console.log(e)

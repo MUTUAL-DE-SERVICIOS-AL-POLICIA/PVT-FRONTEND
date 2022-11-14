@@ -1,5 +1,7 @@
 <template>
-  <v-card v-if="!state">
+  <v-container fluid>
+    <v-form>
+  <template v-if="!state">
     <v-toolbar-title>APORTES ACTIVO</v-toolbar-title>
     <v-row>
       <v-col cols="12" sm="6" md="4">
@@ -35,17 +37,17 @@
         ><br />
       </v-col>
     </v-row>
-    <v-card class="text-right">
+    <div class="text-right">
       <v-btn
         small
         dark
         color="success"
-        class="mr-4"
+        class="my-4 mr-2"
         @click="showDetailActive()"
       >
         <span> Detalle</span> </v-btn
-      ><br />
-    </v-card>
+      >
+    </div>
     <ListContributionActive />
     <v-toolbar-title>APORTES PASIVO</v-toolbar-title>
     <v-card class="text-right">
@@ -53,15 +55,15 @@
         small
         dark
         color="success"
-        class="mr-4"
+        class="my-2 mr-4"
         @click="showDetailPassive()"
       >
         <span> Detalle</span> </v-btn
       ><br />
     </v-card>
     <ListContributionPassive />
-  </v-card>
-  <v-card v-else-if="state">
+  </template>
+  <template v-else-if="state">
     <template v-if="show_detail.active">
       <v-toolbar-title> DETALLE DE APORTES ACTIVO</v-toolbar-title>
       <v-row>
@@ -75,7 +77,7 @@
                 v-model="show_detail.active"
                 color="success"
                 v-on="on"
-                class="mr-4"
+                class="my-2 mr-4"
                 @click="showContribution()"
               >
                 <v-icon>mdi-arrow-left-bold </v-icon>
@@ -96,7 +98,7 @@
                 :color="'success'"
                 :loading="loading_print"
                 v-on="on"
-                class="mr-4"
+                class="my-2 mr-4"
                 @click="printContributionsActive()"
               >
                 <v-icon> mdi-download</v-icon>Descargar
@@ -124,7 +126,7 @@
                 v-model="show_detail.passive"
                 color="success"
                 v-on="on"
-                class="mr-4"
+                class="my-2 mr-4"
                 @click="showContribution()"
               >
                 <v-icon>mdi-arrow-left-bold </v-icon>
@@ -145,7 +147,7 @@
                 :color="'success'"
                 :loading="loading_print"
                 v-on="on"
-                class="mr-4"
+                class="my-2 mr-4"
                 @click="printContributionsPassive()"
               >
                 <v-icon> mdi-download</v-icon>Descargar
@@ -160,7 +162,9 @@
       </v-row>
       <ListContributionDetailPassive />
     </template>
-  </v-card>
+  </template>
+    </v-form>
+  </v-container>
 </template>
 
 <script>

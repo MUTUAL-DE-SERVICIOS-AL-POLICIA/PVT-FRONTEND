@@ -9,18 +9,7 @@
     <template v-slot:item="props">
       <tr :class="props.isExpanded ? 'accent white--text': ''">
         <td @click.stop="expand(props)">{{ props.item.year }}</td>
-        <td @click.stop="expand(props)">{{ Object.entries(props.item.contributions[0].detail).length !==0 ? props.item.contributions[0].detail.total: '0,00' }}</td>
-        <td @click.stop="expand(props)">{{ Object.entries(props.item.contributions[1].detail).length !==0 ? props.item.contributions[1].detail.total: '0,00' }}</td>
-        <td @click.stop="expand(props)">{{ Object.entries(props.item.contributions[2].detail).length !==0 ? props.item.contributions[2].detail.total: '0,00' }}</td>
-        <td @click.stop="expand(props)">{{ Object.entries(props.item.contributions[3].detail).length !==0 ? props.item.contributions[3].detail.total: '0,00' }}</td>
-        <td @click.stop="expand(props)">{{ Object.entries(props.item.contributions[4].detail).length !==0 ? props.item.contributions[4].detail.total: '0,00' }}</td>
-        <td @click.stop="expand(props)">{{ Object.entries(props.item.contributions[5].detail).length !==0 ? props.item.contributions[5].detail.total: '0,00' }}</td>
-        <td @click.stop="expand(props)">{{ Object.entries(props.item.contributions[6].detail).length !==0 ? props.item.contributions[6].detail.total: '0,00' }}</td>
-        <td @click.stop="expand(props)">{{ Object.entries(props.item.contributions[7].detail).length !==0 ? props.item.contributions[7].detail.total: '0,00' }}</td>
-        <td @click.stop="expand(props)">{{ Object.entries(props.item.contributions[8].detail).length !==0 ? props.item.contributions[8].detail.total: '0,00' }}</td>
-        <td @click.stop="expand(props)">{{ Object.entries(props.item.contributions[9].detail).length !==0 ? props.item.contributions[9].detail.total: '0,00' }}</td>
-        <td @click.stop="expand(props)">{{ Object.entries(props.item.contributions[10].detail).length !==0 ? props.item.contributions[10].detail.total: '0,00'}}</td>
-        <td @click.stop="expand(props)">{{ Object.entries(props.item.contributions[11].detail).length !==0 ? props.item.contributions[11].detail.total: '0,00'}}</td>
+        <td @click.stop="expand(props)" v-for="(key,index) in props.item.contributions" :key="index" >{{Object.entries(key.detail).length !==0 ? key.detail.total:'0,00' }}</td>
       </tr>
     </template>
     <template v-slot:expanded-item="{item}">

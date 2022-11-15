@@ -94,14 +94,12 @@ export default {
           danger: '#ff6d00',
           normal: '#757575',
           background: '#EDF2F4',
-          table: '#948870',
+          table: '#08A687',
           inputsearch: '#fef0e0',
           textPrimary:'#ffffff',
           textSecondary:'#ff533e',
-          backgroundTab:'#FAFAFA',
-          backgroundCard: '#BDBDBD',
-          notificationCard: '#EAEDED',
-          tableNotification: '#5f7f7a',          
+          backgroundTab:'#EAEDED',
+          backgroundCard: '#eff7fd',    
         }
       }
     }

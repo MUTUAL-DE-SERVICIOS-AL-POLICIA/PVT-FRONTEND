@@ -1,9 +1,8 @@
 <template>
-  <div class="mt-2 pb-8 mx-0 px-0 gradient2">
+  <div class="mt-2 pb-8 mx-0 px-0 backgroundCard">
     <v-row>
       <v-col class="ma-4">
-        <v-row>
-          <!-- filtros -->
+        <v-row>          
           <v-col cols="12" md="3">
             <v-card class="px-5 py-6 elevation-0">
               <v-select
@@ -14,8 +13,7 @@
                 label="Acción"
                 @change="(value) => changeStateAction(value)"
                 :rules="[$rules.obligatoria('Acción')]"
-                background-color="#E7F6FE"
-                color="#318058"
+                background-color="backgroundCard"
                 outlined
                 dense
               ></v-select>
@@ -27,8 +25,7 @@
                 item-text="name"
                 item-value="id"
                 label="Método de pago"
-                background-color="#E7F6FE"
-                color="#318058"
+                background-color="backgroundCard"
                 @change="(value) => changeStatePaymentMethod(value)"
                 :rules="[
                   $rules.obligatoriaSiCondicion(
@@ -47,7 +44,7 @@
                 item-text="shortened"
                 item-value="id"
                 label="Tipo Observación"
-                background-color="#E7F6FE"
+                background-color="backgroundCard"
                 @change="() => changeStateObservation()"
                 :rules="[
                   $rules.obligatoriaSiCondicion(
@@ -74,14 +71,12 @@
                 :hint="check || check_2 ? 'Semestre' : ''"
                 persistent-hint
                 outlined
-                item-color="purple"
-                background-color="#E7F6FE"
+                background-color="backgroundCard"
                 @change="() => changeStateObservation()"
                 :rules="[
                   $rules.obligatoria(!form.observation, 'Campo requerido'),
                   $rules.obligatoriaSiCondicion(form.action != 3),
                 ]"
-                color="purple"
                 dense
               ></v-select>
               <v-select
@@ -96,7 +91,7 @@
                     : 'Tipo beneficiario'
                 "                
                 :hint="check || form.payment_method === 0 ? 'Tipo beneficiario' : ''"
-                background-color="#E7F6FE"
+                background-color="backgroundCard"
                 @change="(value) => changeStateModality(value)"
                 persistent-hint
                 outlined
@@ -120,19 +115,18 @@
                 outlined
                 dense
                 :hint="check || form.payment_method === 0  ? 'Nivel jerárquico' : ''"
-                background-color="#E7F6FE"
+                background-color="backgroundCard"
                 persistent-hint
                 @change="() => changeStateHierarchies()"
               ></v-select>
             </v-card>
           </v-col>
-
-          <!-- área de redacción -->
+          
           <v-col cols="12" md="6">
             <v-card class="pa-2 elevation-0">
               <transition-group name="list" tag="div">
                 <drag
-                  class="drag"
+                  class="drag table"
                   v-for="n in params"
                   :key="n"
                   :data="n"
@@ -148,7 +142,7 @@
                   <v-textarea
                     label="Cuerpo del mensaje"
                     v-model="text"
-                    color="#3e5f8a"
+                    color="primary"
                     no-resize
                     outlined
                     counter
@@ -169,22 +163,22 @@
               <v-row>
                 <v-col cols="4">
                   <v-file-input
-                    accept="image/png, image/jpeg, image/jpg"
+                    accept="image/png,image/jpeg,image/jpg"
                     dense
                     label="Imagen"
                     outlined
                     v-model="file"
-                    @change="() => fileUpload()"
+                    @change="() => fileUpload()"                    
                     clearable
                     show-size
-                  ></v-file-input>
+                  >></v-file-input>
                 </v-col>
                 <v-col cols="8">
                   <v-alert
                     class="ml-2"
                     text
                     dense
-                    color="warning"
+                    color="info"
                     icon="mdi-information"
                     border="left"
                   >
@@ -197,11 +191,10 @@
               </v-row>
             </v-card>
           </v-col>
-
-          <!-- pre visualizador -->
+          
           <v-col cols="12" md="3">
             <v-card ma-3 elevation="0" tile>
-              <v-card class="text-center" height="25" color="#006666">
+              <v-card class="text-center primary" height="25" >
                 <v-card-subtitle class="mt-0 py-1">
                   <h3 class="font-weight-bold white--text">VISTA PREVIA</h3>
                 </v-card-subtitle>
@@ -228,7 +221,8 @@
                     class="mr-4 white--text font-weight-bold elevation-0 mb-1"
                     block
                     elevation="5"
-                    color="#006666"
+                    color="primary"
+                    :disabled="filter"
                     @click="notify()"
                   >
                     ENVIAR
@@ -240,8 +234,6 @@
         </v-row>
       </v-col>
     </v-row>
-
-    <!-- table -->
     <v-card class="ma-4 pb-10 elevation-0">
       <v-tooltip top>
         <template v-slot:activator="{ on }">
@@ -293,7 +285,7 @@
         <template v-slot:[`item.actions`]="{ item }">
           <v-checkbox
             v-model="item.send"
-            color="indigo"
+            color="primary"
             :value="item.send"
             @click="updateStateSend(item.send, item.affiliate_id)"
             hide-details
@@ -369,7 +361,7 @@
 import { Drag, Drop } from "vue-easy-dnd";
 
 export default {
-  name: "MainNotification2",
+  name: "NotificationApp",
   components: {
     Drag,
     Drop,
@@ -388,80 +380,84 @@ export default {
     items: ["Notificación App", "SMS's"],
     id: 6, // habilitados para el pago de complemento económico
     module_id: 2, // id del modulo
-    // ====================== filtros =======================
+    
     actions: [],
     modalities_payment: [],
     semesters: [],
     hierarchies: [],
     observations: [],
     beneficiaries: [],
-    // ==================== fin filtros =====================
+    
     params: [
       {
         param: "nombre",
-        value: "{{nombre}}",
+        value: "{{full_name}}",
       },
       {
         param: "grado",
-        value: "{{grado}}",
+        value: "{{degree}}",
+      },
+      {
+        param: "categoría",
+        value: "{{category}}",
       },
       {
         param: "carnet",
-        value: "{{carnet}}",
+        value: "{{identity_card}}",
       },
       {
-        param: "fecha",
-        value: "{{fecha}}",
+        param: "entidad",
+        value: "{{pension_entity}}",
       },
     ],
-    // ====================== tabla  ========================
+
     headers: [
       {
         text: "NUP",
         value: "affiliate_id",
-        class: ["tableNotification", "white--text"],
+        class: ["table", "white--text"],
         width: "3%",
         sortable: false,
       },
       {
         text: "Apellido Paterno",
         value: "last_name",
-        class: ["tableNotification", "white--text"],
+        class: ["table", "white--text"],
         width: "5%",
         sortable: false,
       },
       {
         text: "Apellido Materno",
         value: "mothers_last_name",
-        class: ["tableNotification", "white--text"],
+        class: ["table", "white--text"],
         width: "5%",
         sortable: false,
       },
       {
         text: "Primer Nombre",
         value: "first_name",
-        class: ["tableNotification", "white--text"],
+        class: ["table", "white--text"],
         width: "5%",
         sortable: false,
       },
       {
         text: "Segundo Nombre",
         value: "second_name",
-        class: ["tableNotification", "white--text"],
+        class: ["table", "white--text"],
         width: "5%",
         sortable: false,
       },
       {
         text: "Carnet Identidad",
         value: "identity_card",
-        class: ["tableNotification", "white--text"],
+        class: ["table", "white--text"],
         width: "5%",
         sortable: false,
       },
       {
         text: "Acción",
         value: "actions",
-        class: ["tableNotification ", "white--text"],
+        class: ["table ", "white--text"],
         width: "2%",
         align: "center",
         sortable: false,
@@ -475,9 +471,7 @@ export default {
       second_name: "",
       identity_card: "",
     },
-    // ==================== fin tabla =======================
 
-    // values select (podemos volverlo un array)
     form: {
       action: "",
       payment_method: "",
@@ -485,22 +479,16 @@ export default {
       hierarchie: "",
       observation: "",
       beneficiary: "",
-      // image: null,
-      // page: 1,
-      // per_page: 8,
-      // first: null,
     },
     flag_payment_method: false,
     flag_observation: false,
-
-    // mensajes
+    
     text: "",
     check: false, // recepción de requisitos
     check_2: false, // pago complemento económico
     check_3: false,
     check_4: false,
 
-    // Table
     affiliates: [],
     options: {
       page: 1,
@@ -513,6 +501,7 @@ export default {
     file: null,
     url_file: null,
     parameters: {},
+    filter: false,    
   }),
   watch: {
     options: function (newVal, oldVal) {
@@ -524,20 +513,6 @@ export default {
         this.parameters.per_page = this.options.itemsPerPage
         this.parameters.first = false
         this.applicationProcess(this.parameters, false)
-        // switch (this.form.action) {
-        //   case 1:
-        //     // this.receiptOfRequirements(false)
-        //     this.applicationProcess(this.parameters, false)
-        //     break;
-        //   case 2:
-        //     this.paymentMethod(false);
-        //     this.modality(false);
-        //     this.hierarchies2(false);
-        //     break;
-        //   case 3:
-        //     this.observation22(false);
-        //     break;
-        // }
       }
     },
     searching: {
@@ -619,87 +594,116 @@ export default {
     },
     async notify() {
       try {                   
-          if(this.text != null && this.text != "" && this.all_affiliates.length) {
+          if(this.text != null && this.text != "" && this.all_affiliates.length && this.amountToSend() !== 0) {
             if(this.file != null) 
-              this.url_file = await this.$firebase.getURL(this.file);                        
+              this.url_file = await this.$firebase.getURL(this.file);  
+            let amount = this.amountToSend()                      
             this.$swal({
               title: '¿Está seguro de enviar notificaciones?',
-              text: '¡Esto no se puede revertir!',                
+              text: `¡Se va enviar a ${amount} afiliados`,  
               type: 'warning',
               showCancelButton: true,
-              confirmButtonColor: '#3085d6',
+              confirmButtonColor: '#00838F',
               cancelButtonColor: '#d33',
               confirmButtonText: 'Confirmar'
-            }).then( async (result) => {                
+            }).then( async (result) => {                         
                 if(result.value) {
-                  let response = await this.$axios.post(
-                    "/notification/send_mass_notification",
-                    {
-                      title: "Complemento económico",
-                      message: this.text,
-                      user_id: 1, // Esto modificar
-                      image: this.url_file,
-                      attached: "Comunicado",
-                      sends: this.all_affiliates,
+                  try {
+                    let response = await this.$axios.post(
+                      "/notification/send_mass_notification",
+                      {
+                        title: "Complemento económico",
+                        message: this.text,
+                        user_id: this.$store.getters.user.id, 
+                        image: this.url_file,
+                        attached: "Comunicado",
+                        sends: this.all_affiliates,
+                      }
+                    );
+                    let error = response.data.error
+                    
+                    if (!error) {              
+                      let message = response.message            
+                      let success_count = response.data.success_count
+                      let cmp = success_count == 1 ? "afiliado" : "afiliados"
+                      this.$swal({
+                        position: 'top-end',
+                        type: 'success',
+                        title: message,
+                        text: `Se ha notificado exitosamente a ${success_count} ${cmp}`,
+                        showConfirmButton: false,
+                        timer: 2500
+                      })
+                    } else {
+                      this.$swal({
+                        type: 'error',
+                        title: 'Hubo un error',
+                        text: 'Comuniquese con sistemas'
+                      })
                     }
-                  );
-                  let error = response.data.error
-                  if (!error) {              
-                    let message = response.message            
-                    let success_count = response.data.success_count
-                    let cmp = success_count == 1 ? "afiliado" : "afiliados"
+                  } catch(e) {
                     this.$swal({
-                      position: 'top-end',
-                      type: 'success',
-                      title: message,
-                      text: `Se ha notificado exitosamente a ${success_count} ${cmp}`,
-                      showConfirmButton: false,
-                      timer: 2500
+                      type: 'error',
+                      title: 'Hubo un error',
+                      text: 'Comuniquese con sistemas'
                     })
-                  } else 
-                  if(this.text == null || this.text == "") 
-                    this.$swal({
-                      position: 'top-end',
-                      type: 'warning',
-                      title: 'ALgunos campos sin rellenar',
-                      text: `El cuerpo del mensaje no puede estar vacío`,
-                      showConfirmButton: false,
-                      timer: 2500
-                    }) 
-                  else this.$swal({
-                      position: 'top-end',
-                      type: 'warning',
-                      title: 'Sin datos',
-                      text: `No hay nadie a quien enviar`,
-                      showConfirmButton: false,
-                      timer: 2500
-                    }) 
+                    console.log(e)
+                  }
                 }
                 
-              }) 
-              
-          }                           
+              })               
+          } else if(this.text == null || this.text == "") {
+            const Toast = this.$swal.mixin({
+              toast: true,
+              position: 'top-end',
+              showConfirmButton: false,
+              timer: 3000,
+              timerProgressBar: true,
+            })
+            Toast.fire({
+              type: 'warning',
+              title: '¡El cuerpo del mensaje no puede estar vacío!'
+            })
+        } else {
+            const Toast = this.$swal.mixin({
+              toast: true,
+              position: 'top-end',
+              showConfirmButton: false,
+              timer: 3000,
+              timerProgressBar: true,
+            })
+            Toast.fire({
+              type: 'warning',
+              title: '¡No hay afiliados para notificar!'
+            })
+        }                         
       } catch (e) {
         console.log(e);
       }
     },
     async applicationProcess(obj, flag = true){
-      try {        
+      try {                
         this.loading_table = true
-        obj.first = flag        
-        if(!this.isEmptyObjectValues(this.searching)) {
-          obj = {...obj, ...this.searching}             
-        }             
-        let response = await this.$axios.post("/notification/list_to_notify", obj)
-        this.all_affiliates = flag
-          ? this.preProcessData(response.all)
-          : this.all_affiliates
-        this.dataSync(response)          
-        this.total_affiliates = response.data.total
-        this.options.page = response.data.current_page
-        this.options.itemsPerPage = parseInt(response.data.per_page)
-        this.loading_table = false
-        // this.check_all = true
+        setTimeout(async () => {        
+          obj.first = flag        
+          if(!this.isEmptyObjectValues(this.searching)) {  // entra cuando se llenaron los filtros          
+            this.filter = true 
+            obj = {...obj, ...this.searching}                       
+          }  else {  
+            this.filter = false                   
+          }
+          let response = await this.$axios.post("/notification/list_to_notify", obj)        
+          this.all_affiliates = flag 
+          // || this.filter
+            ? this.preProcessData(response.all)
+            : this.all_affiliates
+          this.dataSync(response)          
+          this.total_affiliates = response.data.total
+          this.options.page = response.data.current_page
+          this.options.itemsPerPage = parseInt(response.data.per_page)
+          // this.filter = false  
+        }, 300) 
+        this.loading_table = false  
       } catch(e) {
         this.loading_table = false
         console.log(e)
@@ -718,9 +722,16 @@ export default {
     onCopyDrop(e) {
       this.text += " " + e.data.value + " ";      
     },
-    async show() {
-      let res = await this.$firebase.upload(this.file);      
-      this.url_file = await this.$firebase.getURL(this.file);
+    show() {
+     
+    },
+    amountToSend(){
+      let i = 0
+      this.all_affiliates.forEach((el) => {
+        if(el.send) i++
+      })  
+      console.log(i)
+      return i
     },
     resetValues() {
       this.form.payment_method =
@@ -826,23 +837,40 @@ export default {
           element.send = send ?? false
           return
         }
-      })
-      console.log(this.all_affiliates)
+      })      
     },
     preProcessData(array) {
-      array.forEach((element) => {
-        element.send = true;
-      });
+      if(array.length) {
+        array.forEach((element) => {
+          element.send = true;
+        });
+      }
+      
       return array;
     },
     dataSync(response) {      
-      this.affiliates = this.preProcessData(response.data.data)      
+      this.affiliates = this.preProcessData(response.data.data)   
+      // if(this.filter) {        
+      //   let diff = this.all_affiliates.filter(
+      //     element => this.affiliates.findIndex(
+      //       other => other.affiliate_id == element.affiliate_id
+      //       ) 
+      //     == -1
+      //   )  
+      //   diff.forEach((element) => {
+      //     this.all_affiliates.filter((key) => {
+      //       if(key.affiliate_id == element.affiliate_id) {
+      //         key.send = false
+      //       }
+      //     })
+      //   })
+      // }                      
       if (this.all_affiliates.length) {
         this.affiliates.forEach((element) => {
           this.all_affiliates.filter((key) => {
             if (key.affiliate_id == element.affiliate_id) {
               element.send = key.send
-            }
+            } 
           })
         })
       }      
@@ -855,12 +883,12 @@ export default {
       this.searching.second_name = ""
       this.searching.identity_card = ""
       const {affiliate_id, last_name, mothers_last_name, first_name, second_name, identity_card, ...think} = this.parameters  // más eficiente 
-      // this.applicationProcess(this.parameters, false)    
+      // this.applicationProcess(this.parameters, false)   
+      this.filter = false      
       this.applicationProcess(think, false) 
     },
     checkAll() {      
-      this.check_all = !this.check_all
-      console.log(this.check_all)
+      this.check_all = !this.check_all      
       this.all_affiliates.forEach((element) => {
         element.send = this.check_all
         this.affiliates.filter((key) => {
@@ -871,6 +899,7 @@ export default {
       })      
     },
     fileUpload() {
+      if(this.file !== null)
       console.log(this.$firebase.upload(this.file));
     },
   },
@@ -878,28 +907,18 @@ export default {
 </script>
 <style scoped>
 .drag {
-  width: 78px;
+  width: 85px;
   height: 30px;
-  background-color: #7ca287;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin: 0px 0px 0 30px;
-  font-size: 20px;
+  margin: 0px 0px 0 20px;
+  font-size: 15px;
   transition: all 0.5s;
   border-radius: 5px;
   color: white;
 }
 .group {
   display: flex;
-}
-.gradient2 {
-  background: -webkit-gradient(
-    linear,
-    right top,
-    left bottom,
-    color-stop(0%, #eff7fd),
-    color-stop(100%, #d1eff3)
-  );
 }
 </style>

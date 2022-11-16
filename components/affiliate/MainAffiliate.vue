@@ -123,9 +123,9 @@
           <v-tab-item :value="'tab-4'">
             <v-card flat tile>
               <v-card-text>
-                <Spouse 
-                  :affiliate.sync="affiliate" 
-                  :editable.sync="editable" 
+                <Spouse
+                  :affiliate.sync="affiliate"
+                  :editable.sync="editable"
                   :permission="permission" />
               </v-card-text>
             </v-card>
@@ -265,7 +265,7 @@ export default {
       }
     }
   },
-  
+
   methods: {
     resetForm() {
       this.cancel = true;
@@ -323,7 +323,7 @@ export default {
 
     getStateCredential() {
 
-      if (this.affiliate.credential_status.access_status == "No asignadas") {
+      if (this.affiliate.credential_status.access_status == "Inactivo" || this.affiliate.credential_status.access_status == "No asignadas") {
         this.watch_button_send = true;
       } else {
         this.watch_button_send = false;
@@ -335,7 +335,7 @@ export default {
       console.log(this.affiliate.credential_status.access_status)
       this.loading= true
       try {
-        if (this.affiliate.credential_status.access_status == "No asignadas") {
+        if (this.affiliate.credential_status.access_status == "No asignadas" || this.affiliate.credential_status.access_status == "Inactivo") {
           let res = await this.$axios.post(`/affiliate/store`,{
             affiliate_id: this.affiliate.id
           }

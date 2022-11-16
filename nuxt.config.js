@@ -35,7 +35,8 @@ export default {
     { src: '~/plugins/utils.js' },
     { src: '~/plugins/rules.js' },
     { src: '~/plugins/filters.js' },
-    { src: '~/plugins/vue-the-mask.js' }
+    { src: '~/plugins/vue-the-mask.js' },
+    { src: '~/plugins/firebase-storage.js'},
   ],
 
   build: {},
@@ -54,6 +55,7 @@ export default {
     '@nuxtjs/axios',
     '@nuxtjs/moment',
     "vue-toastification/nuxt",
+    "nuxt-sweetalert2",
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
@@ -92,12 +94,12 @@ export default {
           danger: '#ff6d00',
           normal: '#757575',
           background: '#EDF2F4',
-          table: '#948870',
+          table: '#08A687',
           inputsearch: '#fef0e0',
           textPrimary:'#ffffff',
           textSecondary:'#ff533e',
-          backgroundTab:'#FAFAFA',
-          backgroundCard: '#EEEEEE',
+          backgroundTab:'#EAEDED',
+          backgroundCard: '#eff7fd',    
         }
       }
     }

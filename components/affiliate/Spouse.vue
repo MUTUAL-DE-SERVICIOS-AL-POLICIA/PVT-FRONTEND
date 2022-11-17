@@ -5,19 +5,215 @@
         <v-col cols="12" md="6" class="v-card-profile">
           <v-row>
             <v-col cols="12">
-              <v-toolbar-title>INFORMACION CONYUGE</v-toolbar-title>
+              <v-toolbar-title>INFORMACIÓN CONYUGE</v-toolbar-title>
             </v-col>
             <v-col cols="12" md="6">
               <v-text-field
                 dense
-                v-model="affiliate.first_name"
+                v-model="spouse.first_name"
                 class="purple-input"
                 label="Primer Nombre"
-                :readonly="!editable "
-                :outlined="editable "
-                :disabled="(!editable || affiliate.affiliate_state_id != 4)"
+                :readonly="!editable"
+                :outlined="editable"
+                :disabled="!editable || affiliate.affiliate_state_id != 4"
               >
-            </v-text-field>
+              </v-text-field>
+            </v-col>
+            <v-col cols="12" md="6">
+              <v-text-field
+                dense
+                v-model="spouse.second_name"
+                class="purple-input"
+                label="Segundo Nombre"
+                :readonly="!editable"
+                :outlined="editable"
+                :disabled="!editable || affiliate.affiliate_state_id != 4"
+              >
+              </v-text-field>
+            </v-col>
+            <v-col cols="12" md="4">
+              <v-text-field
+                dense
+                v-model="spouse.last_name"
+                class="purple-input"
+                label="Segundo Nombre"
+                :readonly="!editable"
+                :outlined="editable"
+                :disabled="!editable || affiliate.affiliate_state_id != 4"
+              >
+              </v-text-field>
+            </v-col>
+            <v-col cols="12" md="4">
+              <v-text-field
+                dense
+                v-model="spouse.mothers_last_name"
+                class="purple-input"
+                label="Segundo Nombre"
+                :readonly="!editable"
+                :outlined="editable"
+                :disabled="!editable || affiliate.affiliate_state_id != 4"
+              >
+              </v-text-field>
+            </v-col>
+            <v-col cols="12" md="4">
+              <v-text-field
+                dense
+                v-model="spouse.surname_husband"
+                class="purple-input"
+                label="Apellido de Casada"
+                :readonly="!editable"
+                :outlined="editable"
+                :disabled="!editable || affiliate.affiliate_state_id != 4"
+              >
+              </v-text-field>
+            </v-col>
+            <v-col cols="12" md="4">
+              <v-text-field
+                dense
+                v-model="spouse.identity_card"
+                class="purple-input"
+                label="Cedula de Identidad"
+                :readonly="!editable"
+                :outlined="editable"
+                :disabled="!editable || affiliate.affiliate_state_id != 4"
+              >
+              </v-text-field>
+            </v-col>
+            <v-col cols="12" md="4">
+              <v-select
+                dense
+                :loading="loading"
+                :items="cities"
+                item-text="name"
+                item-value="id"
+                label="Ciudad de Expedición"
+                v-model="spouse.city_identity_card_id"
+                :readonly="!editable"
+                :outlined="editable"
+                :disabled="!editable || affiliate.affiliate_state_id != 4"
+              >
+              </v-select>
+            </v-col>
+            <v-col cols="12" md="4">
+              <v-text-field
+                dense
+                v-model="spouse.registration"
+                class="purple-input"
+                label="Matrícula"
+                :readonly="!editable"
+                :outlined="editable"
+                :disabled="!editable || affiliate.affiliate_state_id != 4"
+              >
+              </v-text-field>
+            </v-col>
+            <v-col cols="12" md="4" v-if="spouse.is_duedate_undefined != true">
+              <v-text-field
+                dense
+                v-model="spouse.due_date"
+                label="Fecha Vencimiento CI"
+                hint="Día/Mes/Año"
+                class="purple-input"
+                type="date"
+                :clearable="editable"
+                :readonly="!editable"
+                :outlined="editable"
+                :disabled="!editable || affiliate.affiliate_state_id != 4"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12" md="3">
+              <v-checkbox
+                v-model="spouse.is_duedate_undefined"
+                :readonly="!editable"
+                :outlined="editable"
+                :disabled="!editable || affiliate.affiliate_state_id != 4"
+                :label="`Indefinido`"
+              ></v-checkbox>
+            </v-col>
+            <v-col cols="12" md="4">
+              <v-select
+                dense
+                :items="civil"
+                item-text="name"
+                item-value="value"
+                label="Estado Civil"
+                name="estado_civil"
+                v-model="spouse.civil_status"
+                :readonly="!editable"
+                :outlined="editable"
+                :disabled="!editable || affiliate.affiliate_state_id != 4"
+              ></v-select>
+            </v-col>
+            <v-col cols="12" md="6">
+              <v-text-field
+                dense
+                v-model="spouse.birth_date"
+                name="spouse_birth_date"
+                label="Fecha Nacimiento"
+                hint="Día/Mes/Año"
+                type="date"
+                :readonly="!editable"
+                :outlined="editable"
+                :disabled="!editable || affiliate.affiliate_state_id != 4"
+              ></v-text-field>
+            </v-col>
+
+            <v-col cols="12" md="6">
+              <v-select
+                dense
+                :loading="loading"
+                :items="cities"
+                item-text="name"
+                item-value="id"
+                name="nacimiento"
+                label="Lugar de Nacimiento"
+                v-model="spouse.city_birth_id"
+                :readonly="!editable"
+                :outlined="editable"
+                :disabled="!editable || affiliate.affiliate_state_id != 4"
+              ></v-select>
+            </v-col>
+          </v-row>
+        </v-col>
+        <v-col cols="12" md="6" class="v-card-profile">
+          <v-row>
+            <v-col cols="12">
+              <v-toolbar-title>INFORMACION DECESO</v-toolbar-title>
+            </v-col>
+            <v-col cols="12" md="6">
+              <v-text-field
+                dense
+                v-model="spouse.date_death"
+                label="Fecha Fallecimiento"
+                hint="Día/Mes/Año"
+                class="purple-input"
+                type="date"
+                :onclick="Death()"
+                :readonly="!editable"
+                :outlined="editable"
+                :disabled="!editable || affiliate.affiliate_state_id != 4"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12" md="6" v-if="!visible">
+              <v-text-field
+                dense
+                v-model="spouse.death_certificate_number"
+                label="Cert. de Defunción"
+                class="purple-input"
+                :readonly="!editable"
+                :outlined="editable"
+                :disabled="!editable || affiliate.affiliate_state_id != 4"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12" md="12" v-if="!visible">
+              <v-text-field
+                dense
+                v-model="spouse.reason_death"
+                label="Causa del Fallecimiento"
+                class="purple-input"
+                :readonly="!editable"
+                :outlined="editable"
+                :disabled="!editable || affiliate.affiliate_state_id != 4"
+              ></v-text-field>
             </v-col>
           </v-row>
         </v-col>
@@ -27,16 +223,57 @@
 </template>
 
 <script>
-  export default {
+export default {
   props: {
-    affiliate :{
+    affiliate: {
       type: Object,
-      require :true,
+      require: true,
     },
-    editable:{
+    spouse: {
+      type: Object,
+      required: true,
+    },
+    editable: {
       type: Boolean,
-      require :true,
-    }
+      require: true,
+    },
   },
-}
+  data: () => ({
+    loading: false,
+    cities: [],
+    civil: [
+      { name: "Soltero", value: "S" },
+      { name: "Casado", value: "C" },
+      { name: "Viudo", value: "V" },
+      { name: "Divorciado", value: "D" },
+    ],
+    visible: false,
+  }),
+  mounted() {},
+  beforeMount() {
+    this.getCities();
+  },
+  methods: {
+    async getCities() {
+      try {
+        this.loading = true;
+        let res = await this.$axios.get(`/global/city`);
+        this.cities = res;
+        console.log(this.cities);
+      } catch (e) {
+        this.loading = false;
+        console.log(e);
+      } finally {
+        this.loading = false;
+      }
+    },
+    Death() {
+      if (this.spouse.date_death == null) {
+        this.visible = true;
+      } else {
+        this.visible = false;
+      }
+    },
+  },
+};
 </script>

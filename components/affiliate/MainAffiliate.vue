@@ -125,6 +125,7 @@
               <v-card-text>
                 <Spouse
                   :affiliate.sync="affiliate"
+                  :spouse.sync="spouse"
                   :editable.sync="editable"
                   :permission="permission" />
               </v-card-text>
@@ -229,7 +230,28 @@ export default {
       addresses_aux: null,
     },
     cancel: false,
-    loading: false
+    loading: false,
+    spouse: {
+      affiliate_id: null,
+      first_name: null,
+      second_name:null,
+      last_name: null,
+      mothers_last_name:null,
+      identity_card:null,
+      birth_date:null,
+      date_death:null,
+      reason_death:null,
+      phone_number:null,
+      cell_phone_number:null,
+      city_identity_card_id:null,
+      death_certificate_number:null,
+      city_birth_id:null,
+      civil_status:null,
+      official:null,
+      book:null,
+      departure:null,
+      marriage_date:null
+    },
   }),
   mounted() {
     this.getAffiliate(this.affiliate_id);
@@ -282,6 +304,7 @@ export default {
         let res = await this.$axios.get(`/affiliate/affiliate/${id}`);
         this.affiliate = res;
         this.getStateCredential();
+        this.getSpouse(id)
       } catch (e) {
         console.log(e);
       } finally {
@@ -298,8 +321,21 @@ export default {
             this.affiliate
           );
           this.getAffiliateAddress();
+          //Preguntar si afiliado esta fallecido
+          if (this.affiliate.affiliate_state_id == 4) {
+            if (this.spouse.id) {
+              await this.$axios.patch(
+                `affiliate/spouse/${this.spouse.id}`,
+                this.spouse
+              );
+            } else if (Object.entries(this.spouse).length !== 0) {
+              this.spouse.affiliate_id = this.affiliate.id;
+              await this.$axios.post(`affiliate/spouse`, this.spouse);
+              this.getAffiliate(this.$route.params.id);
+            }
+          }
           this.$toast.success(
-            "Se actualizao correctamente los datos del afiliado"
+            "Se actualizao correctamente los datos del afiliado."
           );
           this.editable = false;
         }
@@ -367,7 +403,19 @@ export default {
         console.log();
       }
     },
-
+    async getSpouse(id) {
+      this.loading= true
+        try {
+        this.loading_spouse=true
+        let res = await this.$axios.get(
+          `/affiliate/affiliate/${id}/spouse`);
+        this.spouse = res
+      } catch (e) {
+        this.loading = false
+      } finally {
+        this.loading = false
+      }
+    },
   },
 };
 </script>

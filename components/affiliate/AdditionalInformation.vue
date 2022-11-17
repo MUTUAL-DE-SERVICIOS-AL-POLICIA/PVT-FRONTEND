@@ -47,7 +47,6 @@
         <v-col cols="12" md="6">
           <v-toolbar-title class="pb-5">DATOS FINANCIEROS </v-toolbar-title>
           <v-select
-            :error-messages="errors"
             dense
             :loading="loading"
             :items="entity"
@@ -60,7 +59,6 @@
             :disabled="editable && !permission.secondary"
           ></v-select>
           <v-text-field
-            :error-messages="errors"
             dense
             v-model="affiliate.account_number"
             label="Número de Cuenta SIGEP activa"
@@ -116,7 +114,8 @@ export default {
   },
 
   data: () => ({
-    entity: []
+    entity: [],
+    loading:false
   }),
   watch: {},
   computed: {},

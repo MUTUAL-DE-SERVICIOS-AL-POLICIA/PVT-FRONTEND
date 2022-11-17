@@ -106,13 +106,12 @@
               >
               </v-text-field>
             </v-col>
-            <v-col cols="12" md="4" v-if="spouse.is_duedate_undefined != true">
+            <v-col cols="12" md="5">
               <v-text-field
                 dense
                 v-model="spouse.due_date"
                 label="Fecha Vencimiento CI"
                 hint="Día/Mes/Año"
-                class="purple-input"
                 type="date"
                 :clearable="editable"
                 :readonly="!editable"
@@ -185,7 +184,6 @@
                 v-model="spouse.date_death"
                 label="Fecha Fallecimiento"
                 hint="Día/Mes/Año"
-                class="purple-input"
                 type="date"
                 :onclick="Death()"
                 :readonly="!editable"
@@ -198,7 +196,6 @@
                 dense
                 v-model="spouse.death_certificate_number"
                 label="Cert. de Defunción"
-                class="purple-input"
                 :readonly="!editable"
                 :outlined="editable"
                 :disabled="!editable || affiliate.affiliate_state_id != 4"
@@ -209,7 +206,6 @@
                 dense
                 v-model="spouse.reason_death"
                 label="Causa del Fallecimiento"
-                class="purple-input"
                 :readonly="!editable"
                 :outlined="editable"
                 :disabled="!editable || affiliate.affiliate_state_id != 4"

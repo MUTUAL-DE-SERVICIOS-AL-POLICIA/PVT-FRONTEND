@@ -321,7 +321,7 @@ export default {
             this.affiliate
           );
           this.getAffiliateAddress();
-              //Preguntar si afiliado esta fallecido
+          //Preguntar si afiliado esta fallecido
           if (this.affiliate.affiliate_state_id == 4) {
             if (this.spouse.id) {
               await this.$axios.patch(
@@ -357,16 +357,6 @@ export default {
       console.log(this.state_cellphone);
     },
 
-    getStateCredential() {
-
-      if (this.affiliate.credential_status.access_status == "No asignadas") {
-        this.watch_button_send = true;
-      } else {
-        this.watch_button_send = false;
-        this.options.response_message ="El afiliado y cuenta con credencialea asignados como: " +
-          this.affiliate.credential_status.access_status;
-      }
-    },
     getStateCredential() {
 
       if (this.affiliate.credential_status.access_status == "Inactivo" || this.affiliate.credential_status.access_status == "No asignadas") {

@@ -5,9 +5,11 @@
     :loading="loading"
     single-expand
     item-key="year"
+    :itemsPerPage="contributions.length"
+    hide-default-footer
   >
     <template v-slot:item="props">
-      <tr :class="props.isExpanded ? 'accent white--text': ''">
+      <tr :class="props.isExpanded ? 'warning white--text': ''">
         <td @click.stop="expand(props)">{{ props.item.year }}</td>
         <td @click.stop="expand(props)" v-for="(key,index) in props.item.contributions" :key="index" >{{Object.entries(key.detail).length !==0 ? key.detail.total:'0,00' }}</td>
       </tr>

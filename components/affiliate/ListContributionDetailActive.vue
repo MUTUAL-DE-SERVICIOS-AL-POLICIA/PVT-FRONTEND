@@ -6,7 +6,6 @@
     :options.sync="options"
     :loading="loading_table"
     :server-items-length="total_contributions"
-    :footer-props="{ itemsPerPageOptions: [8, 15, 30] }"
   >
     <template v-slot:[`header.year`]="{ header }">
       <span :class="searching.year ? 'primary--text' : ''">{{

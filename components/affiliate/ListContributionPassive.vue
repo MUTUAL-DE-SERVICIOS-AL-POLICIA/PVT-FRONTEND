@@ -5,6 +5,8 @@
     :loading="loading"
     single-expand
     item-key="year"
+    :itemsPerPage="contributions.length"
+    hide-default-footer
   >
     <template v-slot:item="props">
       <tr :class="props.isExpanded ? 'accent white--text': ''">

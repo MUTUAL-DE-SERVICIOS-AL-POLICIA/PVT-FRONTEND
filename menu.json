@@ -42,15 +42,9 @@
     "permission": "show-affiliate"
   },
   {
-    "title": "Notificaciones",
+    "title": "Notificaciones App-Movil",
     "icon": "mdi-send",
-    "permission": "show-notification",
-    "group":[
-      {
-        "href": "/notification/PageNotification",
-        "title": "Notificaciones App-movile",
-        "icon": "mdi-cube-send"
-      }
-    ]
+    "href": "/notification/PageNotification",
+    "permission": "show-notification"
   }
 ]

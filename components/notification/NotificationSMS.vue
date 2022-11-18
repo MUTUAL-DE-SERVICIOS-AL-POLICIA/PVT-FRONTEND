@@ -1,35 +1,29 @@
 <template>
-  <v-container fluid>
-    <v-card flat>
-      <v-card-text>
+  <div class="mt-2 pb-8 mx-0 px-0 backgroundCard">
         <v-form ref="forNotification">
           <v-row>
             <v-col cols="6" align="center">
-              <v-card class="ma-0 pa-3">
-                <v-text-field
-                  dense
-                  label="Titulo"
-                  disabled
-                  outlined
-                  clearable
-                  v-model="form.title"
-                  
-                >
-                </v-text-field>
-
-                <v-textarea
-                  dense
-                  label="Mensaje"
-                  outlined
-                  disabled
-                  clearable
-                  v-model="form.message"
-                 
-                >
-                </v-textarea>
+              <v-card class="ma-4 pa-4 elevation-0">
+                <!-- <v-text-field -->
+                  <!-- dense -->
+                  <!-- label="Titulo" -->
+                  <!-- disabled -->
+                  <!-- outlined -->
+                  <!-- clearable -->
+                  <!-- v-model="form.title" -->
+                <!-- > -->
+                <!-- </v-text-field> -->
+                <!-- <v-textarea -->
+                  <!-- dense -->
+                  <!-- label="Mensaje" -->
+                  <!-- outlined -->
+                  <!-- disabled -->
+                  <!-- clearable -->
+                  <!-- v-model="form.message" -->
+                <!-- > -->
+                <!-- </v-textarea> -->
 
                 <v-alert
-                  class="ml-2"
                   text
                   dense
                   color="info"
@@ -63,9 +57,12 @@
                   ></v-file-input
                 >
                 <v-btn
-                  color="success"
+                  color="primary"
+                  block
+                  elevation="2"
                   right
                   @click="validateFormNotification()"
+                  class="ma-0"
                 >
                   ENVIAR
                 </v-btn>
@@ -73,8 +70,7 @@
             </v-col>
           </v-row>
         </v-form>
-      </v-card-text>
-    </v-card>
+
     <v-dialog v-model="dialog_send_notification" max-width="500" persistent>
       <v-card>
         <v-card-title>
@@ -101,7 +97,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-  </v-container>
+</div>
 </template>
 
 <script>

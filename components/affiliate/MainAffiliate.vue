@@ -416,6 +416,15 @@ export default {
         this.loading = false
       }
     },
+    validateForm() {
+      if (this.$refs.forAffiliate) {
+        if (this.$refs.forAffiliate.validate()) {
+          this.saveAffiliate();
+        } else {
+          console.log("no valido");
+        }
+      }
+    },
   },
 };
 </script>

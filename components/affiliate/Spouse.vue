@@ -16,6 +16,8 @@
                 :readonly="!editable"
                 :outlined="editable"
                 :disabled="!editable || affiliate.affiliate_state_id != 4"
+                @keyup.enter="validateForm()"
+                :rules="[$rules.obligatoria('Primer Nombre'),$rules.soloLetras(),$rules.longitudMinima(3),$rules.longitudMaxima(20)]"
               >
               </v-text-field>
             </v-col>
@@ -28,6 +30,8 @@
                 :readonly="!editable"
                 :outlined="editable"
                 :disabled="!editable || affiliate.affiliate_state_id != 4"
+                @keyup.enter="validateForm()"
+                :rules="[$rules.soloLetras(),$rules.longitudMinima(3),$rules.longitudMaxima(20)]"
               >
               </v-text-field>
             </v-col>
@@ -36,10 +40,12 @@
                 dense
                 v-model="spouse.last_name"
                 class="purple-input"
-                label="Segundo Nombre"
+                label="Apellido Paterno"
                 :readonly="!editable"
                 :outlined="editable"
                 :disabled="!editable || affiliate.affiliate_state_id != 4"
+                @keyup.enter="validateForm()"
+                  :rules="(spouse.mothers_last_name == null || spouse.mothers_last_name == '')?[$rules.obligatoria('Apellido Paterno'),$rules.soloLetras(),$rules.longitudMinima(3),$rules.longitudMaxima(20)]:[$rules.soloLetras(),$rules.longitudMinima(3),$rules.longitudMaxima(20)]"
               >
               </v-text-field>
             </v-col>
@@ -48,10 +54,12 @@
                 dense
                 v-model="spouse.mothers_last_name"
                 class="purple-input"
-                label="Segundo Nombre"
+                label="Apellido Materno"
                 :readonly="!editable"
                 :outlined="editable"
                 :disabled="!editable || affiliate.affiliate_state_id != 4"
+                @keyup.enter="validateForm()"
+                :rules="(spouse.last_name == null || spouse.last_name == '')?[$rules.obligatoria('Apellido Materno'),$rules.soloLetras(),$rules.longitudMinima(3),$rules.longitudMaxima(20)]:[$rules.soloLetras(),$rules.longitudMinima(3),$rules.longitudMaxima(20)]"
               >
               </v-text-field>
             </v-col>
@@ -64,6 +72,8 @@
                 :readonly="!editable"
                 :outlined="editable"
                 :disabled="!editable || affiliate.affiliate_state_id != 4"
+                @keyup.enter="validateForm()"
+                :rules="[$rules.soloLetras(),$rules.longitudMinima(3),$rules.longitudMaxima(20)]"
               >
               </v-text-field>
             </v-col>
@@ -76,6 +86,8 @@
                 :readonly="!editable"
                 :outlined="editable"
                 :disabled="!editable || affiliate.affiliate_state_id != 4"
+                @keyup.enter="validateForm()"
+                :rules="[$rules.obligatoria('Cédula de Identidad'),$rules.longitudMinima(5),$rules.longitudMaxima(15)]"
               >
               </v-text-field>
             </v-col>
@@ -91,6 +103,8 @@
                 :readonly="!editable"
                 :outlined="editable"
                 :disabled="!editable || affiliate.affiliate_state_id != 4"
+                @keyup.enter="validateForm()"
+                :rules="[$rules.obligatoria('Ciudad de Expedición')]"
               >
               </v-select>
             </v-col>
@@ -140,6 +154,8 @@
                 :readonly="!editable"
                 :outlined="editable"
                 :disabled="!editable || affiliate.affiliate_state_id != 4"
+                @keyup.enter="validateForm()"
+                :rules="[$rules.obligatoria('Estado Civil')]"
               ></v-select>
             </v-col>
             <v-col cols="12" md="6">
@@ -169,6 +185,8 @@
                 :readonly="!editable"
                 :outlined="editable"
                 :disabled="!editable || affiliate.affiliate_state_id != 4"
+                @keyup.enter="validateForm()"
+                :rules="[$rules.obligatoria('Lugar de Nacimiento')]"
               ></v-select>
             </v-col>
           </v-row>

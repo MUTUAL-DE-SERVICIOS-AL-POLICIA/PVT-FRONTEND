@@ -10,7 +10,7 @@
               Datos del afiliado
             </v-col>
           </v-row>
-          <v-tooltip bottom>
+          <v-tooltip>
             <template v-slot:activator="{ on, attrs }">
               <v-btn
                 small
@@ -19,6 +19,7 @@
                 v-on="on"
                 @click="getState_cellphone()"
                 color="success"
+                class="mr-4"
               >
                 <span v-if="!editable"> ASIGNAR CREDENCIALES</span>
               </v-btn>
@@ -90,6 +91,7 @@
                 <Dashboard
                   :affiliate.sync="affiliate"
                   :loading_affiliate="loading_affiliate"
+                  :permission="permission"
                 />
               </v-card-text>
             </v-card>
@@ -100,6 +102,7 @@
                 <Profile
                   :affiliate.sync="affiliate"
                   :editable.sync="editable"
+                  :permission="permission"
                 />
               </v-card-text>
             </v-card>
@@ -112,6 +115,7 @@
                   :editable.sync="editable"
                   :obj_address.sync="obj_address"
                   :cancel.sync="cancel"
+                  :permission="permission"
                 />
               </v-card-text>
             </v-card>
@@ -119,14 +123,20 @@
           <v-tab-item :value="'tab-4'">
             <v-card flat tile>
               <v-card-text>
-                <Spouse :affiliate.sync="affiliate" :editable.sync="editable" />
+                <Spouse
+                  :affiliate.sync="affiliate"
+                  :spouse.sync="spouse"
+                  :editable.sync="editable"
+                  :permission="permission" />
               </v-card-text>
             </v-card>
           </v-tab-item>
           <v-tab-item :value="'tab-5'">
             <v-card flat tile>
               <v-card-text>
-                <Contribution :affiliate.sync="affiliate"/>
+                <ListContribution
+                  :affiliate.sync="affiliate"
+                  :show_contribution.sync="show_contribution"/>
               </v-card-text>
             </v-card>
           </v-tab-item>
@@ -168,14 +178,14 @@ import AdditionalInformation from "@/components/affiliate/AdditionalInformation"
 import Dashboard from "@/components/affiliate/Dashboard";
 import Profile from "@/components/affiliate/Profile";
 import Spouse from "@/components/affiliate/Spouse.vue";
-import Contribution from "@/components/affiliate/Contribution.vue";
+import ListContribution from "@/components/affiliate/ListContribution.vue";
 export default {
   components: {
     AdditionalInformation,
     Dashboard,
     Profile,
     Spouse,
-    Contribution,
+    ListContribution,
   },
   props: {
     affiliate_id: {
@@ -203,6 +213,7 @@ export default {
       affiliate_state_id: null,
     },
     editable: false,
+    show_contribution:false,
     vertical: false,
     icons: true,
     loading_affiliate: false,
@@ -219,7 +230,28 @@ export default {
       addresses_aux: null,
     },
     cancel: false,
-    loading: false
+    loading: false,
+    spouse: {
+      affiliate_id: null,
+      first_name: null,
+      second_name:null,
+      last_name: null,
+      mothers_last_name:null,
+      identity_card:null,
+      birth_date:null,
+      date_death:null,
+      reason_death:null,
+      phone_number:null,
+      cell_phone_number:null,
+      city_identity_card_id:null,
+      death_certificate_number:null,
+      city_birth_id:null,
+      civil_status:null,
+      official:null,
+      book:null,
+      departure:null,
+      marriage_date:null
+    },
   }),
   mounted() {
     this.getAffiliate(this.affiliate_id);
@@ -228,6 +260,34 @@ export default {
   watch: {
 
   },
+    computed: {
+    //permisos del selector global por rol
+    permissionSimpleSelected () {
+      return this.$store.getters.permissionSimpleSelected
+    },
+
+    permission() {
+      return {
+        primary: this.primaryPermission,
+        secondary: this.secondaryPermission
+      }
+    },
+    secondaryPermission() {
+      if (this.affiliate.id) {
+        return this.permissionSimpleSelected.includes('update-affiliate-secondary')
+      } else {
+        return this.permissionSimpleSelected.includes('create-affiliate')
+      }
+    },
+    primaryPermission() {
+      if (this.affiliate.id) {
+        return this.permissionSimpleSelected.includes('update-affiliate-primary')
+      } else {
+        return this.permissionSimpleSelected.includes('create-affiliate')
+      }
+    }
+  },
+
   methods: {
     resetForm() {
       this.cancel = true;
@@ -244,6 +304,7 @@ export default {
         let res = await this.$axios.get(`/affiliate/affiliate/${id}`);
         this.affiliate = res;
         this.getStateCredential();
+        this.getSpouse(id)
       } catch (e) {
         console.log(e);
       } finally {
@@ -260,8 +321,21 @@ export default {
             this.affiliate
           );
           this.getAffiliateAddress();
+          //Preguntar si afiliado esta fallecido
+          if (this.affiliate.affiliate_state_id == 4) {
+            if (this.spouse.id) {
+              await this.$axios.patch(
+                `affiliate/spouse/${this.spouse.id}`,
+                this.spouse
+              );
+            } else if (Object.entries(this.spouse).length !== 0) {
+              this.spouse.affiliate_id = this.affiliate.id;
+              await this.$axios.post(`affiliate/spouse`, this.spouse);
+              this.getAffiliate(this.$route.params.id);
+            }
+          }
           this.$toast.success(
-            "Se actualizao correctamente los datos del afiliado"
+            "Se actualizao correctamente los datos del afiliado."
           );
           this.editable = false;
         }
@@ -285,7 +359,7 @@ export default {
 
     getStateCredential() {
 
-      if (this.affiliate.credential_status.access_status == "No asignadas") {
+      if (this.affiliate.credential_status.access_status == "Inactivo" || this.affiliate.credential_status.access_status == "No asignadas") {
         this.watch_button_send = true;
       } else {
         this.watch_button_send = false;
@@ -297,7 +371,7 @@ export default {
       console.log(this.affiliate.credential_status.access_status)
       this.loading= true
       try {
-        if (this.affiliate.credential_status.access_status == "No asignadas") {
+        if (this.affiliate.credential_status.access_status == "No asignadas" || this.affiliate.credential_status.access_status == "Inactivo") {
           let res = await this.$axios.post(`/affiliate/store`,{
             affiliate_id: this.affiliate.id
           }
@@ -329,7 +403,19 @@ export default {
         console.log();
       }
     },
-
+    async getSpouse(id) {
+      this.loading= true
+        try {
+        this.loading_spouse=true
+        let res = await this.$axios.get(
+          `/affiliate/affiliate/${id}/spouse`);
+        this.spouse = res
+      } catch (e) {
+        this.loading = false
+      } finally {
+        this.loading = false
+      }
+    },
   },
 };
 </script>

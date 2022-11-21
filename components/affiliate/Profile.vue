@@ -12,9 +12,10 @@
                 <v-text-field
                   dense
                   v-model="affiliate.first_name"
-                  :disabled="!editable"
-                  :outlined="editable"
                   label="Primer Nombre"
+                  :readonly="!editable || !permission.primary"
+                  :outlined="editable && permission.primary"
+                  :disabled="editable && !permission.primary"
                 >
                 </v-text-field>
               </v-col>
@@ -22,9 +23,10 @@
                 <v-text-field
                   dense
                   v-model="affiliate.second_name"
-                  :disabled="!editable"
-                  :outlined="editable"
                   label="Segundo Nombre"
+                  :readonly="!editable || !permission.primary"
+                  :outlined="editable && permission.primary"
+                  :disabled="editable && !permission.primary"
                   >
                 </v-text-field>
               </v-col>
@@ -32,9 +34,10 @@
                 <v-text-field
                   dense
                   v-model="affiliate.last_name"
-                  :disabled="!editable"
-                  :outlined="editable"
                   label="Apellido Paterno"
+                  :readonly="!editable || !permission.primary"
+                  :outlined="editable && permission.primary"
+                  :disabled="editable && !permission.primary"
                 >
                 </v-text-field>
               </v-col>
@@ -42,9 +45,10 @@
                 <v-text-field
                   dense
                   v-model="affiliate.mothers_last_name"
-                  :disabled="!editable"
-                  :outlined="editable"
                   label="Apellido Materno"
+                  :readonly="!editable || !permission.primary"
+                  :outlined="editable && permission.primary"
+                  :disabled="editable && !permission.primary"
                 >
                 </v-text-field>
               </v-col>
@@ -52,9 +56,10 @@
                 <v-text-field
                   dense
                   v-model="affiliate.surname_husband"
-                  :disabled="!editable"
-                  :outlined="editable"
                   label="Apellido de Casada"
+                  :readonly="!editable || !permission.primary"
+                  :outlined="editable && permission.primary"
+                  :disabled="editable && !permission.primary"
                 >
                 </v-text-field>
               </v-col>
@@ -64,10 +69,11 @@
                   :items="genders"
                   item-text="name"
                   item-value="value"
-                  :disabled="!editable"
-                  :outlined="editable"
                   label="Género"
                   v-model="affiliate.gender"
+                  :readonly="!editable || !permission.secondary"
+                  :outlined="editable && permission.secondary"
+                  :disabled="editable && !permission.secondary"
                 >
                 </v-select>
               </v-col>
@@ -75,9 +81,10 @@
                 <v-text-field
                   dense
                   v-model="affiliate.identity_card"
-                  :disabled="!editable"
-                  :outlined="editable"
                   label="Cédula de Identidad"
+                  :readonly="!editable || !permission.primary"
+                  :outlined="editable && permission.primary"
+                  :disabled="editable && !permission.primary"
                 >
                 </v-text-field>
               </v-col>
@@ -88,9 +95,10 @@
                   item-text="name"
                   item-value="id"
                   label="Ciudad de Expedición"
-                  :disabled="!editable"
-                  :outlined="editable"
                   v-model="affiliate.city_identity_card_id"
+                  :readonly="!editable || !permission.secondary"
+                  :outlined="editable && permission.secondary"
+                  :disabled="editable && !permission.secondary"
                   >
                 </v-select>
               </v-col>
@@ -98,9 +106,10 @@
                 <v-text-field
                   dense
                   v-model="affiliate.registration"
-                  :disabled="!editable"
-                  :outlined="editable"
                   label="Matrícula"
+                  :readonly="!editable || !permission.secondary"
+                  :outlined="editable && permission.secondary"
+                  :disabled="editable && !permission.secondary"
                 >
                 </v-text-field>
               </v-col>
@@ -112,9 +121,9 @@
                   hint="Día/Mes/Año"
                   type="date"
                   :clearable="editable"
-                  :readonly="!editable"
-                  :outlined="editable"
-                  :disabled="!editable"
+                  :readonly="!editable || !permission.secondary"
+                  :outlined="editable && permission.secondary"
+                  :disabled="editable && !permission.secondary"
                 >
                 </v-text-field>
               </v-col>
@@ -122,10 +131,10 @@
                 <v-checkbox
                   dense
                   v-model="affiliate.is_duedate_undefined"
-                  :readonly="!editable"
-                  :outlined="editable"
-                  :disabled="!editable"
                   :label="`Indefinido`"
+                  :readonly="!editable || !permission.secondary"
+                  :outlined="editable && permission.secondary"
+                  :disabled="editable && !permission.secondary"
                 >
                 </v-checkbox>
               </v-col>
@@ -138,9 +147,9 @@
                   item-value="value"
                   label="Estado Civil"
                   v-model="affiliate.civil_status"
-                  :readonly="!editable"
-                  :outlined="editable"
-                  :disabled="!editable"
+                  :readonly="!editable || !permission.secondary"
+                  :outlined="editable && permission.secondary"
+                  :disabled="editable && !permission.secondary"
                 >
                 </v-select>
               </v-col>
@@ -151,9 +160,9 @@
                   label="Fecha Nacimiento"
                   hint="Día/Mes/Año"
                   type="date"
-                  :readonly="!editable"
-                  :outlined="editable"
-                  :disabled="!editable"
+                  :readonly="!editable || !permission.secondary"
+                  :outlined="editable && permission.secondary"
+                  :disabled="editable && !permission.secondary"
                 >
                 </v-text-field>
               </v-col>
@@ -166,9 +175,9 @@
                   item-value="id"
                   label="Ciudad de Nacimiento"
                   v-model="affiliate.city_birth_id"
-                  :readonly="!editable"
-                  :outlined="editable"
-                  :disabled="!editable"
+                  :readonly="!editable || !permission.secondary"
+                  :outlined="editable && permission.secondary"
+                  :disabled="editable && !permission.secondary"
                 >
                 </v-select>
               </v-col>
@@ -190,9 +199,9 @@
                   label="Estado"
                   v-model="affiliate.affiliate_state_id"
                   :Onchange="Onchange()"
-                  :readonly="!editable"
-                  :outlined="editable"
-                  :disabled="!editable"
+                  :readonly="!editable || !permission.primary"
+                  :outlined="editable && permission.primary"
+                  :disabled="editable && !permission.primary"
                 ></v-select>
               </v-col>
             <v-col cols="12" md="6" v-if="!visible">
@@ -209,9 +218,9 @@
                 label="Fecha Fallecimiento"
                 hint="Día/Mes/Año"
                 type="date"
-                :readonly="!editable"
-                :outlined="editable"
-                :disabled="!editable"
+                :readonly="!editable || !permission.secondary"
+                :outlined="editable && permission.secondary"
+                :disabled="editable && !permission.secondary"
               >
               </v-text-field>
             </v-col>
@@ -220,9 +229,9 @@
                 dense
                 v-model="affiliate.death_certificate_number"
                 label="N° de Certificado de Defunción"
-                :readonly="!editable"
-                :outlined="editable"
-                :disabled="!editable"
+                :readonly="!editable || !permission.secondary"
+                :outlined="editable && permission.secondary"
+                :disabled="editable && !permission.secondary"
               >
               </v-text-field>
             </v-col>
@@ -231,9 +240,9 @@
                 dense
                 v-model="affiliate.reason_death"
                 label="Causa Fallecimiento"
-                :readonly="!editable"
-                :outlined="editable"
-                :disabled="!editable"
+                :readonly="!editable || !permission.secondary"
+                :outlined="editable && permission.secondary"
+                :disabled="editable && !permission.secondary"
               >
               </v-text-field>
             </v-col>
@@ -245,9 +254,9 @@
                 hint="Día/Mes/Año"
                 type="date"
                 :clearable="editable"
-                :readonly="!editable"
-                :outlined="editable"
-                :disabled="!editable"
+                :readonly="!editable || !permission.secondary"
+                :outlined="editable && permission.secondary"
+                :disabled="editable && !permission.secondary"
               >
               </v-text-field>
             </v-col>
@@ -261,9 +270,9 @@
                 label="Grado"
                 name="Grado"
                 v-model="affiliate.degree_id"
-                :readonly="!editable "
-                :outlined="editable "
-                :disabled="!editable"
+                :readonly="!editable || !permission.primary"
+                :outlined="editable && permission.primary"
+                :disabled="editable && !permission.primary"
               ></v-select>
             </v-col>
             <v-col cols="12" md="6">
@@ -276,9 +285,9 @@
                 label="Categoria"
                 name="categoria"
                 v-model="affiliate.category_id"
-                :readonly="!editable "
-                :outlined="editable "
-                :disabled="!editable "
+                :readonly="!editable || !permission.primary"
+                :outlined="editable && permission.primary"
+                :disabled="editable && !permission.primary"
               ></v-select>
             </v-col>
             <v-col cols="12" md="6">
@@ -291,9 +300,9 @@
                 label="Unidad"
                 v-model="affiliate.unit_id"
                 persistent-hint
-                :readonly="!editable "
-                :outlined="editable "
-                :disabled="!editable "
+                :readonly="!editable || !permission.secondary"
+                :outlined="editable && permission.secondary"
+                :disabled="editable && !permission.secondary"
               ></v-select>
             </v-col>
             <v-col cols="12" md="12">
@@ -301,9 +310,9 @@
                 dense
                 v-model="affiliate.unit_police_description"
                 label="Descripcion de Unidad"
-                :readonly="!editable "
-                :outlined="editable "
-                :disabled="!editable "
+                :readonly="!editable || !permission.secondary"
+                :outlined="editable && permission.secondary"
+                :disabled="editable && !permission.secondary"
               ></v-text-field>
             </v-col>
             <v-col cols="12" md="6">
@@ -316,19 +325,21 @@
                 label="Ente Gestor"
                 name="Grado"
                 v-model="affiliate.pension_entity_id"
-                :readonly="!editable "
-                :outlined="editable "
-                :disabled="!editable "
+                :readonly="!editable || !permission.secondary"
+                :outlined="editable && permission.secondary"
+                :disabled="editable && !permission.secondary"
               ></v-select>
             </v-col>
             <v-col cols="12" md="6">
               <v-text-field
                 dense
                 v-model="affiliate.date_derelict"
-                :disabled="!editable "
                 label="Fecha Desvinculacion"
                 hint="Día/Mes/Año"
                 type="date"
+                :readonly="!editable || !permission.secondary"
+                :outlined="editable && permission.secondary"
+                :disabled="editable && !permission.secondary"
               ></v-text-field>
             </v-col>
           </v-row>
@@ -347,6 +358,10 @@ export default {
     },
     editable: {
       type: Boolean,
+      required: true,
+    },
+    permission: {
+      type: Object,
       required: true,
     },
   },
@@ -386,11 +401,19 @@ export default {
           formatted: null,
           picker: false
         },
-        birthDate: {
+        dateEntry: {
+          formatted: null,
+          picker: false
+        },
+        dateDerelict: {
           formatted: null,
           picker: false
         },
         dateDeath: {
+          formatted: null,
+          picker: false
+        },
+        birthDate: {
           formatted: null,
           picker: false
         }

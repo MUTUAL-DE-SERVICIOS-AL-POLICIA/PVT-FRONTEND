@@ -15,7 +15,7 @@
                 label="Primer Nombre"
                 :readonly="!editable"
                 :outlined="editable"
-                :disabled="!editable || affiliate.affiliate_state_id != 4"
+                :disabled="!editable"
                 @keyup.enter="validateForm()"
                 :rules="[$rules.obligatoria('Primer Nombre'),$rules.soloLetras(),$rules.longitudMinima(3),$rules.longitudMaxima(20)]"
               >
@@ -29,7 +29,7 @@
                 label="Segundo Nombre"
                 :readonly="!editable"
                 :outlined="editable"
-                :disabled="!editable || affiliate.affiliate_state_id != 4"
+                :disabled="!editable"
                 @keyup.enter="validateForm()"
                 :rules="[$rules.soloLetras(),$rules.longitudMinima(3),$rules.longitudMaxima(20)]"
               >
@@ -43,7 +43,7 @@
                 label="Apellido Paterno"
                 :readonly="!editable"
                 :outlined="editable"
-                :disabled="!editable || affiliate.affiliate_state_id != 4"
+                :disabled="!editable"
                 @keyup.enter="validateForm()"
                   :rules="(spouse.mothers_last_name == null || spouse.mothers_last_name == '')?[$rules.obligatoria('Apellido Paterno'),$rules.soloLetras(),$rules.longitudMinima(3),$rules.longitudMaxima(20)]:[$rules.soloLetras(),$rules.longitudMinima(3),$rules.longitudMaxima(20)]"
               >
@@ -57,7 +57,7 @@
                 label="Apellido Materno"
                 :readonly="!editable"
                 :outlined="editable"
-                :disabled="!editable || affiliate.affiliate_state_id != 4"
+                :disabled="!editable"
                 @keyup.enter="validateForm()"
                 :rules="(spouse.last_name == null || spouse.last_name == '')?[$rules.obligatoria('Apellido Materno'),$rules.soloLetras(),$rules.longitudMinima(3),$rules.longitudMaxima(20)]:[$rules.soloLetras(),$rules.longitudMinima(3),$rules.longitudMaxima(20)]"
               >
@@ -71,7 +71,7 @@
                 label="Apellido de Casada"
                 :readonly="!editable"
                 :outlined="editable"
-                :disabled="!editable || affiliate.affiliate_state_id != 4"
+                :disabled="!editable"
                 @keyup.enter="validateForm()"
                 :rules="[$rules.soloLetras(),$rules.longitudMinima(3),$rules.longitudMaxima(20)]"
               >
@@ -85,7 +85,7 @@
                 label="Cedula de Identidad"
                 :readonly="!editable"
                 :outlined="editable"
-                :disabled="!editable || affiliate.affiliate_state_id != 4"
+                :disabled="!editable"
                 @keyup.enter="validateForm()"
                 :rules="[$rules.obligatoria('Cédula de Identidad'),$rules.longitudMinima(5),$rules.longitudMaxima(15)]"
               >
@@ -102,7 +102,7 @@
                 v-model="spouse.city_identity_card_id"
                 :readonly="!editable"
                 :outlined="editable"
-                :disabled="!editable || affiliate.affiliate_state_id != 4"
+                :disabled="!editable"
                 @keyup.enter="validateForm()"
                 :rules="[$rules.obligatoria('Ciudad de Expedición')]"
               >
@@ -116,7 +116,7 @@
                 label="Matrícula"
                 :readonly="!editable"
                 :outlined="editable"
-                :disabled="!editable || affiliate.affiliate_state_id != 4"
+                :disabled="!editable"
               >
               </v-text-field>
             </v-col>
@@ -130,7 +130,7 @@
                 :clearable="editable"
                 :readonly="!editable"
                 :outlined="editable"
-                :disabled="!editable || affiliate.affiliate_state_id != 4"
+                :disabled="!editable"
               ></v-text-field>
             </v-col>
             <v-col cols="12" md="3">
@@ -138,7 +138,7 @@
                 v-model="spouse.is_duedate_undefined"
                 :readonly="!editable"
                 :outlined="editable"
-                :disabled="!editable || affiliate.affiliate_state_id != 4"
+                :disabled="!editable"
                 :label="`Indefinido`"
               ></v-checkbox>
             </v-col>
@@ -153,7 +153,7 @@
                 v-model="spouse.civil_status"
                 :readonly="!editable"
                 :outlined="editable"
-                :disabled="!editable || affiliate.affiliate_state_id != 4"
+                :disabled="!editable"
                 @keyup.enter="validateForm()"
                 :rules="[$rules.obligatoria('Estado Civil')]"
               ></v-select>
@@ -168,7 +168,7 @@
                 type="date"
                 :readonly="!editable"
                 :outlined="editable"
-                :disabled="!editable || affiliate.affiliate_state_id != 4"
+                :disabled="!editable"
               ></v-text-field>
             </v-col>
 
@@ -184,7 +184,7 @@
                 v-model="spouse.city_birth_id"
                 :readonly="!editable"
                 :outlined="editable"
-                :disabled="!editable || affiliate.affiliate_state_id != 4"
+                :disabled="!editable"
                 @keyup.enter="validateForm()"
                 :rules="[$rules.obligatoria('Lugar de Nacimiento')]"
               ></v-select>
@@ -206,7 +206,7 @@
                 :onclick="Death()"
                 :readonly="!editable"
                 :outlined="editable"
-                :disabled="!editable || affiliate.affiliate_state_id != 4"
+                :disabled="!editable"
               ></v-text-field>
             </v-col>
             <v-col cols="12" md="6" v-if="!visible">
@@ -216,7 +216,7 @@
                 label="Cert. de Defunción"
                 :readonly="!editable"
                 :outlined="editable"
-                :disabled="!editable || affiliate.affiliate_state_id != 4"
+                :disabled="!editable"
               ></v-text-field>
             </v-col>
             <v-col cols="12" md="12" v-if="!visible">
@@ -226,7 +226,7 @@
                 label="Causa del Fallecimiento"
                 :readonly="!editable"
                 :outlined="editable"
-                :disabled="!editable || affiliate.affiliate_state_id != 4"
+                :disabled="!editable"
               ></v-text-field>
             </v-col>
           </v-row>

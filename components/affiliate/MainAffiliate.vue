@@ -321,8 +321,11 @@ export default {
             this.affiliate
           );
           this.getAffiliateAddress();
-          //Preguntar si afiliado esta fallecido
-          if (this.affiliate.affiliate_state_id == 4) {
+          this.$toast.success(
+            "Se actualizao correctamente los datos del afiliado."
+          );
+          //Preguntar si afiliado esta fallecido o tiene esposa con fecha de fallecimiento para crear o actualizar
+          if (this.affiliate.affiliate_state_id == 4 || this.spouse.date_death.length !== 0) {
             if (this.spouse.id) {
               await this.$axios.patch(
                 `affiliate/spouse/${this.spouse.id}`,
@@ -332,12 +335,14 @@ export default {
               this.spouse.affiliate_id = this.affiliate.id;
               await this.$axios.post(`affiliate/spouse`, this.spouse);
               this.getAffiliate(this.$route.params.id);
+              this.$toast.success(
+                "Se actualizao correctamente los datos de la esposa."
+              );
             }
+            this.editable = false;
+          } else {
+            this.$toast.error("Ocurrio un error durante la actualización");
           }
-          this.$toast.success(
-            "Se actualizao correctamente los datos del afiliado."
-          );
-          this.editable = false;
         }
       } catch (e) {
         this.editable = false;

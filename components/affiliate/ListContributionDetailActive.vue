@@ -44,7 +44,15 @@
         <td><v-text-field disabled class="filter-text"></v-text-field></td>
         <td><v-text-field disabled class="filter-text"></v-text-field></td>
         <td><v-text-field disabled class="filter-text"></v-text-field></td>
-        <td><v-text-field disabled class="filter-text"></v-text-field></td>
+        <td>
+          <v-text-field
+            placeholder="Desglose"
+            spellcheck="false"
+            class="filter-text"
+            v-model="searching.breakdown"
+            @input="getSearchActiveAffiliateContribution()"
+            ></v-text-field>
+            </td>
       </tr>
     </template>
   </v-data-table>
@@ -62,6 +70,8 @@ export default {
     searching: {
       year: "",
       month: "",
+      breakdown:""
+      
     },
     options: {
       page: 1,
@@ -132,7 +142,7 @@ export default {
         sortable: false,
       },{
         text: "Desg.",
-        value: "breakdown_id",
+        value: "breakdown_name",
         class: ["table", "white--text"],
         width: "15%",
         sortable: false,
@@ -171,6 +181,7 @@ export default {
               affiliate_id: this.$route.params.id,
               year: this.searching.year,
               month: this.searching.month,
+              breakdown:this.searching.breakdown,
               contributionable_type: this.searching.contributionable_type,
               page: this.options.page,
               per_page: this.options.itemsPerPage,

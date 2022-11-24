@@ -87,7 +87,7 @@
           </v-tab>
           <v-tab-item class="backgroundTab" :value="'tab-1'">
             <v-card flat tile>
-              <v-card-text>
+              <v-card-text class="pt-0">
                 <Dashboard
                   :affiliate.sync="affiliate"
                   :loading_affiliate="loading_affiliate"
@@ -98,7 +98,7 @@
           </v-tab-item>
           <v-tab-item :value="'tab-2'">
             <v-card flat tile>
-              <v-card-text>
+              <v-card-text class="pt-0">
                 <Profile
                   :affiliate.sync="affiliate"
                   :editable.sync="editable"
@@ -109,7 +109,7 @@
           </v-tab-item>
           <v-tab-item :value="'tab-3'">
             <v-card flat tile>
-              <v-card-text>
+              <v-card-text class="pt-0">
                 <AdditionalInformation
                   :affiliate.sync="affiliate"
                   :editable.sync="editable"
@@ -122,18 +122,17 @@
           </v-tab-item>
           <v-tab-item :value="'tab-4'">
             <v-card flat tile>
-              <v-card-text>
+              <v-card-text class="pt-0">
                 <Spouse
                   :affiliate.sync="affiliate"
                   :spouse.sync="spouse"
-                  :editable.sync="editable"
                   :permission="permission" />
               </v-card-text>
             </v-card>
           </v-tab-item>
           <v-tab-item :value="'tab-5'">
             <v-card flat tile>
-              <v-card-text>
+              <v-card-text class="pt-0">
                 <ListContribution
                   :affiliate.sync="affiliate"
                   :show_contribution.sync="show_contribution"/>
@@ -253,6 +252,11 @@ export default {
       marriage_date:null
     },
   }),
+  beforeMount(){
+    this.$nuxt.$on('eventGetSpouse', (val) => {
+      this.getSpouse(val)
+    })
+  },
   mounted() {
     this.getAffiliate(this.affiliate_id);
     this.editable = false;
@@ -321,19 +325,6 @@ export default {
             this.affiliate
           );
           this.getAffiliateAddress();
-          //Preguntar si afiliado esta fallecido
-          if (this.affiliate.affiliate_state_id == 4) {
-            if (this.spouse.id) {
-              await this.$axios.patch(
-                `affiliate/spouse/${this.spouse.id}`,
-                this.spouse
-              );
-            } else if (Object.entries(this.spouse).length !== 0) {
-              this.spouse.affiliate_id = this.affiliate.id;
-              await this.$axios.post(`affiliate/spouse`, this.spouse);
-              this.getAffiliate(this.$route.params.id);
-            }
-          }
           this.$toast.success(
             "Se actualizao correctamente los datos del afiliado."
           );

@@ -1,9 +1,7 @@
 <template>
   <v-container fluid>
     <v-form>
-          {{state.active}}
   <template v-if="!state.active">
-
    <v-row>
        <v-col cols="6"  class="text-left mb-0">
     <v-toolbar-title>APORTES ACTIVO</v-toolbar-title>

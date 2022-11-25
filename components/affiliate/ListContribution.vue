@@ -1,7 +1,7 @@
 <template>
   <v-container fluid>
     <v-form>
-  <template v-if="!state">
+  <template v-if="!state.active">
    <v-row>
        <v-col cols="6"  class="text-left mb-0">
     <v-toolbar-title>APORTES ACTIVO</v-toolbar-title>
@@ -127,7 +127,7 @@
     </v-row>
     <ListContributionPassive />
   </template>
-  <template v-else-if="state">
+  <template v-else-if="state.active">
     <template v-if="show_detail.active">
       <v-row >
         <v-col cols="1">
@@ -204,8 +204,8 @@ export default {
       type: Object,
       require: true,
     },
-    show_contribution: {
-      type: Boolean,
+    state: {
+      type: Object,
       require: true,
     },
   },
@@ -224,7 +224,7 @@ export default {
       passive: false,
       active: false,
     },
-    state: false,
+    //state: false,
     contributions: [],
     list: [],
     loading_print_active: false,
@@ -232,25 +232,26 @@ export default {
     loading_passive_widow: false,
   }),
   mounted() {
-    this.state = this.show_contribution;
+
   },
   methods: {
     expand(props) {
       props.expand(!props.isExpanded);
     },
     showDetailPassive() {
-      this.state = true;
+      this.state.active = true;
       this.show_detail.passive = true;
       this.show_detail.active = false;
+
     },
     showDetailActive() {
       this.show_detail.passive = false;
-      this.state = true;
+      this.state.active = true;
       this.show_detail.active = true;
     },
     showContribution() {
       if (this.show_detail.active == true || this.show_detail.passive == true)
-        this.state = false;
+        this.state.active = false;
     },
     async printContributionsActive() {
       this.loading_print_active = true;

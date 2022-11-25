@@ -59,20 +59,27 @@
         </v-toolbar>
       </v-card-title>
       <v-card-text>
-        <v-tabs :vertical="true">
-          <v-card color="backgroundCard">
-            <v-card-text>
-              <v-row>
-                <v-col cols="12" md="12" align="center">
-                  <h2>{{ affiliate.full_name }}</h2>
-                  <br />
-                  <strong>C.I.: </strong> {{ affiliate.identity_card }}
-                </v-col>
-              </v-row>
+        <v-tabs :vertical="true" v-model="tab">
+          <v-card color="accent" class="pa-2" style="width:300px" align="center">
+            <v-chip
+              class="ma-0"
+              color="secondary"
+              label
+              text-color="white"
+            >
+              <v-icon left class="body-2">
+                NUP:
+              </v-icon>
+              {{ affiliate.id }}
+            </v-chip>
+            <v-card-text class="textPrimary--text">
+              <h2>{{ affiliate.full_name }}</h2>
+              <strong>C.I.: </strong> {{ affiliate.identity_card }}
             </v-card-text>
           </v-card>
           <v-tabs-slider></v-tabs-slider>
-          <v-tab class="backgroundTab" :href="`#tab-1`"> DASHBOARD </v-tab>
+          <v-tab class="backgroundTab" :href="`#tab-1`">
+            DASHBOARD </v-tab>
           <v-tab class="backgroundTab" :href="`#tab-2`">
             DATOS PERSONALES DEL AFILIADO
           </v-tab>
@@ -85,7 +92,7 @@
           <v-tab class="backgroundTab" :href="`#tab-5`">
             APORTES
           </v-tab>
-          <v-tab-item class="backgroundTab" :value="'tab-1'">
+          <v-tab-item :value="'tab-1'">
             <v-card flat tile>
               <v-card-text class="pt-0">
                 <Dashboard
@@ -135,7 +142,7 @@
               <v-card-text class="pt-0">
                 <ListContribution
                   :affiliate.sync="affiliate"
-                  :show_contribution.sync="show_contribution"/>
+                  :state.sync="state"/>
               </v-card-text>
             </v-card>
           </v-tab-item>
@@ -251,6 +258,10 @@ export default {
       departure:null,
       marriage_date:null
     },
+    tab: 0,
+    state:{
+      active:false
+    }
   }),
   beforeMount(){
     this.$nuxt.$on('eventGetSpouse', (val) => {
@@ -262,7 +273,10 @@ export default {
     this.editable = false;
   },
   watch: {
-
+    tab: function(newVal, oldVal){
+      if(newVal!= oldVal)
+        this.state.active = false
+    }
   },
     computed: {
     //permisos del selector global por rol

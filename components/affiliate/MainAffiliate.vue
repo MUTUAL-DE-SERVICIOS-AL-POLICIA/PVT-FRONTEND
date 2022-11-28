@@ -59,8 +59,8 @@
         </v-toolbar>
       </v-card-title>
       <v-card-text>
-        <v-tabs :vertical="true" v-model="tab">
-          <v-card color="accent" class="pa-2" style="width:300px" align="center">
+        <v-tabs vertical v-model="tab">
+          <v-card color="accent" class="pa-2" style="width:250px" align="center">
             <v-chip
               class="ma-0"
               color="secondary"
@@ -81,7 +81,7 @@
           <v-tab class="backgroundTab" :href="`#tab-1`">
             DASHBOARD </v-tab>
           <v-tab class="backgroundTab" :href="`#tab-2`">
-            DATOS PERSONALES DEL AFILIADO
+            DATOS PERSONALES
           </v-tab>
           <v-tab class="backgroundTab" :href="`#tab-3`">
             INFORMACION ADICIONAL
@@ -219,8 +219,6 @@ export default {
       affiliate_state_id: null,
     },
     editable: false,
-    show_contribution:false,
-    vertical: false,
     icons: true,
     loading_affiliate: false,
     watch_button_send: false,

@@ -132,8 +132,7 @@
               <v-card-text class="pt-0">
                 <Spouse
                   :affiliate.sync="affiliate"
-                  :spouse.sync="spouse"
-                  :permission="permission" />
+                  :spouse.sync="spouse"/>
               </v-card-text>
             </v-card>
           </v-tab-item>

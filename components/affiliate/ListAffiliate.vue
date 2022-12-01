@@ -36,6 +36,9 @@
           :loading = loading_table
         >
           <!--Estilos de busqueda para las cabeceras -->
+          <template v-slot:[`header.affiliate_id`]="{ header }">
+            <span :class="searching.affiliate_id? 'primary--text' : ''">{{ header.text }}</span>
+          </template>
           <template v-slot:[`header.identity_card_affiliate`]="{ header }">
             <span :class="searching.identity_card_affiliate? 'primary--text' : ''">{{ header.text }}</span>
           </template>
@@ -80,6 +83,7 @@
           <template slot="body.prepend">
             <tr v-if="show_filter">
                 <!--<td><v-text-field placeholder="C.I. Afiliado" spellcheck="false" class="filter-text" v-model="searching.identity_card_affiliate" @keydown.enter="getListAffiliates"></v-text-field></td>-->
+                <td><v-text-field placeholder="Nup" spellcheck="false" class="filter-text" v-model="searching.id_affiliate" @keyup="searchTimeOut()"></v-text-field></td>
                 <td><v-text-field placeholder="C.I. Afiliado" spellcheck="false" class="filter-text" v-model="searching.identity_card_affiliate" @keyup="searchTimeOut()"></v-text-field></td>
                 <td><v-text-field placeholder="Nombre Completo" spellcheck="false" class="filter-text" v-model="searching.full_name_affiliate" @keyup="searchTimeOut()"></v-text-field></td>
                 <td><v-text-field placeholder="Matricula" spellcheck="false" class="filter-text" v-model="searching.registration_affiliate" @keyup="searchTimeOut()"></v-text-field></td>
@@ -110,6 +114,7 @@ export default {
   data: () => ({
     // Cabeceras de la tabla
     headers: [
+      { text: 'Nup', value:'id_affiliate', class: ['table', 'white--text'],width: '2%', sortable: false },
       { text: 'CI Afiliado', value:'identity_card_affiliate', class: ['table', 'white--text'],width: '5%', sortable: false },
       { text: 'Nombre Completo Afiliado', value:'full_name_affiliate', class: ['table', 'white--text'],width: '10%', sortable: false },
       { text: 'Matrícula', value:'registration_affiliate', class: ['table', 'white--text'],width: '5%', sortable: false },
@@ -197,6 +202,7 @@ export default {
         return 'row-white'
     },
     clearAll() {
+      this.searching.id_affiliate= "",
       this.searching.identity_card_affiliate= "",
       this.searching.full_name_affiliate= "",
       this.searching.registration_affiliate = "",

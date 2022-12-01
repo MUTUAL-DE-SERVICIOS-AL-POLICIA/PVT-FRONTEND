@@ -3,7 +3,7 @@
     <v-form ref="forSpouse">
       <v-row class="text-right">
         <v-col cols="12" class="ma-0 pa-0 pt-0">
-          <template v-if="!this.spouse.id"
+          <template v-if="!this.spouse.id && primaryPermission"
             ><v-btn
               x-small
               dark
@@ -23,7 +23,7 @@
               <span> Cancelar</span>
             </v-btn>
           </template>
-          <template v-if="this.spouse.id">
+          <template v-if="(this.spouse.id && primaryPermission) || (this.spouse.id && secondaryPermission)">
             <v-btn
               x-small
               right

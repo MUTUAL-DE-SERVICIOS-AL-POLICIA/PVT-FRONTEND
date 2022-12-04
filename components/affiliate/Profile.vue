@@ -1,6 +1,6 @@
  <template>
   <v-container fluid>
-    <v-form>
+    <v-form ref="forAffiliate">
       <v-row justify="center">
         <v-col cols="12" md="6">
           <v-container class="py-0">
@@ -16,6 +16,8 @@
                   :readonly="!editable || !permission.primary"
                   :outlined="editable && permission.primary"
                   :disabled="editable && !permission.primary"
+                  @keyup.enter="validateForm()"
+                  :rules="[$rules.obligatoria('Primer Nombre'),$rules.soloLetras(),$rules.longitudMinima(3),$rules.longitudMaxima(20)]"
                 >
                 </v-text-field>
               </v-col>
@@ -27,6 +29,8 @@
                   :readonly="!editable || !permission.primary"
                   :outlined="editable && permission.primary"
                   :disabled="editable && !permission.primary"
+                  @keyup.enter="validateForm()"
+                  :rules="[$rules.soloLetras(),$rules.longitudMinima(3),$rules.longitudMaxima(20)]"
                   >
                 </v-text-field>
               </v-col>
@@ -38,6 +42,8 @@
                   :readonly="!editable || !permission.primary"
                   :outlined="editable && permission.primary"
                   :disabled="editable && !permission.primary"
+                  @keyup.enter="validateForm()"
+                  :rules="(affiliate.mothers_last_name == null || affiliate.mothers_last_name == '')?[$rules.obligatoria('Apellido Paterno'),$rules.soloLetras(),$rules.longitudMinima(3),$rules.longitudMaxima(20)]:[$rules.soloLetras(),$rules.longitudMinima(3),$rules.longitudMaxima(20)]"
                 >
                 </v-text-field>
               </v-col>
@@ -49,6 +55,8 @@
                   :readonly="!editable || !permission.primary"
                   :outlined="editable && permission.primary"
                   :disabled="editable && !permission.primary"
+                  @keyup.enter="validateForm()"
+                  :rules="(affiliate.last_name == null || affiliate.last_name == '')?[$rules.obligatoria('Apellido Materno'),$rules.soloLetras(),$rules.longitudMinima(3),$rules.longitudMaxima(20)]:[$rules.soloLetras(),$rules.longitudMinima(3),$rules.longitudMaxima(20)]"
                 >
                 </v-text-field>
               </v-col>
@@ -60,6 +68,8 @@
                   :readonly="!editable || !permission.primary"
                   :outlined="editable && permission.primary"
                   :disabled="editable && !permission.primary"
+                  @keyup.enter="validateForm()"
+                  :rules="[$rules.soloLetras(),$rules.longitudMinima(3),$rules.longitudMaxima(20)]"
                 >
                 </v-text-field>
               </v-col>
@@ -74,6 +84,8 @@
                   :readonly="!editable || !permission.secondary"
                   :outlined="editable && permission.secondary"
                   :disabled="editable && !permission.secondary"
+                  @keyup.enter="validateForm()"
+                  :rules="[$rules.obligatoria('Género')]"
                 >
                 </v-select>
               </v-col>
@@ -85,6 +97,8 @@
                   :readonly="!editable || !permission.primary"
                   :outlined="editable && permission.primary"
                   :disabled="editable && !permission.primary"
+                  @keyup.enter="validateForm()"
+                  :rules="[$rules.obligatoria('Cédula de Identidad'),$rules.longitudMinima(5),$rules.longitudMaxima(15)]"
                 >
                 </v-text-field>
               </v-col>
@@ -99,6 +113,8 @@
                   :readonly="!editable || !permission.secondary"
                   :outlined="editable && permission.secondary"
                   :disabled="editable && !permission.secondary"
+                  @keyup.enter="validateForm()"
+                  :rules="[$rules.obligatoria('Ciudad de Expedición')]"
                   >
                 </v-select>
               </v-col>
@@ -110,6 +126,8 @@
                   :readonly="!editable || !permission.secondary"
                   :outlined="editable && permission.secondary"
                   :disabled="editable && !permission.secondary"
+                  @keyup.enter="validateForm()"
+                  :rules="[$rules.longitudMinima(5),$rules.longitudMaxima(15)]"
                 >
                 </v-text-field>
               </v-col>
@@ -150,6 +168,8 @@
                   :readonly="!editable || !permission.secondary"
                   :outlined="editable && permission.secondary"
                   :disabled="editable && !permission.secondary"
+                  @keyup.enter="validateForm()"
+                  :rules="[$rules.obligatoria('Estado Civil')]"
                 >
                 </v-select>
               </v-col>
@@ -178,6 +198,8 @@
                   :readonly="!editable || !permission.secondary"
                   :outlined="editable && permission.secondary"
                   :disabled="editable && !permission.secondary"
+                  @keyup.enter="validateForm()"
+                  :rules="[$rules.obligatoria('Ciudad de Nacimiento')]"
                 >
                 </v-select>
               </v-col>
@@ -202,6 +224,8 @@
                   :readonly="!editable || !permission.primary"
                   :outlined="editable && permission.primary"
                   :disabled="editable && !permission.primary"
+                  @keyup.enter="validateForm()"
+                  :rules="[$rules.obligatoria('Estado')]"
                 ></v-select>
               </v-col>
             <v-col cols="12" md="6" v-if="!visible">
@@ -273,6 +297,8 @@
                 :readonly="!editable || !permission.primary"
                 :outlined="editable && permission.primary"
                 :disabled="editable && !permission.primary"
+                @keyup.enter="validateForm()"
+                :rules="[$rules.obligatoria('Grado')]"
               ></v-select>
             </v-col>
             <v-col cols="12" md="6">
@@ -288,6 +314,8 @@
                 :readonly="!editable || !permission.primary"
                 :outlined="editable && permission.primary"
                 :disabled="editable && !permission.primary"
+                @keyup.enter="validateForm()"
+                :rules="[$rules.obligatoria('Categoria')]"
               ></v-select>
             </v-col>
             <v-col cols="12" md="6">

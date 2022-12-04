@@ -9,9 +9,9 @@
     hide-default-footer
   >
     <template v-slot:item="props">
-      <tr :class="props.isExpanded ? 'warning white--text': ''">
-        <td @click.stop="expand(props)">{{ props.item.year }}</td>
-        <td @click.stop="expand(props)" v-for="(key,index) in props.item.contributions" :key="index" >{{Object.entries(key.detail).length !==0 ? key.detail.total:'0,00' }}</td>
+      <tr :class="props.isExpanded ? 'secondary white--text': ''">
+        <td class="text-left" @click.stop="expand(props)">{{ props.item.year }}</td>
+        <td class="text-right" @click.stop="expand(props)" v-for="(key,index) in props.item.contributions" :key="index" >{{Object.entries(key.detail).length !==0 ? key.detail.total:'0,00' }}</td>
       </tr>
     </template>
     <template v-slot:expanded-item="{item}">
@@ -25,10 +25,10 @@
             <template v-slot:body="{ items }">
               <tbody>
                 <tr v-for="header in headersDetail" :key="header.id">
-                  <td>
+                  <td class="font-weight-bold">
                     {{ header.text }}
                   </td>
-                  <td v-for="item in items" :key="item.id">
+                  <td class="text-right" v-for="item in items" :key="item.id">
                     {{ Object.entries(item.detail).length !==0 ? item.detail[header.value]: '0,00'}}
                   </td>
                 </tr>
@@ -60,26 +60,26 @@ export default {
     show_detail:false,
     contributions: [],
     headers: [
-      { text: "Año",value: "year", class: ["table", "white--text"], width: "16%", sortable: true,},
-      { text: "Enero",value: "", class: ["table", "white--text"], width: "7%", sortable: false,},
-      { text: "Febrero",value: "", class: ["table", "white--text"], width: "7%", sortable: false,},
-      { text: "Marzo",value: "", class: ["table", "white--text"], width: "7%", sortable: false,},
-      { text: "Abril",value: "", class: ["table", "white--text"], width: "7%", sortable: false,},
-      { text: "Mayo",value: "", class: ["table", "white--text"], width: "7%", sortable: false,},
-      { text: "Junio",value: "", class: ["table", "white--text"], width: "7%", sortable: false,},
-      { text: "Julio",value: "", class: ["table", "white--text"], width: "7%", sortable: false,},
-      { text: "Agosto",value: "", class: ["table", "white--text"], width: "7%",sortable: false,},
-      { text: "Septiembre",value: "", class: ["table", "white--text"], width: "7%",sortable: false,},
-      { text: "Octubre",value: "", class: ["table", "white--text"], width: "7%",sortable: false,},
-      { text: "Noviembre",value: "", class: ["table", "white--text"], width: "7%", sortable: false,},
-      { text: "Diciembre",value: "",class: ["table", "white--text"], width: "7%", sortable: false,},
+      { text: "Año",value: "year", class: ["table", "white--text", "text-left","text-uppercase"], width: "10%", sortable: true,},
+      { text: "Enero",value: "", class: ["table", "white--text", "text-right","text-uppercase"], width: "7%", sortable: false,},
+      { text: "Febrero",value: "", class: ["table", "white--text", "text-right","text-uppercase"], width: "7%", sortable: false,},
+      { text: "Marzo",value: "", class: ["table", "white--text", "text-right","text-uppercase"], width: "7%", sortable: false,},
+      { text: "Abril",value: "", class: ["table", "white--text", "text-right","text-uppercase"], width: "7%", sortable: false,},
+      { text: "Mayo",value: "", class: ["table", "white--text", "text-right","text-uppercase"], width: "7%", sortable: false,},
+      { text: "Junio",value: "", class: ["table", "white--text", "text-right","text-uppercase"], width: "7%", sortable: false,},
+      { text: "Julio",value: "", class: ["table", "white--text", "text-right","text-uppercase"], width: "7%", sortable: false,},
+      { text: "Agosto",value: "", class: ["table", "white--text", "text-right","text-uppercase"], width: "7%",sortable: false,},
+      { text: "Septiembre",value: "", class: ["table", "white--text", "text-right","text-uppercase"], width: "7%",sortable: false,},
+      { text: "Octubre",value: "", class: ["table", "white--text", "text-right","text-uppercase"], width: "7%",sortable: false,},
+      { text: "Noviembre",value: "", class: ["table", "white--text", "text-right","text-uppercase"], width: "7%", sortable: false,},
+      { text: "Diciembre",value: "",class: ["table", "white--text", "text-right","text-uppercase"], width: "7%", sortable: false,},
     ],
     headersDetail: [
-      { text: "Cotizable", value: "quotable", class: ["table", "white--text"], width: "16%", sortable: true,},
-      { text: "Fondo de Retiro", value: "retirement_fund", class: ["table", "white--text"], width: "16%", sortable: true,},
-      { text: "Cuota Mortuoria ", value: "mortuary_quota", class: ["table", "white--text"], width: "16%", sortable: true,},
-      { text: "Aporte", value: "total", class: ["table", "white--text"], width: "16%", sortable: true,},
-      { text: "Reintegro", value: "reimbursement_total", class: ["table", "white--text"], width: "16%", sortable: true,},
+      { text: "Cotizable", value: "quotable", class: ["table", "white--text", "text-left"], width: "10%", sortable: true,},
+      { text: "Fondo de Retiro", value: "retirement_fund", class: ["table", "white--text", "text-left"], width: "10%", sortable: true,},
+      { text: "Cuota Mortuoria ", value: "mortuary_quota", class: ["table", "white--text", "text-left"], width: "10%", sortable: true,},
+      { text: "Aporte", value: "total", class: ["table", "white--text", "text-left"], width: "16%", sortable: true,},
+      { text: "Reintegro", value: "reimbursement_total", class: ["table", "white--text", "text-left"], width: "10%", sortable: true,},
     ],
   }),
   mounted() {

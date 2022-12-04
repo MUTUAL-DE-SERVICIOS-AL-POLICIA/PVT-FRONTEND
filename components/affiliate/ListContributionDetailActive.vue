@@ -21,6 +21,15 @@
       <tr>
         <td>
           <v-text-field
+            placeholder="Tipo"
+            spellcheck="false"
+            class="filter-text"
+            v-model="searching.con_re"
+            @input="getSearchActiveAffiliateContribution()"
+          ></v-text-field>
+        </td>
+        <td>
+          <v-text-field
             placeholder="Año"
             spellcheck="false"
             class="filter-text"
@@ -68,6 +77,7 @@ export default {
   },
   data: () => ({
     searching: {
+      con_re:"",
       year: "",
       month: "",
       breakdown:""
@@ -85,6 +95,13 @@ export default {
     contribution_list: [],
     headers: [
       {
+        text: "Tipo",
+        value: "con_re",
+        input: "",
+        class: ["table", "white--text"],
+        width: "10%",
+        sortable: true,
+      },{
         text: "Año",
         value: "year",
         input: "",
@@ -179,6 +196,7 @@ export default {
           `/contribution/search_active_affiliate_contribution`, undefined, {
             params: {
               affiliate_id: this.$route.params.id,
+              con_re: this.searching.con_re,
               year: this.searching.year,
               month: this.searching.month,
               breakdown:this.searching.breakdown,

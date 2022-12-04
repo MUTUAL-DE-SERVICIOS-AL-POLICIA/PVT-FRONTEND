@@ -1,4 +1,71 @@
 <template>
+    <v-row >
+      <v-col cols="6"  class="text-left mb-0">
+        <v-toolbar-title>APORTES ACTIVO</v-toolbar-title>
+      </v-col>
+      <v-col cols="6" class="text-right mb-0" >
+        <v-tooltip top class="my-0">
+          <template v-slot:activator="{ on }">
+            <v-btn
+              x-small
+              dark
+              :color="'success'"
+              :loading="loading_print_active"
+              v-on="on"
+              class="my-2 mr-2"
+              @click="printContributionsActive()"
+                  >
+              <v-icon> mdi-download</v-icon>Descargar
+            </v-btn>
+          </template>
+            <div>
+              <span>Certificación de Aportes</span>
+            </div>
+          </v-tooltip>
+            <v-btn top
+              x-small
+              dark
+              color="success"
+              class="my-2 mr-2"
+              @click="showDetailActive()"
+            >
+            <span> Detalle</span>
+            </v-btn>
+      </v-col>
+      <v-col cols="4">
+        <span
+          ><strong>Fecha de Ingreso a la Institucional Policial: </strong
+          >{{
+            affiliate.date_entry != null && affiliate.date_entry.trim() != ""
+              ? affiliate.date_entry
+              : "Sin Registro"
+          }}</span
+        ><br />
+      </v-col>
+      <v-col cols="4" >
+        <span
+          ><strong>Fecha de Desvinculación: </strong
+          >{{
+            affiliate.date_derelict != null &&
+            affiliate.date_derelict.trim() != ""
+              ? affiliate.date_derelict
+              : "Sin Registro"
+          }}</span
+        ><br />
+      </v-col>
+      <v-col cols="4">
+        <span
+          ><strong>Último Periodo Según Listas de Revista: </strong
+          >{{
+            affiliate.date_last_contribution != null &&
+            affiliate.date_last_contribution.trim() != ""
+              ? affiliate.date_last_contribution
+              : "Sin Registro"
+          }}</span
+        ><br />
+      </v-col>
+<template  v-if="show">
+  <v-col cols="12" >
   <v-data-table
     :headers="headers"
     :items="contributions"
@@ -39,14 +106,23 @@
       </tr>
     </template>
   </v-data-table>
+  </v-col>
+  </template>
+  </v-row>
 </template>
-
-
 <script>
 export default {
   name: "ListContributionActive",
   props: {
     affiliate: {
+      type: Object,
+      require: true,
+    },
+    show_detail: {
+      type: Object,
+      require: true,
+    },
+    state: {
       type: Object,
       require: true,
     },
@@ -57,7 +133,8 @@ export default {
     loading: true,
     search: "",
     active: true,
-    show_detail:false,
+    show: false,
+    loading_print_active: false,
     contributions: [],
     headers: [
       { text: "Año",value: "year", class: ["table", "white--text", "text-left","text-uppercase"], width: "10%", sortable: true,},
@@ -98,6 +175,7 @@ export default {
             affiliate_id: id,
           }
         );
+        this.show = res.affiliateExist;
         this.contributions = res.payload.all_contributions;
         console.log(this.contributions);
       } catch (e) {
@@ -105,6 +183,32 @@ export default {
       } finally {
         this.loading = false;
       }
+    },
+    async printContributionsActive() {
+      this.loading_print_active = true;
+      try {
+        let res = await this.$axios.get(
+          `/contribution/print_contributions_active/${this.$route.params.id}`,
+          undefined,
+          { responseType: "blob" }
+        );
+        const url = window.URL.createObjectURL(new Blob([res]));
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", "Aporte_Activo.pdf");
+        document.body.appendChild(link);
+        link.click();
+      } catch (e) {
+        console.log(e);
+        this.loading_print_active = false;
+      } finally {
+        this.loading_print_active = false;
+      }
+    },
+    showDetailActive() {
+      this.show_detail.passive = false;
+      this.state.active = true;
+      this.show_detail.active = true;
     },
   },
 };

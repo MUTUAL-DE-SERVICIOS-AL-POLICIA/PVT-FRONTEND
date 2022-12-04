@@ -1,132 +1,10 @@
 <template>
   <v-container fluid>
     <v-form>
-  <template v-if="!state.active">
-   <v-row>
-       <v-col cols="6"  class="text-left mb-0">
-    <v-toolbar-title>APORTES ACTIVO</v-toolbar-title>
-       </v-col>
-       <v-col cols="6" class="text-right mb-0" >
-          <v-tooltip top class="my-0">
-            <template v-slot:activator="{ on }">
-              <v-btn
-                x-small
-                dark
-                :color="'success'"
-                :loading="loading_print_active"
-                v-on="on"
-                class="my-2 mr-2"
-                @click="printContributionsActive()"
-              >
-                <v-icon> mdi-download</v-icon>Descargar
-              </v-btn>
-            </template>
-            <div>
-              <span>Certificación de Aportes</span>
-            </div>
-          </v-tooltip>
-
-      <v-btn top 
-        x-small
-        dark
-        color="success"
-        class="my-2 mr-2"
-        @click="showDetailActive()"
-      >
-        <span> Detalle</span> </v-btn
-      >
-       </v-col>
- 
-      <v-col cols="12" sm="6" md="4">
-        <span
-          ><strong>Fecha de Ingreso a la Institucional Policial: </strong
-          >{{
-            affiliate.date_entry != null && affiliate.date_entry.trim() != ""
-              ? affiliate.date_entry
-              : "Sin Registro"
-          }}</span
-        ><br />
-      </v-col>
-      <v-col cols="12" sm="6" md="4">
-        <span
-          ><strong>Fecha de Desvinculación: </strong
-          >{{
-            affiliate.date_derelict != null &&
-            affiliate.date_derelict.trim() != ""
-              ? affiliate.date_derelict
-              : "Sin Registro"
-          }}</span
-        ><br />
-      </v-col>
-      <v-col cols="12" sm="6" md="4">
-        <span
-          ><strong>Último Periodo Según Listas de Revista: </strong
-          >{{
-            affiliate.date_last_contribution != null &&
-            affiliate.date_last_contribution.trim() != ""
-              ? affiliate.date_last_contribution
-              : "Sin Registro"
-          }}</span
-        ><br />
-      </v-col>
-    </v-row>
-    <ListContributionActive />
-    <v-row  >
-     <v-col cols="6" class="text-left" >
-    <v-toolbar-title >APORTES PASIVO</v-toolbar-title> 
-     </v-col>
-     <v-col cols="6"  class="text-right ">
-          <v-tooltip top class="my-0">
-            <template v-slot:activator="{ on }">
-              <v-btn
-                x-small
-                dark
-                :color="'success'"
-                :loading="loading_passive_old_age"
-                v-on="on"
-                class="my-2 mr-2"
-                @click="printContributionsPassive('VEJEZ')"
-              >
-                <v-icon> mdi-download</v-icon>Titular
-              </v-btn>
-            </template>
-            <div>
-              <span>Certificación de Aportes Vejez</span>
-            </div>
-          </v-tooltip>
-            <v-tooltip top class="my-0">
-            <template v-slot:activator="{ on }">
-              <v-btn
-                x-small
-                dark
-                :color="'success'"
-                :loading="loading_passive_widow"
-                v-show="affiliate.dead && affiliate.spouse!=null"
-                v-on="on"
-                class="my-2 mr-2"
-                @click="printContributionsPassive('VIUDEDAD')"
-              >
-                <v-icon> mdi-download</v-icon>Viudedad
-              </v-btn>
-            </template>
-            <div>
-              <span>Certificación de Aportes Viudedad</span>
-            </div>
-          </v-tooltip>
-           <v-btn
-        x-small
-        dark
-        color="success"
-        class="my-2 mr-2"
-        @click="showDetailPassive()"
-      >
-        <span> Detalle</span> </v-btn
-      >
-   
-        </v-col>
-    </v-row>
-    <ListContributionPassive />
-  </template>
+      <template v-if="!state.active">
+        <ListContributionActive :affiliate.sync="affiliate" :show_detail="show_detail" :state.sync="state"/>
+        <ListContributionPassive :affiliate.sync="affiliate" :show_detail="show_detail" :state.sync="state"/>
+      </template>
   <template v-else-if="state.active">
     <template v-if="show_detail.active">
       <v-row >
@@ -224,87 +102,18 @@ export default {
       passive: false,
       active: false,
     },
-    //state: false,
     contributions: [],
     list: [],
-    loading_print_active: false,
-    loading_passive_old_age: false,
-    loading_passive_widow: false,
   }),
   mounted() {
 
   },
   methods: {
-    expand(props) {
-      props.expand(!props.isExpanded);
-    },
-    showDetailPassive() {
-      this.state.active = true;
-      this.show_detail.passive = true;
-      this.show_detail.active = false;
 
-    },
-    showDetailActive() {
-      this.show_detail.passive = false;
-      this.state.active = true;
-      this.show_detail.active = true;
-    },
     showContribution() {
       if (this.show_detail.active == true || this.show_detail.passive == true)
         this.state.active = false;
     },
-    async printContributionsActive() {
-      this.loading_print_active = true;
-      try {
-        let res = await this.$axios.get(
-          `/contribution/print_contributions_active/${this.$route.params.id}`,
-          undefined,
-          { responseType: "blob" }
-        );
-        const url = window.URL.createObjectURL(new Blob([res]));
-        const link = document.createElement("a");
-        link.href = url;
-        link.setAttribute("download", "Aporte_Activo.pdf");
-        document.body.appendChild(link);
-        link.click();
-      } catch (e) {
-        console.log(e);
-        this.loading_print_active = false;
-      } finally {
-        this.loading_print_active = false;
-      }
-    },
-    async printContributionsPassive(type_contribution) {
-      if(type_contribution=="VEJEZ"){
-         this.loading_passive_old_age = true;
-      }
-      else{
-       this.loading_passive_widow = true;
-      }
-    
-     
-      try {
-        let res = await this.$axios.get(
-          `/contribution/print_contributions_passive/${this.$route.params.id}`,undefined,{ responseType: "blob"  ,params: {
-            affiliate_rent_class: type_contribution,}
-             },
-        );
-        const url = window.URL.createObjectURL(new Blob([res]));
-        const link = document.createElement("a");
-        link.href = url;
-        link.setAttribute("download", "Aporte_Pasivo.pdf");
-        document.body.appendChild(link);
-        link.click();
-      } catch (e) {
-        console.log(e);
-        this.loading_passive_widow = false;
-        this.loading_passive_old_age = false;
-      } finally {
-        this.loading_passive_widow = false;
-        this.loading_passive_old_age = false;
-      }
-    },
-    
   },
 };
 </script>

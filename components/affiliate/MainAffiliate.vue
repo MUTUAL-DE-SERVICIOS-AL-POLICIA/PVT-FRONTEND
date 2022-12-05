@@ -78,7 +78,7 @@
             </v-card-text>
           </v-card>
           <v-tabs-slider></v-tabs-slider>
-          <v-tab class="backgroundTab" :href="`#tab-1`">
+          <v-tab class="backgroundTab" :href="`#tab-1`" >
             DASHBOARD </v-tab>
           <v-tab class="backgroundTab" :href="`#tab-2`">
             DATOS PERSONALES
@@ -264,6 +264,15 @@ export default {
     this.$nuxt.$on('eventGetSpouse', (val) => {
       this.getSpouse(val)
     })
+    this.$nuxt.$on('eventSaveAffiliate', (val) => {
+      this.saveAffiliate()
+    })
+    this.$nuxt.$on('eventSaveAffiliate2', (val) => {
+      this.saveAffiliate()
+    })
+    this.$nuxt.$on('eventResetForm', (val) => {
+      this.resetForm()
+    })
   },
   mounted() {
     this.getAffiliate(this.affiliate_id);
@@ -418,15 +427,7 @@ export default {
         this.loading = false
       }
     },
-    validateForm() {
-      if (this.$refs.forAffiliate) {
-        if (this.$refs.forAffiliate.validate()) {
-          this.saveAffiliate();
-        } else {
-          console.log("no valido");
-        }
-      }
-    },
+
   },
 };
 </script>

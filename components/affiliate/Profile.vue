@@ -1,6 +1,31 @@
  <template>
   <v-container fluid>
-    <v-form ref="forAffiliate">
+    <v-form ref="forProfile">{{ editable }}
+      <v-row class="text-right">
+        <v-col cols="12" class="ma-0 pa-0 pt-0">
+          <template>
+            <v-btn
+              x-small
+              right
+              color="warning"
+              dark
+              @click.stop="validateFormProfile()"
+            >
+              <span v-if="!editable"> EDITAR</span>
+              <span v-else> Confirmar</span>
+            </v-btn>
+            <v-btn
+              x-small
+              color="error"
+              dark
+              v-show="editable"
+              @click.stop="$nuxt.$emit('eventResetForm', true)"
+            >
+              <span> Cancelar</span>
+            </v-btn>
+          </template>
+        </v-col>
+      </v-row>
       <v-row justify="center">
         <v-col cols="12" md="6">
           <v-container class="py-0">
@@ -574,6 +599,17 @@ export default {
       } else {
         this.visible = false;
       }
+    },
+    validateFormProfile() {
+
+        if (this.$refs.forProfile) {
+          if (this.$refs.forProfile.validate()) {
+            this.$nuxt.$emit('eventSaveAffiliate', true)
+            } else {
+              console.log("no valido");
+            }
+        }
+      
     },
 
   },

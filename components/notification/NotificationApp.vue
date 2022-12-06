@@ -658,7 +658,7 @@ export default {
                       }
                     );
                     let error = response.data.error
-                    
+                    this.dialog_send_notification = false
                     if (!error) {        
                       this.btn_send_notification = false      
                       let message = response.message            
@@ -675,6 +675,7 @@ export default {
                       //   showConfirmButton: false,
                       //   timer: 2500
                       // })
+                      this.btn_send_notification = false
                     } else {
                       this.btn_send_notification = false
                       this.$toast.error('Hubo un error, comuniquese con sistemas');
@@ -699,7 +700,7 @@ export default {
               // })               
           } else if(this.text == null || this.text == "") {
             this.dialog_send_notification = false
-            this.$toast.warning('¡El cuerpo del mensae no puede estar vacío!');
+            this.$toast.error('¡El cuerpo del mensaje no puede estar vacío!');
             // const Toast = this.$swal.mixin({
             //   toast: true,
             //   position: 'top-end',
@@ -712,7 +713,7 @@ export default {
             //   title: '¡El cuerpo del mensaje no puede estar vacío!'
             // })
         } else {
-            this.$toast.warning('¡No hay afiliados para notificar!');
+            this.$toast.error('¡No hay afiliados para notificar!');
             // const Toast = this.$swal.mixin({
             //   toast: true,
             //   position: 'top-end',
@@ -953,9 +954,9 @@ export default {
     verify() {
       if(this.text == null || this.text == "" || this.all_affiliates.length == 0 || this.amountToSend() === 0) {              
         if(this.text == null || this.text == "") {
-          this.$toast.warning('¡El cuerpo del mensae no puede estar vacío!');
+          this.$toast.error('¡El cuerpo del mensaje no puede estar vacío!');
         } else {          
-          this.$toast.warning('¡No hay afiliados para notificar!');
+          this.$toast.error('¡No hay afiliados para notificar!');
         } 
         this.dialog_send_notification = false
       } else {

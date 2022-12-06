@@ -27,7 +27,7 @@
             <v-btn
               x-small
               right
-              color="warning"
+              color="success"
               dark
               @click.stop="updateSpouse()"
             >
@@ -414,7 +414,7 @@ export default {
           }
         }
       } catch (e) {
-        this.editable = false;
+        console.log(e)
         this.$toast.error("Ocurrió un error durante la creación inconsistencia de datos.");
       }
     },
@@ -443,7 +443,7 @@ export default {
           }
         }
       } catch (e) {
-        this.editable = false;
+        console.log(e)
         this.$toast.error("Ocurrio un error durante la actualización.");
       }
     },

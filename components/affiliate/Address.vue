@@ -17,7 +17,7 @@
           <v-radio-group
             :value="id_street"
             @change="id_street = props.item.id"
-            :disabled="!editable"
+            :disabled="!sync_up.editable"
           >
             <v-radio :value="props.item.id"></v-radio>
           </v-radio-group>
@@ -27,7 +27,7 @@
             small
             color="info"
             class="mr-2"
-            :disabled="!editable"
+            :disabled="!sync_up.editable"
             @click="editItem(props.item)"
           >
             mdi-pencil
@@ -36,7 +36,7 @@
             small
             color="error"
             @click="deleteItem(props.item)"
-            :disabled="props.item.id === id_street || !editable"
+            :disabled="props.item.id === id_street || !sync_up.editable"
           >
             mdi-delete
           </v-icon>
@@ -53,7 +53,7 @@
               color="info"
               dark
               class="mb-2"
-              :disabled="!editable"
+              :disabled="!sync_up.editable"
               v-bind="attrs"
               v-on="on"
             >
@@ -143,8 +143,8 @@ export default {
       tyoe: Object,
       require: true,
     },
-    editable: {
-      type: Boolean,
+    sync_up: {
+      type: Object,
       require: true,
     },
     cancel: {

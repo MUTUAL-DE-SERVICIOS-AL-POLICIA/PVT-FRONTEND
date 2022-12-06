@@ -1,17 +1,42 @@
 <template>
   <v-container fluid>
-    <v-form>
+    <v-form ref="refAdditionalInformation">
+      <v-row class="text-right">
+        <v-col cols="12" class="ma-0 pa-0 pt-0">
+          <template>
+            <v-btn
+              x-small
+              right
+              color="success"
+              dark
+              @click.stop="validateFormAdditionalInformation()"
+            >
+              <span v-if="!sync_up.editable"> EDITAR</span>
+              <span v-else> Confirmar</span>
+            </v-btn>
+            <v-btn
+              x-small
+              color="error"
+              dark
+              v-show="sync_up.editable"
+              @click.stop="$nuxt.$emit('eventResetForm', true)"
+            >
+              <span> Cancelar</span>
+            </v-btn>
+          </template>
+        </v-col>
+      </v-row>
       <v-row justify="center">
         <v-col cols="12" md="8">
           <v-toolbar-title class="pb-2">DOMICILIO</v-toolbar-title>
           <Address
             :affiliate.sync="affiliate"
             :obj_address.sync="obj_address"
-            :editable.sync="editable"
+            :sync_up.sync="sync_up"
             :cancel.sync="cancel"
-            :readonly="!editable || !permission.secondary"
-            :outlined="editable && permission.secondary"
-            :disabled="editable && !permission.secondary"
+            :readonly="!sync_up.editable || !permission.secondary"
+            :outlined="sync_up.editable && permission.secondary"
+            :disabled="sync_up.editable && !permission.secondary"
           />
         </v-col>
         <v-col cols="12" md="4">
@@ -21,27 +46,27 @@
             dense
             label="Celular1"
             v-mask="'(###)-#####'"
-            :readonly="!editable || !permission.secondary"
-            :outlined="editable && permission.secondary"
-            :disabled="editable && !permission.secondary"
+            :readonly="!sync_up.editable || !permission.secondary"
+            :outlined="sync_up.editable && permission.secondary"
+            :disabled="sync_up.editable && !permission.secondary"
           ></v-text-field>
           <v-text-field
             v-model="affiliate.cell_phone_number[1]"
             dense
             label="Celular2"
             v-mask="'(###)-#####'"
-            :readonly="!editable || !permission.secondary"
-            :outlined="editable && permission.secondary"
-            :disabled="editable && !permission.secondary"
+            :readonly="!sync_up.editable || !permission.secondary"
+            :outlined="sync_up.editable && permission.secondary"
+            :disabled="sync_up.editable && !permission.secondary"
           ></v-text-field>
           <v-text-field
             v-model="affiliate.phone_number"
             dense
             label="Teléfono"
             v-mask="'(#) ###-###'"
-            :readonly="!editable || !permission.secondary"
-            :outlined="editable && permission.secondary"
-            :disabled="editable && !permission.secondary"
+            :readonly="!sync_up.editable || !permission.secondary"
+            :outlined="sync_up.editable && permission.secondary"
+            :disabled="sync_up.editable && !permission.secondary"
           ></v-text-field>
         </v-col>
         <v-col cols="12" md="6">
@@ -54,17 +79,17 @@
             item-value="id"
             label="Entidad Financiera"
             v-model="affiliate.financial_entity_id"
-            :readonly="!editable || !permission.secondary"
-            :outlined="editable && permission.secondary"
-            :disabled="editable && !permission.secondary"
+            :readonly="!sync_up.editable || !permission.secondary"
+            :outlined="sync_up.editable && permission.secondary"
+            :disabled="sync_up.editable && !permission.secondary"
           ></v-select>
           <v-text-field
             dense
             v-model="affiliate.account_number"
             label="Número de Cuenta SIGEP activa"
-            :readonly="!editable || !permission.secondary"
-            :outlined="editable && permission.secondary"
-            :disabled="editable && !permission.secondary"
+            :readonly="!sync_up.editable || !permission.secondary"
+            :outlined="sync_up.editable && permission.secondary"
+            :disabled="sync_up.editable && !permission.secondary"
           ></v-text-field>
         </v-col>
         <v-col cols="12" md="6">
@@ -95,8 +120,8 @@ export default {
       type: Object,
       require: true,
     },
-    editable: {
-      type: Boolean,
+    sync_up: {
+      type: Object,
       require: true,
     },
     obj_address: {
@@ -137,6 +162,19 @@ export default {
         console.log(e);
       } finally {
         this.loading = false;
+      }
+    },
+    validateFormAdditionalInformation() {
+      if (!this.sync_up.editable) {
+        this.sync_up.editable = true;
+      } else {
+        if (this.$refs.refAdditionalInformation) {
+          if (this.$refs.refAdditionalInformation.validate()) {
+            this.$nuxt.$emit('eventSaveAffiliate2', true)
+          } else {
+            console.log("no valido");
+          }
+        }
       }
     },
   },

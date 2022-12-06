@@ -18,44 +18,43 @@
                 v-bind="attrs"
                 v-on="on"
                 @click="getState_cellphone()"
-                color="success"
-                class="mr-4"
+                color="info"
               >
-                <span v-if="!editable"> ASIGNAR CREDENCIALES</span>
+                <span v-if="!sync_up.editable"> ASIGNAR CREDENCIALES</span>
               </v-btn>
             </template>
           </v-tooltip>
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn
-                small
-                dark
-                v-bind="attrs"
-                v-on="on"
-                @click.stop="saveAffiliate()"
-                :color="editable ? 'success' : 'secondary'"
-              >
-                <span v-if="!editable"> EDITAR</span>
-                <span v-else> Confirmar</span>
-              </v-btn>
-            </template>
-          </v-tooltip>
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn
-                small
-                color="error"
-                dark
-                v-bind="attrs"
-                v-on="on"
-                v-show="editable"
-                @click.stop="resetForm()"
-              >
-                <span> cancelar</span>
-              </v-btn>
-            </template>
-            <span>EDITAR</span>
-          </v-tooltip>
+          <!-- <v-tooltip bottom> -->
+            <!-- <template v-slot:activator="{ on, attrs }"> -->
+              <!-- <v-btn -->
+                <!-- small -->
+                <!-- dark -->
+                <!-- v-bind="attrs" -->
+                <!-- v-on="on" -->
+                <!-- @click.stop="saveAffiliate()" -->
+                <!-- :color="sync_up.editable ? 'success' : 'secondary'" -->
+              <!-- > -->
+                <!-- <span v-if="!sync_up.editable"> EDITAR</span> -->
+                <!-- <span v-else> Confirmar</span> -->
+              <!-- </v-btn> -->
+            <!-- </template> -->
+          <!-- </v-tooltip> -->
+          <!-- <v-tooltip bottom> -->
+            <!-- <template v-slot:activator="{ on, attrs }"> -->
+              <!-- <v-btn -->
+                <!-- small -->
+                <!-- color="error" -->
+                <!-- dark -->
+                <!-- v-bind="attrs" -->
+                <!-- v-on="on" -->
+                <!-- v-show="sync_up.editable" -->
+                <!-- @click.stop="resetForm()" -->
+              <!-- > -->
+                <!-- <span> cancelar</span> -->
+              <!-- </v-btn> -->
+            <!-- </template> -->
+            <!-- <span>EDITAR</span> -->
+          <!-- </v-tooltip> -->
         </v-toolbar>
       </v-card-title>
       <v-card-text>
@@ -78,18 +77,18 @@
             </v-card-text>
           </v-card>
           <v-tabs-slider></v-tabs-slider>
-          <v-tab class="backgroundTab" :href="`#tab-1`">
+          <v-tab class="backgroundTab" :href="`#tab-1`" :disabled="sync_up.editable && tab != 'tab-1'" >
             DASHBOARD </v-tab>
-          <v-tab class="backgroundTab" :href="`#tab-2`">
+          <v-tab class="backgroundTab" :href="`#tab-2`" :disabled="sync_up.editable && tab != 'tab-2'">
             DATOS PERSONALES
           </v-tab>
-          <v-tab class="backgroundTab" :href="`#tab-3`">
+          <v-tab class="backgroundTab" :href="`#tab-3`" :disabled="sync_up.editable && tab != 'tab-3'">
             INFORMACION ADICIONAL
           </v-tab>
-          <v-tab class="backgroundTab" :href="`#tab-4`">
+          <v-tab class="backgroundTab" :href="`#tab-4`" :disabled="sync_up.editable && tab != 'tab-4'">
             INFORMACION CONYUGE
           </v-tab>
-          <v-tab class="backgroundTab" :href="`#tab-5`">
+          <v-tab class="backgroundTab" :href="`#tab-5`" :disabled="sync_up.editable && tab != 'tab-5'">
             APORTES
           </v-tab>
           <v-tab-item :value="'tab-1'">
@@ -108,7 +107,7 @@
               <v-card-text class="pt-0">
                 <Profile
                   :affiliate.sync="affiliate"
-                  :editable.sync="editable"
+                  :sync_up.sync="sync_up"
                   :permission="permission"
                 />
               </v-card-text>
@@ -119,7 +118,7 @@
               <v-card-text class="pt-0">
                 <AdditionalInformation
                   :affiliate.sync="affiliate"
-                  :editable.sync="editable"
+                  :sync_up.sync="sync_up"
                   :obj_address.sync="obj_address"
                   :cancel.sync="cancel"
                   :permission="permission"
@@ -217,7 +216,9 @@ export default {
       unit_name: null,
       affiliate_state_id: null,
     },
-    editable: false,
+    sync_up:{
+      editable: false,
+    },
     icons: true,
     loading_affiliate: false,
     watch_button_send: false,
@@ -264,10 +265,19 @@ export default {
     this.$nuxt.$on('eventGetSpouse', (val) => {
       this.getSpouse(val)
     })
+    this.$nuxt.$on('eventSaveAffiliate', (val) => {
+      this.saveAffiliate()
+    })
+    this.$nuxt.$on('eventSaveAffiliate2', (val) => {
+      this.saveAffiliate()
+    })
+    this.$nuxt.$on('eventResetForm', (val) => {
+      this.resetForm()
+    })
   },
   mounted() {
     this.getAffiliate(this.affiliate_id);
-    this.editable = false;
+    this.sync_up.editable = false;
   },
   watch: {
     tab: function(newVal, oldVal){
@@ -307,7 +317,7 @@ export default {
     resetForm() {
       this.cancel = true;
       this.getAffiliate(this.$route.params.id);
-      this.editable = false;
+      this.sync_up.editable = false;
       this.dialog_send_credential = false;
       this.$nextTick(() => {
         this.cancel = false
@@ -328,8 +338,8 @@ export default {
     },
     async saveAffiliate() {
       try {
-        if (!this.editable) {
-          this.editable = true;
+        if (!this.sync_up.editable) {
+          this.sync_up.editable = true;
         } else {
           await this.$axios.patch(
             `affiliate/affiliate/${this.affiliate.id}`,
@@ -339,10 +349,10 @@ export default {
           this.$toast.success(
             "Se actualizao correctamente los datos del afiliado."
           );
-          this.editable = false;
+          this.sync_up.editable = false;
         }
       } catch (e) {
-        this.editable = false;
+        this.sync_up.editable = false;
         this.$toast.error("Ocurrio un error durante la actualización");
       }
     },
@@ -418,15 +428,7 @@ export default {
         this.loading = false
       }
     },
-    validateForm() {
-      if (this.$refs.forAffiliate) {
-        if (this.$refs.forAffiliate.validate()) {
-          this.saveAffiliate();
-        } else {
-          console.log("no valido");
-        }
-      }
-    },
+
   },
 };
 </script>

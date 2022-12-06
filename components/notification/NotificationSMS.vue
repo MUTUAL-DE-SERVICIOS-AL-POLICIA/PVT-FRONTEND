@@ -71,10 +71,10 @@
           </v-row>
         </v-form>
 
-    <v-dialog v-model="dialog_send_notification" max-width="500" persistent>
+    <v-dialog v-model="dialog_send_notification" max-width="400" persistent>
       <v-card>
         <v-card-title>
-          Esta seguro de realizar el envio de notificaciones?
+          ¿Está seguro de realizar el envío de <br>notificaciones?
         </v-card-title>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -129,7 +129,7 @@ export default {
         this.btn_send_notification = true;
         let formData = new FormData();
         formData.append("file", this.form.file);
-        formData.append("user_id", 1)
+        formData.append("user_id", this.$store.getters.user.id)
         // formData.append("title", this.form.title);
         // formData.append("message", this.form.message);
         // formData.append("attached", this.form.attached);

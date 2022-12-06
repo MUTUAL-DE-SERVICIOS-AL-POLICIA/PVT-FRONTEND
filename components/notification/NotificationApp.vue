@@ -127,8 +127,8 @@
               <transition-group name="list" tag="div">
                 <drag
                   class="drag table"
-                  v-for="n in params"
-                  :key="n"
+                  v-for="(n, i) in params"                   
+                  :key="n+i"
                   :data="n"
                   @cut="remove(n)"
                   >{{ n.param }}</drag
@@ -223,7 +223,7 @@
                     elevation="5"
                     color="primary"
                     :disabled="filter"
-                    @click="notify()"
+                    @click="verify()"
                   >
                     ENVIAR
                   </v-btn>
@@ -355,6 +355,38 @@
         </template>
       </v-data-table>
     </v-card>
+
+    <v-dialog
+      v-model="dialog_send_notification"
+      max-width="400"
+      persistent
+    >
+      <v-card>
+          <v-card-title>
+            ¿Está seguro de realizar el envío de<br> notificaciones?
+          </v-card-title>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              color="error"
+              text
+              @click="dialog_send_notification = false"
+              :disabled="btn_send_notification"
+            >
+              Cerrar
+            </v-btn>
+            <v-btn
+              color="sucess"
+              text
+              @click="notify()"
+              :loading="btn_send_notification"
+            >
+              Enviar
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+    </v-dialog>
+
   </div>
 </template>
 <script>
@@ -368,12 +400,12 @@ export default {
   },
   props: {},
   mounted() {
-    this.getActions();
-    this.getMethodsPayments();
-    this.getSemesters();
-    this.getHierarchies();
-    this.getObservations();
-    this.getBeneficiaries();
+    this.getActions()
+    this.getMethodsPayments()
+    this.getSemesters()
+    this.getHierarchies()
+    this.getObservations()
+    this.getBeneficiaries()
   },
   data: () => ({
     scrollInvoked: 0,    
@@ -501,7 +533,9 @@ export default {
     file: null,
     url_file: null,
     parameters: {},
-    filter: false,    
+    filter: false,  
+    dialog_send_notification: false,
+    btn_send_notification: false,  
   }),
   watch: {
     options: function (newVal, oldVal) {
@@ -593,22 +627,25 @@ export default {
       }
     },
     async notify() {
-      try {                   
-          if(this.text != null && this.text != "" && this.all_affiliates.length && this.amountToSend() !== 0) {
+      try {    
+                      
+          if(this.text != null && this.text != "" && this.all_affiliates.length && this.amountToSend() !== 0) {            
+            
             if(this.file != null) 
               this.url_file = await this.$firebase.getURL(this.file);  
-            let amount = this.amountToSend()                      
-            this.$swal({
-              title: '¿Está seguro de enviar notificaciones?',
-              text: `¡Se va enviar a ${amount} afiliados`,  
-              type: 'warning',
-              showCancelButton: true,
-              confirmButtonColor: '#00838F',
-              cancelButtonColor: '#d33',
-              confirmButtonText: 'Confirmar'
-            }).then( async (result) => {                         
-                if(result.value) {
+            // let amount = this.amountToSend()                      
+            // this.$swal({
+            //   title: '¿Está seguro de enviar notificaciones?',
+            //   text: `¡Se va enviar a ${amount} afiliados`,  
+            //   type: 'warning',
+            //   showCancelButton: true,
+            //   confirmButtonColor: '#00838F',
+            //   cancelButtonColor: '#d33',
+            //   confirmButtonText: 'Confirmar'
+            // }).then( async (result) => {                         
+            //     if(result.value) {
                   try {
+                    this.btn_send_notification = true
                     let response = await this.$axios.post(
                       "/notification/send_mass_notification",
                       {
@@ -622,60 +659,71 @@ export default {
                     );
                     let error = response.data.error
                     
-                    if (!error) {              
+                    if (!error) {        
+                      this.btn_send_notification = false      
                       let message = response.message            
                       let success_count = response.data.success_count
                       let cmp = success_count == 1 ? "afiliado" : "afiliados"
-                      this.$swal({
-                        position: 'top-end',
-                        type: 'success',
-                        title: message,
-                        text: `Se ha notificado exitosamente a ${success_count} ${cmp}`,
-                        showConfirmButton: false,
-                        timer: 2500
-                      })
+                      this.$toast.success(
+                        `Se ha notificado exitosamente a ${success_count} ${cmp}`     
+                      );
+                      // this.$swal({
+                      //   position: 'top-end',
+                      //   type: 'success',
+                      //   title: message,
+                      //   text: `Se ha notificado exitosamente a ${success_count} ${cmp}`,
+                      //   showConfirmButton: false,
+                      //   timer: 2500
+                      // })
                     } else {
-                      this.$swal({
-                        type: 'error',
-                        title: 'Hubo un error',
-                        text: 'Comuniquese con sistemas'
-                      })
+                      this.btn_send_notification = false
+                      this.$toast.error('Hubo un error, comuniquese con sistemas');
+                      // this.$swal({
+                      //   type: 'error',
+                      //   title: 'Hubo un error',
+                      //   text: 'Comuniquese con sistemas'
+                      // })
                     }
                   } catch(e) {
-                    this.$swal({
-                      type: 'error',
-                      title: 'Hubo un error',
-                      text: 'Comuniquese con sistemas'
-                    })
+                    // this.$swal({
+                    //   type: 'error',
+                    //   title: 'Hubo un error',
+                    //   text: 'Comuniquese con sistemas'
+                    // })
+                    this.btn_send_notification = false
+                    this.$toast.error('Hubo un error, comuniquese con sistemas');
                     console.log(e)
                   }
-                }
+              //   }
                 
-              })               
+              // })               
           } else if(this.text == null || this.text == "") {
-            const Toast = this.$swal.mixin({
-              toast: true,
-              position: 'top-end',
-              showConfirmButton: false,
-              timer: 3000,
-              timerProgressBar: true,
-            })
-            Toast.fire({
-              type: 'warning',
-              title: '¡El cuerpo del mensaje no puede estar vacío!'
-            })
+            this.dialog_send_notification = false
+            this.$toast.warning('¡El cuerpo del mensae no puede estar vacío!');
+            // const Toast = this.$swal.mixin({
+            //   toast: true,
+            //   position: 'top-end',
+            //   showConfirmButton: false,
+            //   timer: 3000,
+            //   timerProgressBar: true,
+            // })
+            // Toast.fire({
+            //   type: 'warning',
+            //   title: '¡El cuerpo del mensaje no puede estar vacío!'
+            // })
         } else {
-            const Toast = this.$swal.mixin({
-              toast: true,
-              position: 'top-end',
-              showConfirmButton: false,
-              timer: 3000,
-              timerProgressBar: true,
-            })
-            Toast.fire({
-              type: 'warning',
-              title: '¡No hay afiliados para notificar!'
-            })
+            this.$toast.warning('¡No hay afiliados para notificar!');
+            // const Toast = this.$swal.mixin({
+            //   toast: true,
+            //   position: 'top-end',
+            //   showConfirmButton: false,
+            //   timer: 3000,
+            //   timerProgressBar: true,
+            // })
+            // Toast.fire({
+            //   type: 'warning',
+            //   title: '¡No hay afiliados para notificar!'
+            // })
         }                         
       } catch (e) {
         console.log(e);
@@ -902,8 +950,20 @@ export default {
       if(this.file !== null)
       console.log(this.$firebase.upload(this.file));
     },
-  },
-};
+    verify() {
+      if(this.text == null || this.text == "" || this.all_affiliates.length == 0 || this.amountToSend() === 0) {              
+        if(this.text == null || this.text == "") {
+          this.$toast.warning('¡El cuerpo del mensae no puede estar vacío!');
+        } else {          
+          this.$toast.warning('¡No hay afiliados para notificar!');
+        } 
+        this.dialog_send_notification = false
+      } else {
+        this.dialog_send_notification = true
+      }
+    },
+  }
+}
 </script>
 <style scoped>
 .drag {

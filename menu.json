@@ -43,8 +43,19 @@
   },
   {
     "title": "Notificaciones App-Movil",
-    "icon": "mdi-send",
-    "href": "/notification/PageNotification",
-    "permission": "show-notification"
+    "icon": "mdi-bell-badge",
+    "permission": "show-notification",
+    "group": [
+      {
+        "href": "/notification/PageNotification",
+        "title": "Notificaciones",
+        "icon": "mdi-send"
+      },
+      {
+        "href": "/notification/PageReportNotification",
+        "title": "Reporte",
+        "icon": "mdi-file-chart"
+      }
+    ]
   }
 ]

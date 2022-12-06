@@ -71,10 +71,10 @@
           </v-row>
         </v-form>
 
-    <v-dialog v-model="dialog_send_notification" max-width="500" persistent>
+    <v-dialog v-model="dialog_send_notification" max-width="400" persistent>
       <v-card>
         <v-card-title>
-          Esta seguro de realizar el envio de notificaciones?
+          ¿Está seguro de realizar el envío de <br>notificaciones?
         </v-card-title>
         <v-card-actions>
           <v-spacer></v-spacer>

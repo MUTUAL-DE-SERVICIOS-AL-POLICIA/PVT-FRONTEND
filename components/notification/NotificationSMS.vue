@@ -129,7 +129,7 @@ export default {
         this.btn_send_notification = true;
         let formData = new FormData();
         formData.append("file", this.form.file);
-        formData.append("user_id", 1)
+        formData.append("user_id", this.$store.getters.user.id)
         // formData.append("title", this.form.title);
         // formData.append("message", this.form.message);
         // formData.append("attached", this.form.attached);

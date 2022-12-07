@@ -11,16 +11,15 @@
             </v-col>
           </v-row>
           <v-tooltip>
-            <template v-slot:activator="{ on, attrs }">
+            <template v-slot:activator="{ on }">
               <v-btn
                 small
                 dark
-                v-bind="attrs"
                 v-on="on"
                 @click="getState_cellphone()"
                 color="info"
               >
-                <span v-if="!sync_up.editable"> ASIGNAR CREDENCIALES</span>
+                <span> ASIGNAR CREDENCIALES</span>
               </v-btn>
             </template>
           </v-tooltip>

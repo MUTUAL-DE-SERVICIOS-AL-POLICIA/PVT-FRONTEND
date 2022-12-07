@@ -1,36 +1,47 @@
 <template>
   <v-row >
-    <v-col cols="6"  class="text-left mb-0">
-      <v-toolbar-title>APORTES ACTIVO</v-toolbar-title>
+    <v-col cols="6"  class="text-left ma-0 pb-0">
+      <v-toolbar-title>APORTES ACTIVO
+        <v-tooltip top>
+          <template v-slot:activator="{ on }">
+            <v-btn top
+              small
+              dark
+              icon
+              color="success"
+              class="my-2 mr-4"
+              v-on="on"
+              @click="showDetailActive()"
+            >
+              <v-icon> mdi-arrow-right-bold </v-icon>
+            </v-btn>
+          </template>
+          <div>
+            <span>Detalle de Aportes</span>
+          </div>
+        </v-tooltip>
+      </v-toolbar-title>
     </v-col>
-    <v-col cols="6" class="text-right mb-0"  v-if="show">
+    <v-col cols="6" class="text-right ma-0 pb-0"  v-if="show">
       <v-tooltip top class="my-0">
         <template v-slot:activator="{ on }">
           <v-btn
             x-small
-            dark
-            :color="'success'"
+            color="info"
             :loading="loading_print_active"
             v-on="on"
-            class="my-2 mr-2"
+            class="ma-2 pa-3"
+            outlined
+            elevation="2"
             @click="printContributionsActive()"
-                >
-            <v-icon> mdi-download</v-icon>Descargar
+            >
+            <v-icon> mdi-download</v-icon>Certificación
           </v-btn>
         </template>
         <div>
           <span>Certificación de Aportes</span>
         </div>
       </v-tooltip>
-      <v-btn top
-        x-small
-        dark
-        color="success"
-        class="my-2 mr-2"
-        @click="showDetailActive()"
-      >
-      <span> Detalle</span>
-      </v-btn>
     </v-col>
     <v-col cols="12"  v-if="show">
       <v-data-table
@@ -75,7 +86,7 @@
       </v-data-table>
     </v-col>
     <v-col cols="12"  v-else>
-      No se encontro aportes como activo.
+      NO SE ENCONTRARON REGISTROS.
     </v-col>
   </v-row>
 </template>

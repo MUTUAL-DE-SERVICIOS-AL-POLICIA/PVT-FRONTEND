@@ -9,48 +9,51 @@
           <template v-slot:activator="{ on }">
             <v-btn
               x-small
-              dark
-              :color="'success'"
+              color="info"
               :loading="loading_passive_old_age"
               v-on="on"
-              class="my-2 mr-2"
+              class="ma-2 pa-3"
               @click="printContributionsPassive('VEJEZ')"
+              outlined
+              elevation="2"
             >
-              <v-icon> mdi-download</v-icon>Titular
+              <v-icon> mdi-download</v-icon>Cert. Titular
             </v-btn>
-            </template>
-            <div>
-              <span>Certificación de Aportes Vejez</span>
-            </div>
-          </v-tooltip>
-          <v-tooltip top class="my-0">
-            <template v-slot:activator="{ on }">
-              <v-btn
-                x-small
-                dark
-                :color="'success'"
-                :loading="loading_passive_widow"
-                v-show="affiliate.dead && affiliate.spouse!=null"
-                v-on="on"
-                class="my-2 mr-2"
-                @click="printContributionsPassive('VIUDEDAD')"
-              >
-                <v-icon> mdi-download</v-icon>Viudedad
-              </v-btn>
-            </template>
-            <div>
-              <span>Certificación de Aportes Viudedad</span>
-            </div>
-          </v-tooltip>
-           <v-btn
+          </template>
+          <div>
+            <span>Certificación de Aportes Vejez</span>
+          </div>
+        </v-tooltip>
+        <v-tooltip top class="my-0">
+          <template v-slot:activator="{ on }">
+            <v-btn
               x-small
-              dark
               color="success"
-              class="my-2 mr-2"
-              @click="showDetailPassive()"
+              :loading="loading_passive_widow"
+              v-show="affiliate.dead && affiliate.spouse!=null"
+              v-on="on"
+              class="ma-2 pa-3"
+              @click="printContributionsPassive('VIUDEDAD')"
+              outlined
+              elevation="2"
             >
-              <span> Detalle</span>
+              <v-icon> mdi-download</v-icon>Cert. Viudedad
             </v-btn>
+          </template>
+          <div>
+            <span>Certificación de Aportes Viudedad</span>
+          </div>
+        </v-tooltip>
+        <v-btn
+          x-small
+          color="secondary"
+          class="ma-2 pa-3"
+          @click="showDetailPassive()"
+          outlined
+          elevation="2"
+        >
+          <v-icon> mdi-cash</v-icon>Detalle
+        </v-btn>
       </v-col>
       <v-col cols="12" v-if="show">
         <v-data-table
@@ -92,7 +95,7 @@
         </v-data-table>
       </v-col>
       <v-col cols="12"  v-else>
-        No se encontro aportes como pasivo.
+        NO SE ENCONTRARON REGISTROS.
       </v-col>
     </template>
   </v-row>

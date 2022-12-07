@@ -1,113 +1,82 @@
 <template>
-    <v-row >
-      <v-col cols="6"  class="text-left mb-0">
-        <v-toolbar-title>APORTES ACTIVO</v-toolbar-title>
-      </v-col>
-      <v-col cols="6" class="text-right mb-0" >
-        <v-tooltip top class="my-0">
-          <template v-slot:activator="{ on }">
-            <v-btn
-              x-small
-              dark
-              :color="'success'"
-              :loading="loading_print_active"
-              v-on="on"
-              class="my-2 mr-2"
-              @click="printContributionsActive()"
-                  >
-              <v-icon> mdi-download</v-icon>Descargar
-            </v-btn>
-          </template>
-            <div>
-              <span>Certificación de Aportes</span>
-            </div>
-          </v-tooltip>
-            <v-btn top
-              x-small
-              dark
-              color="success"
-              class="my-2 mr-2"
-              @click="showDetailActive()"
-            >
-            <span> Detalle</span>
-            </v-btn>
-      </v-col>
-      <v-col cols="4">
-        <span
-          ><strong>Fecha de Ingreso a la Institucional Policial: </strong
-          >{{
-            affiliate.date_entry != null && affiliate.date_entry.trim() != ""
-              ? affiliate.date_entry
-              : "Sin Registro"
-          }}</span
-        ><br />
-      </v-col>
-      <v-col cols="4" >
-        <span
-          ><strong>Fecha de Desvinculación: </strong
-          >{{
-            affiliate.date_derelict != null &&
-            affiliate.date_derelict.trim() != ""
-              ? affiliate.date_derelict
-              : "Sin Registro"
-          }}</span
-        ><br />
-      </v-col>
-      <v-col cols="4">
-        <span
-          ><strong>Último Periodo Según Listas de Revista: </strong
-          >{{
-            affiliate.date_last_contribution != null &&
-            affiliate.date_last_contribution.trim() != ""
-              ? affiliate.date_last_contribution
-              : "Sin Registro"
-          }}</span
-        ><br />
-      </v-col>
-<template  v-if="show">
-  <v-col cols="12" >
-  <v-data-table
-    :headers="headers"
-    :items="contributions"
-    :loading="loading"
-    single-expand
-    item-key="year"
-    :itemsPerPage="contributions.length"
-    hide-default-footer
-  >
-    <template v-slot:item="props">
-      <tr :class="props.isExpanded ? 'secondary white--text': ''">
-        <td class="text-left" @click.stop="expand(props)">{{ props.item.year }}</td>
-        <td class="text-right" @click.stop="expand(props)" v-for="(key,index) in props.item.contributions" :key="index" >{{Object.entries(key.detail).length !==0 ? key.detail.total:'0,00' }}</td>
-      </tr>
-    </template>
-    <template v-slot:expanded-item="{item}">
-      <tr>
-        <td :colspan="13" class="px-0">
-          <v-data-table 
-            :items="item.contributions"
-            :hide-default-footer="true"
-            :itemsPerPage="12"
-            class="tertiary">
-            <template v-slot:body="{ items }">
-              <tbody>
-                <tr v-for="header in headersDetail" :key="header.id">
-                  <td class="font-weight-bold">
-                    {{ header.text }}
-                  </td>
-                  <td class="text-right" v-for="item in items" :key="item.id">
-                    {{ Object.entries(item.detail).length !==0 ? item.detail[header.value]: '0,00'}}
-                  </td>
-                </tr>
-              </tbody>
-            </template>
-          </v-data-table>
-        </td>
-      </tr>
-    </template>
-  </v-data-table>
-  </v-col>
-  </template>
+  <v-row >
+    <v-col cols="6"  class="text-left mb-0">
+      <v-toolbar-title>APORTES ACTIVO</v-toolbar-title>
+    </v-col>
+    <v-col cols="6" class="text-right mb-0"  v-if="show">
+      <v-tooltip top class="my-0">
+        <template v-slot:activator="{ on }">
+          <v-btn
+            x-small
+            dark
+            :color="'success'"
+            :loading="loading_print_active"
+            v-on="on"
+            class="my-2 mr-2"
+            @click="printContributionsActive()"
+                >
+            <v-icon> mdi-download</v-icon>Descargar
+          </v-btn>
+        </template>
+        <div>
+          <span>Certificación de Aportes</span>
+        </div>
+      </v-tooltip>
+      <v-btn top
+        x-small
+        dark
+        color="success"
+        class="my-2 mr-2"
+        @click="showDetailActive()"
+      >
+      <span> Detalle</span>
+      </v-btn>
+    </v-col>
+    <v-col cols="12"  v-if="show">
+      <v-data-table
+        :headers="headers"
+        :items="contributions"
+        :loading="loading"
+        single-expand
+        item-key="year"
+        :itemsPerPage="contributions.length"
+        hide-default-footer
+      >
+        <template v-slot:item="props">
+          <tr :class="props.isExpanded ? 'secondary white--text': ''">
+            <td class="text-left" @click.stop="expand(props)">{{ props.item.year }}</td>
+            <td class="text-right" @click.stop="expand(props)" v-for="(key,index) in props.item.contributions" :key="index" >{{Object.entries(key.detail).length !==0 ? key.detail.total:'0,00' }}</td>
+          </tr>
+        </template>
+        <template v-slot:expanded-item="{item}">
+          <tr>
+            <td :colspan="13" class="px-0">
+              <v-data-table 
+                :items="item.contributions"
+                :hide-default-footer="true"
+                :itemsPerPage="12"
+                class="tertiary">
+                <template v-slot:body="{ items }">
+                  <tbody>
+                    <tr v-for="header in headersDetail" :key="header.id">
+                      <td class="font-weight-bold">
+                        {{ header.text }}
+                      </td>
+                      <td class="text-right" v-for="item in items" :key="item.id">
+                        {{ Object.entries(item.detail).length !==0 ? item.detail[header.value]: '0,00'}}
+                      </td>
+                    </tr>
+                  </tbody>
+                </template>
+              </v-data-table>
+            </td>
+          </tr>
+        </template>
+      </v-data-table>
+    </v-col>
+    <v-col cols="12"  v-else>
+      No se encontro aportes como activo.
+    </v-col>
   </v-row>
 </template>
 <script>
@@ -175,7 +144,7 @@ export default {
             affiliate_id: id,
           }
         );
-        this.show = res.affiliateExist;
+        this.show = res.hasContributions;
         this.contributions = res.payload.all_contributions;
         console.log(this.contributions);
       } catch (e) {

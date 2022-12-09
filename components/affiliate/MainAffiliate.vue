@@ -4,198 +4,238 @@
       <v-card-title>
         <v-toolbar dense color="tertiary" class="caption">
           <v-row>
-            <v-col cols="12" class="pa-0">
-              Listado de afiliados
-            </v-col>
+            <v-col cols="12" class="pa-0"> Datos del afiliado </v-col>
             <v-col cols="12" class="pa-0">
               <v-icon>mdi-arrow-right-bold-box</v-icon>
-                Datos del afiliado
+              Datos del afiliado
             </v-col>
           </v-row>
-            <v-tooltip bottom>
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  dark
-                  v-bind="attrs"
-                  v-on="on"
-                   @click="getState_cellphone()"
-                  color="success"
-                >
-                  <v-toolbar-title v-if="!editable"> ASIGNAR CREDENCIALES</v-toolbar-title>
-                </v-btn>
-              </template>
-            </v-tooltip>
-            <v-tooltip bottom>
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  dark
-                  v-bind="attrs"
-                  v-on="on"
-                  @click.stop="saveAffiliate()"
-                  :color="editable ? 'success' : 'secondary'"
-                >
-                  <v-toolbar-title v-if="!editable"> EDITAR</v-toolbar-title>
-                  <v-toolbar-title v-else> Confirmar</v-toolbar-title>
-                </v-btn>
-              </template>
-            </v-tooltip>
-            <v-tooltip bottom>
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  color="error"
-                  dark
-                  v-bind="attrs"
-                  v-on="on"
-                  v-show="editable"
-                  @click.stop="resetForm()"
-                >
-                  <v-toolbar-title> cancelar</v-toolbar-title>
-                </v-btn>
+          <v-tooltip>
+            <template v-slot:activator="{ on }">
+              <v-btn
+                small
+                dark
+                v-on="on"
+                @click="getState_cellphone()"
+                color="info"
+              >
+                <span> ASIGNAR CREDENCIALES</span>
+              </v-btn>
             </template>
-            <span>EDITAR</span>
-            </v-tooltip>
+          </v-tooltip>
+          <!-- <v-tooltip bottom> -->
+            <!-- <template v-slot:activator="{ on, attrs }"> -->
+              <!-- <v-btn -->
+                <!-- small -->
+                <!-- dark -->
+                <!-- v-bind="attrs" -->
+                <!-- v-on="on" -->
+                <!-- @click.stop="saveAffiliate()" -->
+                <!-- :color="sync_up.editable ? 'success' : 'secondary'" -->
+              <!-- > -->
+                <!-- <span v-if="!sync_up.editable"> EDITAR</span> -->
+                <!-- <span v-else> Confirmar</span> -->
+              <!-- </v-btn> -->
+            <!-- </template> -->
+          <!-- </v-tooltip> -->
+          <!-- <v-tooltip bottom> -->
+            <!-- <template v-slot:activator="{ on, attrs }"> -->
+              <!-- <v-btn -->
+                <!-- small -->
+                <!-- color="error" -->
+                <!-- dark -->
+                <!-- v-bind="attrs" -->
+                <!-- v-on="on" -->
+                <!-- v-show="sync_up.editable" -->
+                <!-- @click.stop="resetForm()" -->
+              <!-- > -->
+                <!-- <span> cancelar</span> -->
+              <!-- </v-btn> -->
+            <!-- </template> -->
+            <!-- <span>EDITAR</span> -->
+          <!-- </v-tooltip> -->
         </v-toolbar>
       </v-card-title>
       <v-card-text>
-
-      <v-tabs
-        :vertical="true"
-      >
-        <v-card color="backgroundCard" >
-          <v-card-text>
-            <v-row>
-              <v-col cols="12" md="12" align="center">
-                <h2> {{affiliate.full_name}}</h2><br>
-                <strong>C.I.:  </strong> {{affiliate.identity_card}}
-              </v-col>
-            </v-row>
-          </v-card-text>
-        </v-card>
-        <v-tabs-slider></v-tabs-slider>
-        <v-tab class="backgroundTab"
-          :href="`#tab-1`"
-        >
-        DASHBOARD
-        </v-tab>
-        <v-tab class="backgroundTab"
-          :href="`#tab-2`"
-        >
-        DATOS PERSONALES DEL AFILIADO
-        </v-tab>
-        <v-tab  class="backgroundTab"
-          :href="`#tab-3`"
-        >
-        INFORMACION ADICIONAL
-        </v-tab>
-        <v-tab  class="backgroundTab"
-          :href="`#tab-4`"
-        >
-        INFORMACION CONYUGE
-        </v-tab>
-        <v-tab-item  class="backgroundTab"
-        :value="'tab-1'"
-        >
-          <v-card flat tile >
-            <v-card-text>
-              <Dashboard 
-                :affiliate.sync="affiliate"
-                :loading_affiliate="loading_affiliate" />
+        <v-tabs vertical v-model="tab">
+          <v-card color="accent" class="pa-2" style="width:250px" align="center">
+            <v-chip
+              class="ma-0"
+              color="secondary"
+              label
+              text-color="white"
+            >
+              <v-icon left class="body-2">
+                NUP:
+              </v-icon>
+              {{ affiliate.id }}
+            </v-chip>
+            <v-card-text class="textPrimary--text">
+              <h2>{{ affiliate.full_name }}</h2>
+              <strong>C.I.: </strong> {{ affiliate.identity_card }}
             </v-card-text>
           </v-card>
-        </v-tab-item>
-        <v-tab-item
-          :value="'tab-2'"
-         >
-          <v-card flat tile >
+          <v-tabs-slider></v-tabs-slider>
+          <v-tab class="backgroundTab" :href="`#tab-1`" :disabled="sync_up.editable && tab != 'tab-1'" >
+            DASHBOARD </v-tab>
+          <v-tab class="backgroundTab" :href="`#tab-2`" :disabled="sync_up.editable && tab != 'tab-2'">
+            DATOS PERSONALES
+          </v-tab>
+          <v-tab class="backgroundTab" :href="`#tab-3`" :disabled="sync_up.editable && tab != 'tab-3'">
+            INFORMACION ADICIONAL
+          </v-tab>
+          <v-tab class="backgroundTab" :href="`#tab-4`" :disabled="sync_up.editable && tab != 'tab-4'">
+            INFORMACION CONYUGE
+          </v-tab>
+          <v-tab class="backgroundTab" :href="`#tab-5`" :disabled="sync_up.editable && tab != 'tab-5'">
+            APORTES
+          </v-tab>
+          <v-tab-item :value="'tab-1'">
+            <v-card flat tile>
+              <v-card-text class="pt-0">
+                <Dashboard
+                  :affiliate.sync="affiliate"
+                  :loading_affiliate="loading_affiliate"
+                  :permission="permission"
+                />
+              </v-card-text>
+            </v-card>
+          </v-tab-item>
+          <v-tab-item :value="'tab-2'">
+            <v-card flat tile>
+              <v-card-text class="pt-0">
+                <Profile
+                  :affiliate.sync="affiliate"
+                  :sync_up.sync="sync_up"
+                  :permission="permission"
+                />
+              </v-card-text>
+            </v-card>
+          </v-tab-item>
+          <v-tab-item :value="'tab-3'">
+            <v-card flat tile>
+              <v-card-text class="pt-0">
+                <AdditionalInformation
+                  :affiliate.sync="affiliate"
+                  :sync_up.sync="sync_up"
+                  :obj_address.sync="obj_address"
+                  :cancel.sync="cancel"
+                  :permission="permission"
+                />
+              </v-card-text>
+            </v-card>
+          </v-tab-item>
+          <v-tab-item :value="'tab-4'">
+            <v-card flat tile>
+              <v-card-text class="pt-0">
+                <Spouse
+                  :affiliate.sync="affiliate"
+                  :spouse.sync="spouse"/>
+              </v-card-text>
+            </v-card>
+          </v-tab-item>
+          <v-tab-item :value="'tab-5'">
+            <v-card flat tile>
+              <v-card-text class="pt-0">
+                <ListContribution
+                  :affiliate.sync="affiliate"
+                  :state.sync="state"/>
+              </v-card-text>
+            </v-card>
+          </v-tab-item>
+        </v-tabs>
+        <v-dialog v-model="dialog_send_credential" width="500">
+          <v-card>
+            <v-card-title>
+              <span>Confirmar</span>
+            </v-card-title>
+            <v-spacer></v-spacer>
             <v-card-text>
-              <Profile
-                :affiliate.sync="affiliate"
-                :editable.sync="editable"
-                
-              />
+              <v-container v-if="state_cellphone">
+                {{ options.response_message }}
+              </v-container>
+              <v-container v-else>
+                Por favor actualice el numero de celular
+              </v-container>
             </v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="error" text @click="resetForm()"> cerrar </v-btn>
+              <v-btn
+                v-if="watch_button_send && state_cellphone"
+                color="success"
+                @click="getCredential()"
+                :loading="loading"
+              >
+                ENVIAR
+              </v-btn>
+            </v-card-actions>
           </v-card>
-        </v-tab-item>
-        <v-tab-item
-           :value="'tab-3'"
-        >
-          <v-card flat tile >
-            <v-card-text>
-              <AdditionalInformation
-                :affiliate.sync="affiliate"
-                :editable.sync="editable"
-              />
-            </v-card-text>
-          </v-card>
-        </v-tab-item>
-        <v-tab-item
-           :value="'tab-4'"
-        >
-          <v-card flat tile >
-            <v-card-text>
-              <Spouse
-                :affiliate.sync="affiliate"
-                :editable.sync="editable"
-               />
-            </v-card-text>
-          </v-card>
-        </v-tab-item>
-      </v-tabs>
-                        <v-dialog
-                    v-model="dialog_send_credential"
-                    width="500">
-                      <v-card>
-                        <v-card-title>
-                          <v-toolbar-title>Confirmar</v-toolbar-title>
-                        </v-card-title>
-                        <v-spacer></v-spacer>
-                        <v-card-text>
-                          <v-container v-if="state_cellphone">
-                            {{options.response_message}}
-                          </v-container>
-                          <v-container v-else>
-                            Por favor actualice el numero de celular
-                          </v-container>
-                        </v-card-text>
-                        <v-card-actions>
-                          <v-spacer></v-spacer>
-                          <v-btn color="error" text @click="resetForm()">
-                            cerrar
-                          </v-btn>
-                          <v-btn v-if="watch_button_send && state_cellphone"
-                          color="success"
-                          @click="getCredential()"
-                          >
-                            ENVIAR
-                          </v-btn>
-                        </v-card-actions>
-                      </v-card>
-                    </v-dialog>
+        </v-dialog>
       </v-card-text>
     </v-card>
   </v-container>
 </template>
 <script>
-import AdditionalInformation from '@/components/affiliate/AdditionalInformation'
-import Dashboard from '@/components/affiliate/Dashboard'
-import Profile from '@/components/affiliate/Profile'
-import Spouse from '@/components/affiliate/Spouse.vue'
+import AdditionalInformation from "@/components/affiliate/AdditionalInformation";
+import Dashboard from "@/components/affiliate/Dashboard";
+import Profile from "@/components/affiliate/Profile";
+import Spouse from "@/components/affiliate/Spouse.vue";
+import ListContribution from "@/components/affiliate/ListContribution.vue";
 export default {
   components: {
     AdditionalInformation,
     Dashboard,
     Profile,
-    Spouse
-},
+    Spouse,
+    ListContribution,
+  },
   props: {
-    affiliate_id :{
+    affiliate_id: {
       type: String,
-      require :true,
+      require: true,
       default: 0,
-    }
+    },
   },
   data: () => ({
-    affiliate:{
+    affiliate: {
+      first_name: null,
+      second_name: null,
+      last_name: null,
+      mothers_last_name: null,
+      identity_card: null,
+      birth_date: null,
+      date_death: null,
+      reason_death: null,
+      phone_number: null,
+      cell_phone_number: null,
+      city_identity_card_id: null,
+      date_entry: null,
+      date_derelict: null,
+      unit_name: null,
+      affiliate_state_id: null,
+    },
+    sync_up:{
+      editable: false,
+    },
+    icons: true,
+    loading_affiliate: false,
+    watch_button_send: false,
+    options: {
+      response_message: "Esta seguro de enviar los credenciales",
+    },
+
+    dialog_send_credential: false,
+    state_cellphone: false,
+    obj_address: {
+      addresses: null,
+      id_street: null,
+      addresses_aux: null,
+    },
+    cancel: false,
+    loading: false,
+    spouse: {
+      affiliate_id: null,
       first_name: null,
       second_name:null,
       last_name: null,
@@ -207,114 +247,187 @@ export default {
       phone_number:null,
       cell_phone_number:null,
       city_identity_card_id:null,
-      date_entry:null,
-      date_derelict:null,
-      unit_name:null,
-      affiliate_state_id: null,
+      death_certificate_number:null,
+      city_birth_id:null,
+      civil_status:null,
+      official:null,
+      book:null,
+      departure:null,
+      marriage_date:null
     },
-    editable:false,
-    vertical:false,
-    icons: true,
-    loading_affiliate:false,
-    watch_button_send:false,
-    options: {
-        response_message: 'Esta seguro de enviar los credenciales',
-      },
-
-    dialog_send_credential :false,
-    state_cellphone:false,
+    tab: 0,
+    state:{
+      active:false
+    }
   }),
-  mounted(){
-    this.resetForm()
-    this.getAffiliate(this.affiliate_id)
-    this.editable = false
+  beforeMount(){
+    this.$nuxt.$on('eventGetSpouse', (val) => {
+      this.getSpouse(val)
+    })
+    this.$nuxt.$on('eventSaveAffiliate', (val) => {
+      this.saveAffiliate()
+    })
+    this.$nuxt.$on('eventSaveAffiliate2', (val) => {
+      this.saveAffiliate()
+    })
+    this.$nuxt.$on('eventResetForm', (val) => {
+      this.resetForm()
+    })
   },
-  watch:{
-    /*status_credential: {
-      deep: true,
-      handler(val) {
-        this.getAffiliate(this.affiliate_id)
-      }
-    },*/
-    'status_credential.status': function (newVal, oldVal){
-      this.getAffiliate(this.affiliate_id)
+  mounted() {
+    this.getAffiliate(this.affiliate_id);
+    this.sync_up.editable = false;
+  },
+  watch: {
+    tab: function(newVal, oldVal){
+      if(newVal!= oldVal)
+        this.state.active = false
     }
   },
+    computed: {
+    //permisos del selector global por rol
+    permissionSimpleSelected () {
+      return this.$store.getters.permissionSimpleSelected
+    },
+
+    permission() {
+      return {
+        primary: this.primaryPermission,
+        secondary: this.secondaryPermission
+      }
+    },
+    secondaryPermission() {
+      if (this.affiliate.id) {
+        return this.permissionSimpleSelected.includes('update-affiliate-secondary')
+      } else {
+        return this.permissionSimpleSelected.includes('create-affiliate')
+      }
+    },
+    primaryPermission() {
+      if (this.affiliate.id) {
+        return this.permissionSimpleSelected.includes('update-affiliate-primary')
+      } else {
+        return this.permissionSimpleSelected.includes('create-affiliate')
+      }
+    }
+  },
+
   methods: {
     resetForm() {
-      this.getAffiliate(this.$route.params.id)
-      this.editable = false
-      this.dialog_send_credential  = false
-      //this.reload = true
+      this.cancel = true;
+      this.getAffiliate(this.$route.params.id);
+      this.sync_up.editable = false;
+      this.dialog_send_credential = false;
       this.$nextTick(() => {
-      //this.reload = false
-      })
+        this.cancel = false
+      });
     },
     async getAffiliate(id) {
       try {
-        this.loading_affiliate=true
-        let res = await this.$axios.get(`/affiliate/affiliate/${id}`)
-        console.log(res)
-        this.affiliate= res
-        this.getStateCredential()
+        this.loading_affiliate = true;
+        let res = await this.$axios.get(`/affiliate/affiliate/${id}`);
+        this.affiliate = res;
+        this.getStateCredential();
+        this.getSpouse(id)
       } catch (e) {
-        console.log(e)
-      }finally {
-        this.loading_affiliate=false
+        console.log(e);
+      } finally {
+        this.loading_affiliate = false;
       }
     },
-    async saveAffiliate(){
+    async saveAffiliate() {
       try {
-        if (!this.editable) {
-          this.editable=true
-        }
-        else{
-          await this.$axios.patch(`affiliate/affiliate/${this.affiliate.id}`,this.affiliate)
-          this.$toast.success('Se actualizao correctamente los datos del afiliado')
-          this.editable=false
+        if (!this.sync_up.editable) {
+          this.sync_up.editable = true;
+        } else {
+          await this.$axios.patch(
+            `affiliate/affiliate/${this.affiliate.id}`,
+            this.affiliate
+          );
+          this.getAffiliateAddress();
+          this.$toast.success(
+            "Se actualizao correctamente los datos del afiliado."
+          );
+          this.sync_up.editable = false;
         }
       } catch (e) {
-        this.editable=false
-        this.$toast.error('Ocurrio un error durante la actualización')
+        this.sync_up.editable = false;
+        this.$toast.error("Ocurrio un error durante la actualización");
       }
     },
-        getState_cellphone(){
-      this.dialog_send_credential=true
-      console.log(this.affiliate.cell_phone_number[0])
-      if (this.affiliate.cell_phone_number[0].length>0) {
-        this.state_cellphone=true;
-        this.state_button_send=true;
+    getState_cellphone() {
+      this.dialog_send_credential = true;
+      console.log(this.affiliate.cell_phone_number[0]);
+      if (this.affiliate.cell_phone_number[0].length > 0) {
+        this.state_cellphone = true;
+        this.state_button_send = true;
+      } else {
+        this.state_cellphone = false;
+        this.state_button_send = false;
       }
-      else{
-        this.state_cellphone =false;
-        this.state_button_send=false;
-      }
-      console.log( this.state_cellphone)
+      console.log(this.state_cellphone);
     },
 
-    getStateCredential(){
-      if (this.affiliate.credential_status =='No asignadas'){
-        this.watch_button_send=true
-      }
-      else{
-        this.watch_button_send=false
-        this.options.response_message='El afiliado y cuenta con credencialea asignados como: '+ this.affiliate.credential_status
+    getStateCredential() {
+
+      if (this.affiliate.credential_status.access_status == "Inactivo" || this.affiliate.credential_status.access_status == "No asignadas") {
+        this.watch_button_send = true;
+      } else {
+        this.watch_button_send = false;
+        this.options.response_message ="El afiliado y cuenta con credencialea asignados como: " +
+          this.affiliate.credential_status.access_status;
       }
     },
-    async getCredential(){
+    async getCredential() {
+      console.log(this.affiliate.credential_status.access_status)
+      this.loading= true
       try {
-        if (this.affiliate.credential_status =='No asignadas'){
-          let res = await this.$axios.post(`/affiliate/store/${this.affiliate.id}`)
-          this.options.response_message=res.message+' su usuario es: '+res.payload.user+' su password es '+res.payload.pin;
-          this.watch_button_send = false
-        }
-        else{
-          this.$toast.info('ya cuenta con credenciales')
+        if (this.affiliate.credential_status.access_status == "No asignadas" || this.affiliate.credential_status.access_status == "Inactivo") {
+          let res = await this.$axios.post(`/affiliate/store`,{
+            affiliate_id: this.affiliate.id
+          }
+          );
+          this.options.response_message =
+            res.message +
+            " su usuario es: " +
+            res.payload.username +
+            " su password es " +
+            res.payload.pin;
+          this.watch_button_send = false;
+          this,loading= false
+        } else {
+          this.$toast.info("ya cuenta con credenciales");
         }
       } catch (e) {
-        console.log(e)
+        console.log(e);
       }
-    }
-  }
-}
+    },
+    async getAffiliateAddress() {
+      try {
+        let res = await this.$axios.patch(`affiliate/affiliate/${this.$route.params.id}/address`,
+          {
+            addresses: this.obj_address.addresses.map((o) => o.id),
+            addresses_valid: this.obj_address.id_street,
+          }
+        );
+      } catch (e) {
+        console.log();
+      }
+    },
+    async getSpouse(id) {
+      this.loading= true
+        try {
+        this.loading_spouse=true
+        let res = await this.$axios.get(
+          `/affiliate/affiliate/${id}/spouse`);
+        this.spouse = res
+      } catch (e) {
+        this.loading = false
+      } finally {
+        this.loading = false
+      }
+    },
+
+  },
+};
 </script>

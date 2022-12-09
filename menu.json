@@ -42,14 +42,19 @@
     "permission": "show-affiliate"
   },
   {
-    "title": "Notificaciones",
-    "icon": "mdi-send",
+    "title": "Notificaciones App-Movil",
+    "icon": "mdi-bell-badge",
     "permission": "show-notification",
-    "group":[
+    "group": [
       {
         "href": "/notification/PageNotification",
-        "title": "Notificaciones App-movile",
-        "icon": "mdi-cube-send"
+        "title": "Notificaciones",
+        "icon": "mdi-send"
+      },
+      {
+        "href": "/notification/PageReportNotification",
+        "title": "Reporte",
+        "icon": "mdi-file-chart"
       }
     ]
   }

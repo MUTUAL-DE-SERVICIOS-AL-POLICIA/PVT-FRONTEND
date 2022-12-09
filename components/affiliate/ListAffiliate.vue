@@ -36,6 +36,9 @@
           :loading = loading_table
         >
           <!--Estilos de busqueda para las cabeceras -->
+          <template v-slot:[`header.affiliate_id`]="{ header }">
+            <span :class="searching.affiliate_id? 'primary--text' : ''">{{ header.text }}</span>
+          </template>
           <template v-slot:[`header.identity_card_affiliate`]="{ header }">
             <span :class="searching.identity_card_affiliate? 'primary--text' : ''">{{ header.text }}</span>
           </template>
@@ -64,7 +67,7 @@
                       icon
                       small
                       v-on="on"
-                      to="#"
+                      :to="`PageAffiliate/${item.id_affiliate}`"
                       color="success"
                       ><v-icon>mdi-account-eye</v-icon>
                     </v-btn>
@@ -80,11 +83,12 @@
           <template slot="body.prepend">
             <tr v-if="show_filter">
                 <!--<td><v-text-field placeholder="C.I. Afiliado" spellcheck="false" class="filter-text" v-model="searching.identity_card_affiliate" @keydown.enter="getListAffiliates"></v-text-field></td>-->
-                <td><v-text-field placeholder="C.I. Afiliado" spellcheck="false" class="filter-text" v-model="searching.identity_card_affiliate" @input="getListAffiliates"></v-text-field></td>
-                <td><v-text-field placeholder="Nombre Completo" spellcheck="false" class="filter-text" v-model="searching.full_name_affiliate" @input="getListAffiliates"></v-text-field></td>
-                <td><v-text-field placeholder="Matricula" spellcheck="false" class="filter-text" v-model="searching.registration_affiliate" @input="getListAffiliates"></v-text-field></td>
-                <td><v-text-field placeholder="Grado" spellcheck="false" class="filter-text" v-model="searching.name_degree" @input="getListAffiliates"></v-text-field></td>
-                <td><v-text-field placeholder="Estado" spellcheck="false" class="filter-text" v-model="searching.name_affiliate_state" @input="getListAffiliates"></v-text-field></td>
+                <td><v-text-field placeholder="Nup" spellcheck="false" class="filter-text" v-model="searching.id_affiliate" @keyup="searchTimeOut()"></v-text-field></td>
+                <td><v-text-field placeholder="C.I. Afiliado" spellcheck="false" class="filter-text" v-model="searching.identity_card_affiliate" @keyup="searchTimeOut()"></v-text-field></td>
+                <td><v-text-field placeholder="Nombre Completo" spellcheck="false" class="filter-text" v-model="searching.full_name_affiliate" @keyup="searchTimeOut()"></v-text-field></td>
+                <td><v-text-field placeholder="Matricula" spellcheck="false" class="filter-text" v-model="searching.registration_affiliate" @keyup="searchTimeOut()"></v-text-field></td>
+                <td><v-text-field placeholder="Grado" spellcheck="false" class="filter-text" v-model="searching.name_degree" @keyup="searchTimeOut()"></v-text-field></td>
+                <td><v-text-field placeholder="Estado" spellcheck="false" class="filter-text" v-model="searching.name_affiliate_state" @keyup="searchTimeOut()"></v-text-field></td>
                 <td><v-text-field disabled class="filter-text"></v-text-field></td>
             </tr>
           </template>
@@ -110,6 +114,7 @@ export default {
   data: () => ({
     // Cabeceras de la tabla
     headers: [
+      { text: 'Nup', value:'id_affiliate', class: ['table', 'white--text'],width: '2%', sortable: false },
       { text: 'CI Afiliado', value:'identity_card_affiliate', class: ['table', 'white--text'],width: '5%', sortable: false },
       { text: 'Nombre Completo Afiliado', value:'full_name_affiliate', class: ['table', 'white--text'],width: '10%', sortable: false },
       { text: 'Matrícula', value:'registration_affiliate', class: ['table', 'white--text'],width: '5%', sortable: false },
@@ -129,7 +134,7 @@ export default {
     affiliates: [],
     options: {
       page: 1,
-      items_per_page: 8,
+      itemsPerPage: 8,
       sortDesc: [false],
     },
     total_affiliates: 0,
@@ -142,9 +147,8 @@ export default {
     options: function (newVal, oldVal) {
       if (
         newVal.page != oldVal.page ||
-        newVal.items_per_page != oldVal.items_per_page ||
-        newVal.sortDesc != oldVal.sortDesc
-      ) {
+        newVal.itemsPerPage != oldVal.itemsPerPage ||
+        newVal.sortDesc != oldVal.sortDesc) {
         this.getListAffiliates()
       }
     },
@@ -174,7 +178,7 @@ export default {
             full_name_affiliate: this.searching.full_name_affiliate,
             name_affiliate_state: this.searching.name_affiliate_state,
             page: this.options.page,
-            per_page: this.options.items_per_page,
+            per_page: this.options.itemsPerPage,
             sortDesc: this.options.sortDesc,
           },
         });
@@ -184,7 +188,7 @@ export default {
         /*delete res.data["data"]*/
         this.options.page = res.payload.affiliates.current_page
 
-        this.options.items_per_page = parseInt(res.payload.affiliates.per_page)
+        this.options.itemsPerPage = parseInt(res.payload.affiliates.per_page)
         this.loading_table = false
       } catch (e) {
         console.log(e)
@@ -198,6 +202,7 @@ export default {
         return 'row-white'
     },
     clearAll() {
+      this.searching.id_affiliate= "",
       this.searching.identity_card_affiliate= "",
       this.searching.full_name_affiliate= "",
       this.searching.registration_affiliate = "",
@@ -205,6 +210,15 @@ export default {
       this.searching.name_affiliate_state= "",
       this.getListAffiliates()
     },
+    searchTimeOut() {
+      if (this.timer) {
+          clearTimeout(this.timer);
+          this.timer = null;
+      }
+      this.timer = setTimeout(() => {
+        this.getListAffiliates()
+      }, 800);
+    }
   },
 };
 </script>

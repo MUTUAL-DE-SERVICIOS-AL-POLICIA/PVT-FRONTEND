@@ -665,7 +665,7 @@ export default {
                       let success_count = response.data.success_count
                       let cmp = success_count == 1 ? "afiliado" : "afiliados"
                       this.$toast.success(
-                        `Se ha notificado exitosamente a ${success_count} ${cmp}`     
+                        `Se ha notificado exitosamente`     
                       );
                       // this.$swal({
                       //   position: 'top-end',

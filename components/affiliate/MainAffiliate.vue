@@ -10,19 +10,14 @@
               Datos del afiliado
             </v-col>
           </v-row>
-          <v-tooltip>
-            <template v-slot:activator="{ on }">
-              <v-btn
-                small
-                dark
-                v-on="on"
-                @click="getState_cellphone()"
-                color="info"
-              >
-                <span> ASIGNAR CREDENCIALES</span>
-              </v-btn>
-            </template>
-          </v-tooltip>
+          <v-btn
+            small
+            dark
+            @click="getState_cellphone()"
+            color="info"
+          >
+            <span> ASIGNAR CREDENCIALES</span>
+          </v-btn>
           <!-- <v-tooltip bottom> -->
             <!-- <template v-slot:activator="{ on, attrs }"> -->
               <!-- <v-btn -->
@@ -155,7 +150,7 @@
                 {{ options.response_message }}
               </v-container>
               <v-container v-else>
-                Por favor actualice el numero de celular
+                Por favor actualice el número de celular.
               </v-container>
             </v-card-text>
             <v-card-actions>

@@ -97,9 +97,9 @@
         <span><strong>Estado de credenciales: </strong> {{affiliate.credential_status.access_status}}</span><br />
         <template v-if="affiliate.credential_status.access_status != 'No asignadas'">
           <span>
-            <strong>Fecha de creación de credenciales: </strong>{{ $filters.date(affiliate.credential_status.created_at) }}</span><br />
+            <strong>Fecha de creación de credenciales: </strong>{{ $filters.dateTime(affiliate.credential_status.created_at) }}</span><br />
           <span>
-            <strong>Fecha de actualización de credenciales: </strong>{{ $filters.date(affiliate.credential_status.updated_at) }}</span>
+            <strong>Fecha de actualización de credenciales: </strong>{{ $filters.dateTime(affiliate.credential_status.updated_at) }}</span>
         </template>
         </v-col>
       </v-row>

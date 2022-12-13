@@ -10,7 +10,7 @@
             ><strong class="text-uppercase">Fecha ingreso a la Institución Policial: </strong
             >{{
               affiliate.date_entry != null && affiliate.date_entry.trim() != ""
-                ? affiliate.date_entry
+                ? $filters.date(affiliate.date_entry)
                 : "Sin Registro"
             }}</span
           ><br />
@@ -21,7 +21,7 @@
             >{{
               affiliate.date_derelict != null &&
               affiliate.date_derelict.trim() != ""
-                ? affiliate.date_derelict
+                ? $filters.date(affiliate.date_derelict)
                 : "Sin Registro"
             }}</span
           ><br />
@@ -32,7 +32,7 @@
             >{{
               affiliate.date_last_contribution != null &&
               affiliate.date_last_contribution.trim() != ""
-                ? affiliate.date_last_contribution
+                ? $filters.date(affiliate.date_last_contribution)
                 : "Sin Registro"
             }}</span
           ><br />

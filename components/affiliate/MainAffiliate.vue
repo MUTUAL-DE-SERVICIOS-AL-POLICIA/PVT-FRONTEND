@@ -150,7 +150,7 @@
                 {{ options.response_message }}
               </v-container>
               <v-container v-else>
-                Por favor actualice el número de celular.
+                Por favor actualice el número de celular
               </v-container>
             </v-card-text>
             <v-card-actions>

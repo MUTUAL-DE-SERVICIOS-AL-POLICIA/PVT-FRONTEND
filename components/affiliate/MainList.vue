@@ -60,7 +60,7 @@ import ListSpouses from "@/components/affiliate/ListSpouses"
 import ListAffiliates from "@/components/affiliate/ListAffiliates"
 
 export default {
-  name: "MainListAffiliate",
+  name: "MainList",
   components: {
     GlobalBreadCrumb,
     GlobalLoading,

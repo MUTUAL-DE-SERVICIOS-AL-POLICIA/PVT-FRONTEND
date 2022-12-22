@@ -64,7 +64,7 @@ import GlobalBreadCrumb from "@/components/common/GlobalBreadCrumb.vue";
 import GlobalLoading from "@/components/common/GlobalLoading.vue";
 
 export default {
-  name: "MainListAffiliate",
+  name: "ListAffiliates",
   components: {
     GlobalBreadCrumb,
     GlobalLoading,

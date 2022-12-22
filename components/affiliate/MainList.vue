@@ -23,77 +23,30 @@
           </v-tooltip>
         </v-toolbar>
       </v-card-title>
+
       <v-card-text>
-        <v-data-table
-          dense
-          class="inputSearch"
-          :headers="headers"
-          :items="affiliates"
-          :options.sync="options"
-          :item-class="hovertable"
-          :server-items-length="total_affiliates"
-          :footer-props="{ itemsPerPageOptions: [8, 15, 50,100] }"
-          :loading = loading_table
-        >
-          <!--Estilos de busqueda para las cabeceras -->
-          <template v-slot:[`header.affiliate_id`]="{ header }">
-            <span :class="searching.affiliate_id? 'primary--text' : ''">{{ header.text }}</span>
-          </template>
-          <template v-slot:[`header.identity_card_affiliate`]="{ header }">
-            <span :class="searching.identity_card_affiliate? 'primary--text' : ''">{{ header.text }}</span>
-          </template>
 
-          <template v-slot:[`header.full_name_affiliate`]="{ header }">
-            <span :class="searching.full_name_affiliate? 'primary--text' : ''">{{ header.text }}</span>
-          </template>
+      <v-tabs left background-color="backgroundTab">
+        <v-tab  :href="`#tab-1`" > Lista de Afiliados </v-tab>
+        <v-tab  :href="`#tab-2`" > Lista de Cónyuges </v-tab>
 
-          <template v-slot:[`header.registration_affiliate`]="{ header }">
-            <span :class="searching.registration_affiliate? 'primary--text' : ''">{{ header.text }}</span>
-          </template>
+        <v-tab-item  :value="'tab-1'">
+          <v-card flat tile>
+            <v-card-text>
+              <ListAffiliates />
+            </v-card-text>
+          </v-card>
+        </v-tab-item>
+        <v-tab-item :value="'tab-2'">
+          <v-card flat tile>
+            <v-card-text>
+              <ListSpouses />
+            </v-card-text>
+          </v-card>
+        </v-tab-item>
+      </v-tabs>
 
-          <template v-slot:[`header.name_degree`]="{ header }">
-            <span :class="searching.name_degree? 'primary--text' : ''">{{ header.text }}</span>
-          </template>
-
-          <template v-slot:[`header.name_affiliate_state`]="{ header }">
-            <span :class="searching.name_affiliate_state? 'primary--text' : ''">{{ header.text }}</span>
-         </template>
-          <!--Fin de estilos de busqueda-->
-            <template v-slot:[`item.actions`]="{ item }">
-              <v-tooltip bottom >
-                <template v-slot:activator="{ on }">
-                   <nuxt-link :to="`PageAffiliate/${item.id_affiliate}`" class="button is-primary">
-                    <v-btn
-                      icon
-                      small
-                      v-on="on"
-                      :to="`PageAffiliate/${item.id_affiliate}`"
-                      color="success"
-                      ><v-icon>mdi-account-eye</v-icon>
-                    </v-btn>
-                  </nuxt-link>
-                </template>
-                <span>Ver información afiliado</span>
-              </v-tooltip>
-            </template>
-
-
-
-          <!-- Vista de los filtros -->
-          <template slot="body.prepend">
-            <tr v-if="show_filter">
-                <!--<td><v-text-field placeholder="C.I. Afiliado" spellcheck="false" class="filter-text" v-model="searching.identity_card_affiliate" @keydown.enter="getListAffiliates"></v-text-field></td>-->
-                <td><v-text-field placeholder="Nup" spellcheck="false" class="filter-text" v-model="searching.id_affiliate" @keyup="searchTimeOut()"></v-text-field></td>
-                <td><v-text-field placeholder="C.I. Afiliado" spellcheck="false" class="filter-text" v-model="searching.identity_card_affiliate" @keyup="searchTimeOut()"></v-text-field></td>
-                <td><v-text-field placeholder="Nombre Completo" spellcheck="false" class="filter-text" v-model="searching.full_name_affiliate" @keyup="searchTimeOut()"></v-text-field></td>
-                <td><v-text-field placeholder="Matricula" spellcheck="false" class="filter-text" v-model="searching.registration_affiliate" @keyup="searchTimeOut()"></v-text-field></td>
-                <td><v-text-field placeholder="Grado" spellcheck="false" class="filter-text" v-model="searching.name_degree" @keyup="searchTimeOut()"></v-text-field></td>
-                <td><v-text-field placeholder="Estado" spellcheck="false" class="filter-text" v-model="searching.name_affiliate_state" @keyup="searchTimeOut()"></v-text-field></td>
-                <td><v-text-field disabled class="filter-text"></v-text-field></td>
-            </tr>
-          </template>
-        </v-data-table>
-      </v-card-text>
+    </v-card-text>
     </v-card>
   </v-container>
 </template>
@@ -103,13 +56,17 @@
 import Add from '@/components/affiliate/AdditionalInformation';
 import GlobalBreadCrumb from "@/components/common/GlobalBreadCrumb.vue";
 import GlobalLoading from "@/components/common/GlobalLoading.vue";
+import ListSpouses from "@/components/affiliate/ListSpouses"
+import ListAffiliates from "@/components/affiliate/ListAffiliates"
 
 export default {
   name: "MainListAffiliate",
   components: {
     GlobalBreadCrumb,
     GlobalLoading,
-    Add
+    Add,
+    ListSpouses,
+    ListAffiliates
   },
   data: () => ({
     // Cabeceras de la tabla

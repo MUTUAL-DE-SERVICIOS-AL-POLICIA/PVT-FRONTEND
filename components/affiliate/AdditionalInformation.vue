@@ -34,9 +34,8 @@
             :obj_address.sync="obj_address"
             :sync_up.sync="sync_up"
             :cancel.sync="cancel"
-            :readonly="!sync_up.editable || !permission.secondary"
-            :outlined="sync_up.editable && permission.secondary"
-            :disabled="sync_up.editable && !permission.secondary"
+            readonly
+            disabled
           />
         </v-col>
         <v-col cols="12" md="4">
@@ -64,9 +63,8 @@
             dense
             label="Teléfono"
             v-mask="'(#) ###-###'"
-            :readonly="!sync_up.editable || !permission.secondary"
-            :outlined="sync_up.editable && permission.secondary"
-            :disabled="sync_up.editable && !permission.secondary"
+            readonly
+            disabled
           ></v-text-field>
         </v-col>
         <v-col cols="12" md="6">
@@ -79,17 +77,15 @@
             item-value="id"
             label="Entidad Financiera"
             v-model="affiliate.financial_entity_id"
-            :readonly="!sync_up.editable || !permission.secondary"
-            :outlined="sync_up.editable && permission.secondary"
-            :disabled="sync_up.editable && !permission.secondary"
+            readonly
+            disabled
           ></v-select>
           <v-text-field
             dense
             v-model="affiliate.account_number"
             label="Número de Cuenta SIGEP activa"
-            :readonly="!sync_up.editable || !permission.secondary"
-            :outlined="sync_up.editable && permission.secondary"
-            :disabled="sync_up.editable && !permission.secondary"
+            readonly
+            disabled
           ></v-text-field>
         </v-col>
         <v-col cols="12" md="6">

@@ -1,22 +1,22 @@
 <template>
   <v-card-text>
-    <v-data-table dense class="inputSearch" :headers="headers" :items="affiliates" :options.sync="options"
-      :item-class="hovertable" :server-items-length="total_affiliates"
+    <v-data-table dense class="inputSearch" :headers="headers" :items="spouses" :options.sync="options"
+      :item-class="hovertable" :server-items-length="total_spouses"
       :footer-props="{ itemsPerPageOptions: [8, 15, 50, 100] }" :loading=loading_table>
       <template v-slot:[`header.affiliate_id`]="{ header }">
         <span :class="searching.affiliate_id ? 'primary--text' : ''">{{ header.text }}</span>
       </template>
-      <template v-slot:[`header.identity_card_spouse`]="{ header }">
-        <span :class="searching.identity_card_spouse ? 'primary--text' : ''">{{ header.text }}</span>
+      <template v-slot:[`header.identity_card_spouses`]="{ header }">
+        <span :class="searching.identity_card_spouses ? 'primary--text' : ''">{{ header.text }}</span>
       </template>
-      <template v-slot:[`header.full_name_spouse`]="{ header }">
-        <span :class="searching.full_name_spouse ? 'primary--text' : ''">{{ header.text }}</span>
+      <template v-slot:[`header.full_name_spouses`]="{ header }">
+        <span :class="searching.full_name_spouses ? 'primary--text' : ''">{{ header.text }}</span>
       </template>
       <template v-slot:[`item.actions`]="{ item }">
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
-            <nuxt-link :to="`PageAffiliate/${item.id_affiliate}`" class="button is-primary">
-              <v-btn icon small v-on="on" :to="`PageAffiliate/${item.id_affiliate}`"
+            <nuxt-link :to="`PageAffiliate/${item.affiliate_id}`" class="button is-primary">
+              <v-btn icon small v-on="on" :to="`PageAffiliate/${item.affiliate_id}`"
                 color="success"><v-icon>mdi-account-eye</v-icon>
               </v-btn>
             </nuxt-link>
@@ -29,9 +29,10 @@
           <td><v-text-field placeholder="Nup" spellcheck="false" class="filter-text" v-model="searching.id_affiliate"
               @keyup="searchTimeOut()"></v-text-field></td>
           <td><v-text-field placeholder="C.I. Afiliado" spellcheck="false" class="filter-text"
-              v-model="searching.identity_card_spouse" @keyup="searchTimeOut()"></v-text-field></td>
+              v-model="searching.identity_card_spouses" @keyup="searchTimeOut()"></v-text-field></td>
           <td><v-text-field placeholder="Nombre Completo" spellcheck="false" class="filter-text"
-              v-model="searching.full_name_spouse" @keyup="searchTimeOut()"></v-text-field></td>
+              v-model="searching.full_name_spouses" @keyup="searchTimeOut()"></v-text-field></td>
+          <td><v-text-field disabled class="filter-text"></v-text-field></td>
         </tr>
       </template>
     </v-data-table>
@@ -52,16 +53,16 @@ export default {
   },
   data: () => ({
     headers: [
-      { text: 'Nup', value:'affiliate_id', class: ['table', 'white--text'],width: '2%', sortable: false },
-      { text: 'CI Cònyuge', value:'identity_card', class: ['table', 'white--text'],width: '5%', sortable: false },
-      { text: 'Nombre Completo Cònyuge', value:'last_name', class: ['table', 'white--text'],width: '10%', sortable: false },
-      { text: 'Acción',value:'actions',input:'', menu:false, type:"text", class: ['table', 'white--text','text-md-center'], sortable: false, width: '1%'},
+      { text: 'Nup', value: 'affiliate_id', class: ['table', 'white--text'], width: '2%', sortable: false },
+      { text: 'CI Cònyuge', value: 'identity_card', class: ['table', 'white--text'], width: '5%', sortable: false },
+      { text: 'Nombre Completo Cònyuge', value: 'full_name', class: ['table', 'white--text'], width: '10%', sortable: false },
+      { text: 'Acción', value: 'actions', input: '', menu: false, type: "text", class: ['table', 'white--text', 'text-md-center'], sortable: false, width: '1%' },
     ],
     search: '',
     searching: {
-      id_affiliate:"",
-      identity_card_spouse:"",
-      full_name_spouse:"",
+      id_affiliate: "",
+      identity_card_spouses: "",
+      full_name_spouses: "",
     },
     spouses: [],
     options: {
@@ -71,7 +72,7 @@ export default {
     },
     total_spouses: 0,
     loading_table: false,
-    show_filter:true,
+    show_filter: true,
     refresh_table: 0,
 
   }),
@@ -87,7 +88,7 @@ export default {
     searching: {
       deep: true,
       handler(val) {
-        this.options.page=1
+        this.options.page = 1
       }
     },
   },
@@ -102,16 +103,17 @@ export default {
         let res = await this.$axios.get("/affiliate/spouse", undefined, {
           params: {
             id_affiliate: this.searching.id_affiliate,
-            identity_card_spouse: this.searching.identity_card_spouse,
-            full_name_spouse: this.searching.full_name_spouse,
+            identity_card_spouses: this.searching.identity_card_spouses,
+            full_name_spouses: this.searching.full_name_spouses,
             page: this.options.page,
             per_page: this.options.itemsPerPage,
             sortDesc: this.options.sortDesc,
           },
         });
-        this.spouse = res.payload.spouses.data
+        console.log(res)
+        this.spouses = res.payload.spouses.data
         console.log(this.spouse)
-        this.total_spouse = res.payload.spouses.total
+        this.total_spouses = res.payload.spouses.total
         this.options.page = res.payload.spouses.current_page
         this.options.itemsPerPage = parseInt(res.payload.spouses.per_page)
         this.loading_table = false
@@ -121,21 +123,21 @@ export default {
       }
     },
     _show_filter(){
-       this.show_filter=!this.show_filter
+      this.show_filter =! this.show_filter
     },
     hovertable: function(item) {
-        return 'row-white'
+      return 'row-white'
     },
     clearAll() {
-      this.searching.id_affiliate= "",
-      this.searching.identity_card_spouse= "",
-      this.searching.full_name_spouse= "",
+      this.searching.id_affiliate = "",
+      this.searching.identity_card_spouses = "",
+      this.searching.full_name_spouses = "",
       this.getListAffiliates()
     },
     searchTimeOut() {
       if (this.timer) {
-          clearTimeout(this.timer);
-          this.timer = null;
+        clearTimeout(this.timer);
+        this.timer = null;
       }
       this.timer = setTimeout(() => {
         this.getListAffiliates()

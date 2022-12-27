@@ -8,8 +8,9 @@
     <v-card-text>      
       
       <v-tabs left background-color="backgroundTab">
-        <v-tab  :href="`#tab-1`" > Notificación App </v-tab>
-        <v-tab  :href="`#tab-2`" > SMS's </v-tab>
+        <v-tab  :href="`#tab-1`" > Notificación CE </v-tab>
+        <v-tab  :href="`#tab-2`" > Notificación App</v-tab>
+        <v-tab  :href="`#tab-3`" > SMS's </v-tab>
 
         <v-tab-item  :value="'tab-1'">
           <v-card flat tile>
@@ -19,6 +20,13 @@
           </v-card>
         </v-tab-item>
         <v-tab-item :value="'tab-2'">
+          <v-card flat tile>
+            <v-card-text>
+              <NotificationMassive />
+            </v-card-text>
+          </v-card>
+        </v-tab-item>
+        <v-tab-item :value="'tab-3'">
           <v-card flat tile>
             <v-card-text>
               <NotificationSMS />
@@ -33,15 +41,17 @@
 </template>
 
 <script>
-import GlobalBreadCrumb from "@/components/common/GlobalBreadCrumb.vue";
-import NotificationApp from "@/components/notification/NotificationApp.vue";
-import NotificationSMS from "@/components/notification/NotificationSMS.vue";
+import GlobalBreadCrumb from "@/components/common/GlobalBreadCrumb"
+import NotificationApp from "@/components/notification/NotificationApp"
+import NotificationMassive from "@/components/notification/NotificationMassive"
+import NotificationSMS from "@/components/notification/NotificationSMS"
 
 export default {
   name: "MainNotification",
   components: {
     GlobalBreadCrumb,
     NotificationApp,
+    NotificationMassive,
     NotificationSMS,
   },
   props: {},

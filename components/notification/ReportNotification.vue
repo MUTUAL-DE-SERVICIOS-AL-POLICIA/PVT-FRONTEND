@@ -8,7 +8,7 @@
     <v-card-text>
       <div class="mt-2 pb-8 mx-0 px-0 backgroundCard">
         <v-row>
-          <v-col cols="12" md="3">
+          <v-col cols="6" md="6" lg="4">
             <v-card class="mx-5 px-5 py-6 elevation-0">
               <v-select 
                 v-model="type"
@@ -91,6 +91,9 @@
               <v-btn color="primary" @click="downloadReport()"  :loading="loading">Descargar reporte </v-btn>
             </v-card>
           </v-col>
+          <v-col cols="6" md="6" lg="4">
+            <CellBalance />
+          </v-col>
         </v-row>
       </div>
     </v-card-text>
@@ -99,11 +102,13 @@
 
 <script>
 import GlobalBreadCrumb from "@/components/common/GlobalBreadCrumb.vue";
+import CellBalance from "@/components/notification/CellBalance"
 
 export default {
   name: "ReportNotification",
   components: {
     GlobalBreadCrumb,
+    CellBalance
   },
 
   data: () => ({

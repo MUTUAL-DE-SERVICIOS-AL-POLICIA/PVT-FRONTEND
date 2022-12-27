@@ -53,7 +53,7 @@
               color="info"
               dark
               class="mb-2"
-              :disabled="!sync_up.editable"
+              disabled
               v-bind="attrs"
               v-on="on"
             >

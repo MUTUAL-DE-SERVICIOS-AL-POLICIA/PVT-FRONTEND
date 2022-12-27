@@ -6,6 +6,7 @@
     clipped
     :expand-on-hover="!expanded"
     class="tertiary"
+    :mini-variant="!expanded"
   >
     <v-list
       nav

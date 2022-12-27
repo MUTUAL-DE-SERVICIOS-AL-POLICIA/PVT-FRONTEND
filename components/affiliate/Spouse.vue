@@ -4,7 +4,7 @@
       <v-row class="text-right">
         <v-col cols="12" class="ma-0 pa-0 pt-0">
           <!--TODO corregir primaryPermissionn una vez defina la edicion de  afiliado-->
-          <template v-if="!this.spouse.id && primaryPermissionn"
+          <template v-if="!this.spouse.id && primaryPermission"
             ><v-btn
               x-small
               dark

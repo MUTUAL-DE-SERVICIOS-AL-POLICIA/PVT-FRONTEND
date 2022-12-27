@@ -138,19 +138,20 @@ export default {
           "/notification/file",
           formData
         );
-        if (!res.error) {          
+        if (!res.error) {
           this.notification = res.data.delivered;
           this.btn_send_notification = false;
           this.dialog_send_notification = false;
           this.$toast.success(
-            "Se ha enviado correctamente la notificación a " +
-              res.data.delivereds.length +
-              " destinatarios\n" +
-            "No se ha enviado SMS a " + res.data.fails.length +
-              " destinatarios\n"         
+            "Se está notificando a los afiliados"
+            // "Se ha enviado correctamente la notificación a " +
+              // res.data.delivereds.length +
+              // " destinatarios\n" +
+            // "No se ha enviado SMS a " + res.data.fails.length +
+              // " destinatarios\n"
           );
           this.clearInputs();
-        } else {          
+        } else {
           this.$toast.error(res.message);
         }
       } catch (e) {

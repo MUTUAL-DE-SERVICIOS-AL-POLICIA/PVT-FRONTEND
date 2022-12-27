@@ -21,7 +21,7 @@ export default (context, inject) => {
       const storageRef = ref(storage, `/Imagenes/${file.name}`);
         uploadBytes(storageRef, file).then((snapshot) => {
           console.log('Se ha cargado el archivo!');
-      });      
+      });
     },
     async getURL(file) {
       const storageRef = ref(storage, `/Imagenes/${file.name}`);

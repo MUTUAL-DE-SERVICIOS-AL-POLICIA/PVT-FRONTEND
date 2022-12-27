@@ -11,7 +11,7 @@
             </v-col>
           </v-row>
           <v-btn
-            v-if="affiliate.credential_status.access_status == 'No asignadas'"
+     
             small
             dark
             @click="getState_cellphone()"
@@ -20,7 +20,7 @@
             <span> ASIGNAR CREDENCIALES</span>
           </v-btn>
           <v-btn
-            v-if="affiliate.credential_status.access_status != 'No asignadas'"
+    
             small
             dark
             @click="printFormCredential()"
@@ -29,40 +29,10 @@
           >
             <span> <v-icon>mdi-printer</v-icon>CREDENCIALES</span>
           </v-btn>
-          <!-- <v-tooltip bottom> -->
-            <!-- <template v-slot:activator="{ on, attrs }"> -->
-              <!-- <v-btn -->
-                <!-- small -->
-                <!-- dark -->
-                <!-- v-bind="attrs" -->
-                <!-- v-on="on" -->
-                <!-- @click.stop="saveAffiliate()" -->
-                <!-- :color="sync_up.editable ? 'success' : 'secondary'" -->
-              <!-- > -->
-                <!-- <span v-if="!sync_up.editable"> EDITAR</span> -->
-                <!-- <span v-else> Confirmar</span> -->
-              <!-- </v-btn> -->
-            <!-- </template> -->
-          <!-- </v-tooltip> -->
-          <!-- <v-tooltip bottom> -->
-            <!-- <template v-slot:activator="{ on, attrs }"> -->
-              <!-- <v-btn -->
-                <!-- small -->
-                <!-- color="error" -->
-                <!-- dark -->
-                <!-- v-bind="attrs" -->
-                <!-- v-on="on" -->
-                <!-- v-show="sync_up.editable" -->
-                <!-- @click.stop="resetForm()" -->
-              <!-- > -->
-                <!-- <span> cancelar</span> -->
-              <!-- </v-btn> -->
-            <!-- </template> -->
-            <!-- <span>EDITAR</span> -->
-          <!-- </v-tooltip> -->
         </v-toolbar>
       </v-card-title>
       <v-card-text>
+        {{        affiliate.credential_status.access_status }}
         <v-tabs vertical v-model="tab">
           <v-card color="accent" class="pa-2" style="width:250px" align="center">
             <v-chip
@@ -220,6 +190,9 @@ export default {
       date_derelict: null,
       unit_name: null,
       affiliate_state_id: null,
+      credential_status:{
+        access_status: null
+      }
     },
     sync_up:{
       editable: false,

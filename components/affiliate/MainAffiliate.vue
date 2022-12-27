@@ -11,12 +11,23 @@
             </v-col>
           </v-row>
           <v-btn
+            v-if="affiliate.credential_status.access_status == 'No asignadas'"
             small
             dark
             @click="getState_cellphone()"
             color="info"
           >
             <span> ASIGNAR CREDENCIALES</span>
+          </v-btn>
+          <v-btn
+            v-if="affiliate.credential_status.access_status != 'No asignadas'"
+            small
+            dark
+            @click="printFormCredential()"
+            color="secondary"
+            :loading="loading_btn_print"
+          >
+            <span> <v-icon>mdi-printer</v-icon>CREDENCIALES</span>
           </v-btn>
           <!-- <v-tooltip bottom> -->
             <!-- <template v-slot:activator="{ on, attrs }"> -->
@@ -253,7 +264,8 @@ export default {
     tab: 0,
     state:{
       active:false
-    }
+    },
+    loading_btn_print: false
   }),
   beforeMount(){
     this.$nuxt.$on('eventGetSpouse', (val) => {
@@ -382,12 +394,7 @@ export default {
             affiliate_id: this.affiliate.id
           }
           );
-          this.options.response_message =
-            res.message +
-            " su usuario es: " +
-            res.payload.username +
-            " su password es " +
-            res.payload.pin;
+          this.options.response_message = res.message + " su usuario es: " +res.payload.username +" su password es " +res.payload.pin;
           this.watch_button_send = false;
           this,loading= false
         } else {
@@ -422,6 +429,26 @@ export default {
         this.loading = false
       }
     },
+    async printFormCredential(){
+      this.loading_btn_print=true
+      try {
+        let res = await this.$axios.get(
+          `/affiliate/credential_document/${this.$route.params.id}`,
+          undefined,
+          { responseType: "blob"}
+        )
+        const url = window.URL.createObjectURL(new Blob([res]));
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", "Alta de credenciales.pdf");
+        document.body.appendChild(link);
+        link.click();
+        this.loading_btn_print = false
+      } catch (e) {
+        console.log(e)
+        this.loading_btn_print= false
+      }
+    }
 
   },
 };

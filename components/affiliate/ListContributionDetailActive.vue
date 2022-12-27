@@ -7,7 +7,12 @@
     :loading="loading_table"
     :server-items-length="total_contributions"
   >
-    <template v-slot:[`header.year`]="{ header }">
+    <template v-slot:[`header.con_re`]="{ header }">
+      <span :class="searching.con_re ? 'primary--text' : ''">{{
+        header.text
+      }}</span>
+    </template>
+     <template v-slot:[`header.year`]="{ header }">
       <span :class="searching.year ? 'primary--text' : ''">{{
         header.text
       }}</span>
@@ -20,13 +25,16 @@
     <template slot="body.prepend">
       <tr>
         <td>
-          <v-text-field
-            placeholder="Tipo"
-            spellcheck="false"
-            class="filter-text"
-            v-model="searching.con_re"
-            @input="getSearchActiveAffiliateContribution()"
-          ></v-text-field>
+          <v-select
+            dense
+            :items="items"
+            item-text = "name"
+            item-value = "value"
+            v-model = "searching.con_re"
+            @change = "searchTimeOut()"
+            spellcheck = "false"
+            close-on-click
+          ></v-select>
         </td>
         <td>
           <v-text-field
@@ -34,7 +42,7 @@
             spellcheck="false"
             class="filter-text"
             v-model="searching.year"
-            @input="getSearchActiveAffiliateContribution()"
+            @keyup="searchTimeOut()"
           ></v-text-field>
         </td>
         <td>
@@ -43,7 +51,7 @@
             spellcheck="false"
             class="filter-text"
             v-model="searching.month"
-            @input="getSearchActiveAffiliateContribution()"
+            @keyup="searchTimeOut()"
           ></v-text-field>
         </td>
         <td><v-text-field disabled class="filter-text"></v-text-field></td>
@@ -59,7 +67,7 @@
             spellcheck="false"
             class="filter-text"
             v-model="searching.breakdown"
-            @input="getSearchActiveAffiliateContribution()"
+            @keyup="searchTimeOut()"
             ></v-text-field>
             </td>
       </tr>
@@ -81,8 +89,19 @@ export default {
       year: "",
       month: "",
       breakdown:""
-      
     },
+    items: [
+        {
+          name: "CON",
+          value: 'CON',
+        },{
+          name: "RE",
+          value: 'RE',
+        },{
+          name: "TODOS",
+          value: '',
+        },
+      ],
     options: {
       page: 1,
       itemsPerPage: 8,
@@ -99,8 +118,8 @@ export default {
         value: "con_re",
         input: "",
         class: ["table", "white--text"],
-        width: "10%",
-        sortable: true,
+        width: "5%",
+        sortable: false,
       },{
         text: "Año",
         value: "year",
@@ -161,7 +180,7 @@ export default {
         text: "Desg.",
         value: "breakdown_name",
         class: ["table", "white--text"],
-        width: "15%",
+        width: "20%",
         sortable: false,
       },
     ],
@@ -218,6 +237,15 @@ export default {
       } finally {
         this.loading_table = false;
       }
+    },
+    searchTimeOut() {
+      if (this.timer) {
+        clearTimeout(this.timer);
+        this.timer = null;
+      }
+      this.timer = setTimeout(() => {
+        this.getSearchActiveAffiliateContribution()
+      }, 800);
     },
   },
 };

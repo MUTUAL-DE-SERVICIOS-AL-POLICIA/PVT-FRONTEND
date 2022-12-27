@@ -4,12 +4,14 @@
       <v-row class="text-right">
         <v-col cols="12" class="ma-0 pa-0 pt-0">
           <template>
+             <!--TODO corregir permission.secondaryy una vez defina la edicion de  afiliado-->
             <v-btn
               x-small
               right
               color="success"
               dark
               @click.stop="validateFormProfile()"
+              v-if="permission.secondaryy"
             >
               <span v-if="!sync_up.editable"> EDITAR</span>
               <span v-else> Confirmar</span>

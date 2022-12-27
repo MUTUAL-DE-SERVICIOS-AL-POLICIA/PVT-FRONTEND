@@ -1,14 +1,14 @@
 <template>
   <v-app>
-    <template v-if="isAuthenticated && currentRole" >
-      <Navbar :expanded.sync="expandNavbar" />
-    </template>
-
     <template v-if="isAuthenticated">
       <Appbar :expanded.sync="expandNavbar" />
     </template>
 
-    <v-main style="padding: 48px 0px 32px 56px">
+    <template v-if="isAuthenticated && currentRole" >
+      <Navbar :expanded.sync="expandNavbar" />
+    </template>
+
+    <v-main>
       <Nuxt />
     </v-main>
 

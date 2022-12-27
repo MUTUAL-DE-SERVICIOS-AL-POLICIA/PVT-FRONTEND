@@ -8,14 +8,14 @@
     <v-card-text>
       <div class="mt-2 pb-8 mx-0 px-0 backgroundCard">
         <v-row>
-          <v-col cols="12" md="3">
+          <v-col cols="6" md="6" lg="4">
             <v-card class="mx-5 px-5 py-6 elevation-0">
-              <v-select 
+              <v-select
                 v-model="type"
                 :items="type_notifications"
-                item-text="name" 
-                item-value="id" 
-                label="Tipo Notificación" 
+                item-text="name"
+                item-value="id"
+                label="Tipo Notificación"
                 outlined dense>
               </v-select>
               <v-menu
@@ -91,6 +91,9 @@
               <v-btn color="primary" @click="downloadReport()"  :loading="loading">Descargar reporte </v-btn>
             </v-card>
           </v-col>
+          <v-col cols="6" md="6" lg="4">
+            <CellBalance />
+          </v-col>
         </v-row>
       </div>
     </v-card-text>
@@ -99,11 +102,13 @@
 
 <script>
 import GlobalBreadCrumb from "@/components/common/GlobalBreadCrumb.vue";
+import CellBalance from "@/components/notification/CellBalance"
 
 export default {
   name: "ReportNotification",
   components: {
     GlobalBreadCrumb,
+    CellBalance
   },
 
   data: () => ({
@@ -132,13 +137,13 @@ export default {
                 undefined
             )
             this.type_notifications = response.type_notifications
-            this.type_notifications.unshift({ id: 0, name: "Todos" })            
+            this.type_notifications.unshift({ id: 0, name: "Todos" })
         } catch(e) {
             console.log(e)
         }
     },
     async downloadReport() {
-        try {            
+        try {
             this.loading = true
             let response = await this.$axios.post(
                 "/notification/report",
@@ -149,7 +154,7 @@ export default {
                 },
                 {'Accept': 'application/vnd.ms-excel'},
                 {'responseType': 'blob'}
-            )            
+            )
             const url = window.URL.createObjectURL(new Blob([response]))
             const link = document.createElement("a")
             link.href = url
@@ -167,7 +172,7 @@ export default {
       let month = current_date.getMonth() + 1;
       let day = current_date.getDate();
       let year = current_date.getFullYear();
-      
+
       if(day < 10) {
         day = '0' + day + '';
       }

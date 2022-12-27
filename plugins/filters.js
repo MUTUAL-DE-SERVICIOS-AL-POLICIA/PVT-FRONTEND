@@ -12,9 +12,14 @@ export default (context, inject) => {
         else 
         return parseFloat(value).toLocaleString("de-DE", {minimumFractionDigits: 0, maximumFractionDigits: 0})
     },
-    date(value){
+    dateTime(value){
       if(value != null)
       return Moment(value).format('DD/MM/YYYY HH:mm:ss')
+      else ''
+    },
+    date(value){
+      if(value != null)
+      return Moment(value).format('DD/MM/YYYY')
       else ''
     }
 

@@ -10,50 +10,25 @@
               Datos del afiliado
             </v-col>
           </v-row>
-          <v-tooltip>
-            <template v-slot:activator="{ on }">
-              <v-btn
-                small
-                dark
-                v-on="on"
-                @click="getState_cellphone()"
-                color="info"
-              >
-                <span> ASIGNAR CREDENCIALES</span>
-              </v-btn>
-            </template>
-          </v-tooltip>
-          <!-- <v-tooltip bottom> -->
-            <!-- <template v-slot:activator="{ on, attrs }"> -->
-              <!-- <v-btn -->
-                <!-- small -->
-                <!-- dark -->
-                <!-- v-bind="attrs" -->
-                <!-- v-on="on" -->
-                <!-- @click.stop="saveAffiliate()" -->
-                <!-- :color="sync_up.editable ? 'success' : 'secondary'" -->
-              <!-- > -->
-                <!-- <span v-if="!sync_up.editable"> EDITAR</span> -->
-                <!-- <span v-else> Confirmar</span> -->
-              <!-- </v-btn> -->
-            <!-- </template> -->
-          <!-- </v-tooltip> -->
-          <!-- <v-tooltip bottom> -->
-            <!-- <template v-slot:activator="{ on, attrs }"> -->
-              <!-- <v-btn -->
-                <!-- small -->
-                <!-- color="error" -->
-                <!-- dark -->
-                <!-- v-bind="attrs" -->
-                <!-- v-on="on" -->
-                <!-- v-show="sync_up.editable" -->
-                <!-- @click.stop="resetForm()" -->
-              <!-- > -->
-                <!-- <span> cancelar</span> -->
-              <!-- </v-btn> -->
-            <!-- </template> -->
-            <!-- <span>EDITAR</span> -->
-          <!-- </v-tooltip> -->
+          <v-btn
+            v-if="affiliate.credential_status.access_status == 'No asignadas'"
+            small
+            dark
+            @click="getState_cellphone()"
+            color="info"
+          >
+            <span> ASIGNAR CREDENCIALES</span>
+          </v-btn>
+          <v-btn
+            v-if="affiliate.credential_status.access_status != 'No asignadas'"
+            small
+            dark
+            @click="printFormCredential()"
+            color="secondary"
+            :loading="loading_btn_print"
+          >
+            <span> <v-icon>mdi-printer</v-icon>CREDENCIALES</span>
+          </v-btn>
         </v-toolbar>
       </v-card-title>
       <v-card-text>
@@ -155,7 +130,7 @@
                 {{ options.response_message }}
               </v-container>
               <v-container v-else>
-                Por favor actualice el numero de celular
+                Por favor actualice el número de celular
               </v-container>
             </v-card-text>
             <v-card-actions>
@@ -214,6 +189,9 @@ export default {
       date_derelict: null,
       unit_name: null,
       affiliate_state_id: null,
+      credential_status:{
+        access_status: null
+      }
     },
     sync_up:{
       editable: false,
@@ -258,7 +236,8 @@ export default {
     tab: 0,
     state:{
       active:false
-    }
+    },
+    loading_btn_print: false
   }),
   beforeMount(){
     this.$nuxt.$on('eventGetSpouse', (val) => {
@@ -387,12 +366,7 @@ export default {
             affiliate_id: this.affiliate.id
           }
           );
-          this.options.response_message =
-            res.message +
-            " su usuario es: " +
-            res.payload.username +
-            " su password es " +
-            res.payload.pin;
+          this.options.response_message = res.message + " su usuario es: " +res.payload.username +" su password es " +res.payload.pin;
           this.watch_button_send = false;
           this,loading= false
         } else {
@@ -427,6 +401,26 @@ export default {
         this.loading = false
       }
     },
+    async printFormCredential(){
+      this.loading_btn_print=true
+      try {
+        let res = await this.$axios.get(
+          `/affiliate/credential_document/${this.$route.params.id}`,
+          undefined,
+          { responseType: "blob"}
+        )
+        const url = window.URL.createObjectURL(new Blob([res]));
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", "Alta de credenciales.pdf");
+        document.body.appendChild(link);
+        link.click();
+        this.loading_btn_print = false
+      } catch (e) {
+        console.log(e)
+        this.loading_btn_print= false
+      }
+    }
 
   },
 };

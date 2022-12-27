@@ -871,7 +871,6 @@ export default {
       })
     },
     fileUpload() {
-      console.log("Se ha cargado el archivo");
       if(this.file !== null)
       console.log(this.$firebase.upload(this.file));
     },

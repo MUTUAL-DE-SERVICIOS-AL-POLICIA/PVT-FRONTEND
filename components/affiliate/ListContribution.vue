@@ -45,27 +45,28 @@
       <template v-else-if="state.active">
         <template v-if="show_detail.active">
           <v-row >
-            <v-col cols="12" class="text-left"> <v-toolbar-title> 
-              <v-tooltip top>
-                <template v-slot:activator="{ on }">
-                  <v-btn
-                    small
-                    dark
-                    icon
-                    v-model="show_detail.active"
-                    color="success"
-                    v-on="on"
-                    class="my-2 mr-4"
-                    @click="showContribution()"
-                  >
-                    <v-icon>mdi-arrow-left-bold </v-icon>
-                  </v-btn>
-                </template>
-                <div>
-                  <span>Aportes</span>
-                </div>
-              </v-tooltip>
-              DETALLE DE APORTES ACTIVO
+            <v-col cols="12" class="text-left">
+              <v-toolbar-title>
+                <v-tooltip top>
+                  <template v-slot:activator="{ on }">
+                    <v-btn
+                      small
+                      dark
+                      icon
+                      v-model="show_detail.active"
+                      color="success"
+                      v-on="on"
+                      class="my-2 mr-4"
+                      @click="showContribution()"
+                    >
+                      <v-icon>mdi-arrow-left-bold </v-icon>
+                    </v-btn>
+                  </template>
+                  <div>
+                    <span>Aportes</span>
+                  </div>
+                </v-tooltip>
+                DETALLE DE APORTES ACTIVO
              </v-toolbar-title>
             </v-col>
           </v-row>
@@ -73,9 +74,9 @@
         </template>
         <template v-if="show_detail.passive">
           <v-row>
-            <v-col cols="1" class ="mr-0">
-              <v-toolbar-title> 
-                <v-tooltip  class="my-0">
+            <v-col cols="12" class="text-left">
+              <v-toolbar-title>
+                <v-tooltip top>
                   <template v-slot:activator="{ on }">
                     <v-btn
                       small

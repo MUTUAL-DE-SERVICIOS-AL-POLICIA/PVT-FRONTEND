@@ -5,8 +5,8 @@
         <GlobalBreadCrumb />
       </v-toolbar>
     </v-card-title>
-    <v-card-text>      
-      
+    <v-card-text>
+
       <v-tabs left background-color="backgroundTab">
         <v-tab  :href="`#tab-1`" > Notificación CE </v-tab>
         <v-tab  :href="`#tab-2`" > Notificación App</v-tab>
@@ -34,7 +34,7 @@
           </v-card>
         </v-tab-item>
       </v-tabs>
-      
+
     </v-card-text>
 
   </v-container>

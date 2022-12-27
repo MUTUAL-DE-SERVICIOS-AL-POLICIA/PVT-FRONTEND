@@ -10,12 +10,12 @@
         <v-row>
           <v-col cols="6" md="6" lg="4">
             <v-card class="mx-5 px-5 py-6 elevation-0">
-              <v-select 
+              <v-select
                 v-model="type"
                 :items="type_notifications"
-                item-text="name" 
-                item-value="id" 
-                label="Tipo Notificación" 
+                item-text="name"
+                item-value="id"
+                label="Tipo Notificación"
                 outlined dense>
               </v-select>
               <v-menu
@@ -137,13 +137,13 @@ export default {
                 undefined
             )
             this.type_notifications = response.type_notifications
-            this.type_notifications.unshift({ id: 0, name: "Todos" })            
+            this.type_notifications.unshift({ id: 0, name: "Todos" })
         } catch(e) {
             console.log(e)
         }
     },
     async downloadReport() {
-        try {            
+        try {
             this.loading = true
             let response = await this.$axios.post(
                 "/notification/report",
@@ -154,7 +154,7 @@ export default {
                 },
                 {'Accept': 'application/vnd.ms-excel'},
                 {'responseType': 'blob'}
-            )            
+            )
             const url = window.URL.createObjectURL(new Blob([response]))
             const link = document.createElement("a")
             link.href = url
@@ -172,7 +172,7 @@ export default {
       let month = current_date.getMonth() + 1;
       let day = current_date.getDate();
       let year = current_date.getFullYear();
-      
+
       if(day < 10) {
         day = '0' + day + '';
       }

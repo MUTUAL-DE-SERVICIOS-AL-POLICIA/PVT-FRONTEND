@@ -4,25 +4,6 @@
           <v-row>
             <v-col cols="6" align="center">
               <v-card class="ma-4 pa-4 elevation-0">
-                <!-- <v-text-field -->
-                  <!-- dense -->
-                  <!-- label="Titulo" -->
-                  <!-- disabled -->
-                  <!-- outlined -->
-                  <!-- clearable -->
-                  <!-- v-model="form.title" -->
-                <!-- > -->
-                <!-- </v-text-field> -->
-                <!-- <v-textarea -->
-                  <!-- dense -->
-                  <!-- label="Mensaje" -->
-                  <!-- outlined -->
-                  <!-- disabled -->
-                  <!-- clearable -->
-                  <!-- v-model="form.message" -->
-                <!-- > -->
-                <!-- </v-textarea> -->
-
                 <v-alert
                   text
                   dense
@@ -130,27 +111,20 @@ export default {
         let formData = new FormData();
         formData.append("file", this.form.file);
         formData.append("user_id", this.$store.getters.user.id)
-        // formData.append("title", this.form.title);
-        // formData.append("message", this.form.message);
-        // formData.append("attached", this.form.attached);
 
         let res = await this.$axios.post(
           "/notification/file",
           formData
         );
-        if (!res.error) {          
+        if (!res.error) {
           this.notification = res.data.delivered;
           this.btn_send_notification = false;
           this.dialog_send_notification = false;
           this.$toast.success(
-            "Se ha enviado correctamente la notificación a " +
-              res.data.delivereds.length +
-              " destinatarios\n" +
-            "No se ha enviado SMS a " + res.data.fails.length +
-              " destinatarios\n"         
+            "Se está notificando a los afiliados"
           );
           this.clearInputs();
-        } else {          
+        } else {
           this.$toast.error(res.message);
         }
       } catch (e) {

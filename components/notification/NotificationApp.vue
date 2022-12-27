@@ -2,7 +2,7 @@
   <div class="mt-2 pb-8 mx-0 px-0 backgroundCard">
     <v-row>
       <v-col class="ma-4">
-        <v-row>          
+        <v-row>
           <v-col cols="12" md="3">
             <v-card class="px-5 py-6 elevation-0">
               <v-select
@@ -54,21 +54,21 @@
                 ]"
                 outlined
                 dense
-              ></v-select>              
+              ></v-select>
               <v-select
                 v-model="form.semester"
                 :items="semesters"
-                :disabled="check || check_2 || form.action == ''"
+                :disabled="check_receipt_of_requirements || check_economic_complement_payment || form.action == ''"
                 item-text="period"
                 item-value="id"
                 :label="
-                  check
+                  check_receipt_of_requirements
                     ? 'Todos'
-                    : check_2
+                    : check_economic_complement_payment
                     ? semesters[semesters.length - 1].period
                     : 'Semestre'
                 "
-                :hint="check || check_2 ? 'Semestre' : ''"
+                :hint="check_receipt_of_requirements || check_economic_complement_payment ? 'Semestre' : ''"
                 persistent-hint
                 outlined
                 background-color="backgroundCard"
@@ -82,15 +82,15 @@
               <v-select
                 v-model="form.beneficiary"
                 :items="beneficiaries"
-                :disabled="check || check_3 || check_4 || form.action == ''"
+                :disabled="check_receipt_of_requirements || check_beneficiary || check_hierarchie || form.action == ''"
                 item-text="name"
                 item-value="id"
                 :label="
-                  check || form.payment_method === 0
-                    ? beneficiaries[0].name                    
+                  check_receipt_of_requirements || form.payment_method === 0
+                    ? beneficiaries[0].name
                     : 'Tipo beneficiario'
-                "                
-                :hint="check || form.payment_method === 0 ? 'Tipo beneficiario' : ''"
+                "
+                :hint="check_receipt_of_requirements || form.payment_method === 0 ? 'Tipo beneficiario' : ''"
                 background-color="backgroundCard"
                 @change="(value) => changeStateModality(value)"
                 persistent-hint
@@ -101,33 +101,33 @@
                 v-model="form.hierarchie"
                 :items="hierarchies"
                 :disabled="
-                  check ||
-                  check_3 ||
+                  check_receipt_of_requirements ||
+                  check_beneficiary ||
                   form.beneficiary === 0 ||
                   form.beneficiary == '' ||
-                  check_4
+                  check_hierarchie
                 "
                 item-text="name"
                 item-value="id"
                 :label="
-                  check || form.payment_method === 0 || form.beneficiary === 0 ? hierarchies[0].name : 'Nivel jerárquico'
+                  check_receipt_of_requirements || form.payment_method === 0 || form.beneficiary === 0 ? hierarchies[0].name : 'Nivel jerárquico'
                 "
                 outlined
                 dense
-                :hint="check || form.payment_method === 0  ? 'Nivel jerárquico' : ''"
+                :hint="check_receipt_of_requirements || form.payment_method === 0  ? 'Nivel jerárquico' : ''"
                 background-color="backgroundCard"
                 persistent-hint
                 @change="() => changeStateHierarchies()"
               ></v-select>
             </v-card>
           </v-col>
-          
+
           <v-col cols="12" md="6">
             <v-card class="pa-2 elevation-0">
               <transition-group name="list" tag="div">
                 <drag
                   class="drag table"
-                  v-for="(n, i) in params"                   
+                  v-for="(n, i) in params"
                   :key="n+i"
                   :data="n"
                   @cut="remove(n)"
@@ -168,7 +168,7 @@
                     label="Imagen"
                     outlined
                     v-model="file"
-                    @change="() => fileUpload()"                    
+                    @change="() => fileUpload()"
                     clearable
                     show-size
                   >></v-file-input>
@@ -191,7 +191,7 @@
               </v-row>
             </v-card>
           </v-col>
-          
+
           <v-col cols="12" md="3">
             <v-card ma-3 elevation="0" tile>
               <v-card class="text-center primary" height="25" >
@@ -200,7 +200,7 @@
                 </v-card-subtitle>
               </v-card>
               <v-img
-                src="https://www.opinion.com.bo/asset/thumbnail,992,558,center,center//media/opinion/images/2022/05/24/2022052415283420630.jpg"
+                :src="require('@/assets/images/MUSERPOL.jpg')"
               >
               </v-img>
               <v-card
@@ -300,7 +300,7 @@
                 spellcheck="false"
                 class="filter-text"
                 v-model="searching.affiliate_id"
-                @input="applicationProcess(parameters, false)"
+                @keyup="searchTimeOut()"
               ></v-text-field>
             </td>
             <td>
@@ -309,7 +309,7 @@
                 spellcheck="false"
                 class="filter-text"
                 v-model="searching.last_name"
-                @input="applicationProcess(parameters, false)"
+                @keyup="searchTimeOut()"
               ></v-text-field>
             </td>
             <td>
@@ -318,7 +318,7 @@
                 spellcheck="false"
                 class="filter-text"
                 v-model="searching.mothers_last_name"
-                @input="applicationProcess(parameters, false)"
+                @keyup="searchTimeOut()"
               ></v-text-field>
             </td>
             <td>
@@ -327,7 +327,7 @@
                 spellcheck="false"
                 class="filter-text"
                 v-model="searching.first_name"
-                @input="applicationProcess(parameters, false)"
+                @keyup="searchTimeOut()"
               ></v-text-field>
             </td>
             <td>
@@ -336,7 +336,7 @@
                 spellcheck="false"
                 class="filter-text"
                 v-model="searching.second_name"
-                @input="applicationProcess(parameters, false)"
+                @keyup="searchTimeOut()"
               ></v-text-field>
             </td>
             <td>
@@ -345,7 +345,7 @@
                 spellcheck="false"
                 class="filter-text"
                 v-model="searching.identity_card"
-                @input="applicationProcess(parameters, false)"
+                @keyup="searchTimeOut()"
               ></v-text-field>
             </td>
             <td>
@@ -408,18 +408,18 @@ export default {
     this.getBeneficiaries()
   },
   data: () => ({
-    scrollInvoked: 0,    
+    scrollInvoked: 0,
     items: ["Notificación App", "SMS's"],
-    id: 6, // habilitados para el pago de complemento económico
-    module_id: 2, // id del modulo
-    
+    eco_com_state_type_id: 6, // habilitados para el pago de complemento económico
+    module_id: 2, // id del módulo para observaciones
+
     actions: [],
     modalities_payment: [],
     semesters: [],
     hierarchies: [],
     observations: [],
     beneficiaries: [],
-    
+
     params: [
       {
         param: "nombre",
@@ -514,12 +514,12 @@ export default {
     },
     flag_payment_method: false,
     flag_observation: false,
-    
+
     text: "",
-    check: false, // recepción de requisitos
-    check_2: false, // pago complemento económico
-    check_3: false,
-    check_4: false,
+    check_receipt_of_requirements: false, // recepción de requisitos
+    check_economic_complement_payment: false, // pago complemento económico
+    check_beneficiary: false,
+    check_hierarchie: false,
 
     affiliates: [],
     options: {
@@ -528,14 +528,14 @@ export default {
     },
     total_affiliates: 0,
     loading_table: false,
-    all_affiliates: [],    
+    all_affiliates: [],
     check_all: true,
     file: null,
     url_file: null,
     parameters: {},
-    filter: false,  
+    filter: false,
     dialog_send_notification: false,
-    btn_send_notification: false,  
+    btn_send_notification: false,
   }),
   watch: {
     options: function (newVal, oldVal) {
@@ -571,7 +571,7 @@ export default {
     async getMethodsPayments() {
       try {
         let response = await this.$axios.get(
-          `/notification/get_modalities_payment/${this.id}`,
+          `/notification/get_modalities_payment/${this.eco_com_state_type_id}`,
           undefined
         );
         this.modalities_payment = response.modalities_payment;
@@ -627,23 +627,11 @@ export default {
       }
     },
     async notify() {
-      try {    
-                      
-          if(this.text != null && this.text != "" && this.all_affiliates.length && this.amountToSend() !== 0) {            
-            
-            if(this.file != null) 
-              this.url_file = await this.$firebase.getURL(this.file);  
-            // let amount = this.amountToSend()                      
-            // this.$swal({
-            //   title: '¿Está seguro de enviar notificaciones?',
-            //   text: `¡Se va enviar a ${amount} afiliados`,  
-            //   type: 'warning',
-            //   showCancelButton: true,
-            //   confirmButtonColor: '#00838F',
-            //   cancelButtonColor: '#d33',
-            //   confirmButtonText: 'Confirmar'
-            // }).then( async (result) => {                         
-            //     if(result.value) {
+      try {
+          if(this.text != null && this.text != "" && this.all_affiliates.length && this.amountToSend() !== 0) {
+
+            if(this.file != null)
+              this.url_file = await this.$firebase.getURL(this.file);
                   try {
                     this.btn_send_notification = true
                     let response = await this.$axios.post(
@@ -651,7 +639,7 @@ export default {
                       {
                         title: "Complemento económico",
                         message: this.text,
-                        user_id: this.$store.getters.user.id, 
+                        user_id: this.$store.getters.user.id,
                         image: this.url_file,
                         attached: "Comunicado",
                         sends: this.all_affiliates,
@@ -659,126 +647,78 @@ export default {
                     );
                     let error = response.data.error
                     this.dialog_send_notification = false
-                    if (!error) {        
-                      this.btn_send_notification = false      
-                      let message = response.message            
+                    if (!error) {
+                      this.btn_send_notification = false
+                      let message = response.message
                       let success_count = response.data.success_count
                       let cmp = success_count == 1 ? "afiliado" : "afiliados"
                       this.$toast.success(
-                        `Se ha notificado exitosamente`     
+                        `Se ha notificado exitosamente`
                       );
-                      // this.$swal({
-                      //   position: 'top-end',
-                      //   type: 'success',
-                      //   title: message,
-                      //   text: `Se ha notificado exitosamente a ${success_count} ${cmp}`,
-                      //   showConfirmButton: false,
-                      //   timer: 2500
-                      // })
                       this.btn_send_notification = false
                     } else {
                       this.btn_send_notification = false
-                      this.$toast.error('Hubo un error, comuniquese con sistemas');
-                      // this.$swal({
-                      //   type: 'error',
-                      //   title: 'Hubo un error',
-                      //   text: 'Comuniquese con sistemas'
-                      // })
+                      this.$toast.error('Hubo un error');
                     }
                   } catch(e) {
-                    // this.$swal({
-                    //   type: 'error',
-                    //   title: 'Hubo un error',
-                    //   text: 'Comuniquese con sistemas'
-                    // })
                     this.btn_send_notification = false
-                    this.$toast.error('Hubo un error, comuniquese con sistemas');
+                    this.$toast.error('Hubo un error');
                     console.log(e)
                   }
-              //   }
-                
-              // })               
           } else if(this.text == null || this.text == "") {
             this.dialog_send_notification = false
             this.$toast.error('¡El cuerpo del mensaje no puede estar vacío!');
-            // const Toast = this.$swal.mixin({
-            //   toast: true,
-            //   position: 'top-end',
-            //   showConfirmButton: false,
-            //   timer: 3000,
-            //   timerProgressBar: true,
-            // })
-            // Toast.fire({
-            //   type: 'warning',
-            //   title: '¡El cuerpo del mensaje no puede estar vacío!'
-            // })
         } else {
             this.$toast.error('¡No hay afiliados para notificar!');
-            // const Toast = this.$swal.mixin({
-            //   toast: true,
-            //   position: 'top-end',
-            //   showConfirmButton: false,
-            //   timer: 3000,
-            //   timerProgressBar: true,
-            // })
-            // Toast.fire({
-            //   type: 'warning',
-            //   title: '¡No hay afiliados para notificar!'
-            // })
-        }                         
+        }
       } catch (e) {
         console.log(e);
       }
     },
     async applicationProcess(obj, flag = true){
-      try {                
+      try {
         this.loading_table = true
-        setTimeout(async () => {        
-          obj.first = flag        
-          if(!this.isEmptyObjectValues(this.searching)) {  // entra cuando se llenaron los filtros          
-            this.filter = true 
-            obj = {...obj, ...this.searching}                       
-          }  else {  
-            this.filter = false                   
+        setTimeout(async () => {
+          obj.first = flag
+          if(!this.isEmptyObjectValues(this.searching)) {  // entra cuando se llenaron los filtros
+            this.filter = true
+            obj = {...obj, ...this.searching}
+          }  else {
+            this.filter = false
           }
-          let response = await this.$axios.post("/notification/list_to_notify", obj)        
-          this.all_affiliates = flag 
-          // || this.filter
+          let response = await this.$axios.post("/notification/list_to_notify", obj)
+          this.all_affiliates = flag
             ? this.preProcessData(response.all)
             : this.all_affiliates
-          this.dataSync(response)          
+          this.dataSync(response)
           this.total_affiliates = response.data.total
           this.options.page = response.data.current_page
           this.options.itemsPerPage = parseInt(response.data.per_page)
-          // this.filter = false  
-        }, 300) 
-        this.loading_table = false  
+        }, 300)
+        this.loading_table = false
       } catch(e) {
         this.loading_table = false
         console.log(e)
       }
     },
-    isEmptyObjectValues(obj) {      
+    isEmptyObjectValues(obj) {
       let values = Object.values(obj)
       for(const val of values) {
         if(val != "") return false
-      }      
+      }
       return true
     },
     onScroll() {
       this.scrollInvoked++;
     },
     onCopyDrop(e) {
-      this.text += " " + e.data.value + " ";      
-    },
-    show() {
-     
+      this.text += " " + e.data.value + " ";
     },
     amountToSend(){
       let i = 0
       this.all_affiliates.forEach((el) => {
         if(el.send) i++
-      })  
+      })
       console.log(i)
       return i
     },
@@ -795,43 +735,43 @@ export default {
           this.resetValues();
           this.flag_payment_method = false;
           this.flag_observation = false;
-          this.check = true;
-          this.check_2 = false;
-          this.check_4 = false;          
+          this.check_receipt_of_requirements = true;
+          this.check_economic_complement_payment = false;
+          this.check_hierarchie = false;
           this.parameters = {
             action: this.form.action,
             first: true,
             page: this.options.page,
             per_page: this.options.itemsPerPage,
-          }          
+          }
           this.applicationProcess(this.parameters)
           break;
         case 2: // si es pago de complemento económico
           this.resetValues();
           this.flag_payment_method = true;
           this.flag_observation = false;
-          this.check = false;
-          this.check_2 = true;
+          this.check_receipt_of_requirements = false;
+          this.check_economic_complement_payment = true;
           this.form.semester = this.semesters[this.semesters.length - 1].id;
-          this.check_4 = false;
+          this.check_hierarchie = false;
           break;
         case 3: // Si es observaciones
           this.resetValues();
           this.flag_payment_method = false;
           this.flag_observation = true;
-          this.check = false;
-          this.check_2 = false;
-          this.check_4 = true;
+          this.check_receipt_of_requirements = false;
+          this.check_economic_complement_payment = false;
+          this.check_hierarchie = true;
           break;
       }
     },
     changeStatePaymentMethod(value) {
       this.form.hierarchie = this.form.beneficiary = ""
       this.form.observation = ""
-      if (value == 0) {        
-        this.check_3 = true;
+      if (value == 0) {
+        this.check_beneficiary = true;
       } else {
-        this.check_3 = false;
+        this.check_beneficiary = false;
       }
       this.parameters = {
           action: this.form.action,
@@ -839,7 +779,7 @@ export default {
           first: true,
           page: this.options.page,
           per_page: this.options.itemsPerPage,
-      }      
+      }
       this.applicationProcess(this.parameters)
     },
     changeStateModality(value) {
@@ -851,7 +791,7 @@ export default {
           first: true,
           page: this.options.page,
           per_page: this.options.itemsPerPage,
-      }      
+      }
       this.applicationProcess(this.parameters)
     },
     changeStateHierarchies() {
@@ -863,11 +803,11 @@ export default {
           first: true,
           page: this.options.page,
           per_page: this.options.itemsPerPage,
-      }      
+      }
       this.applicationProcess(this.parameters)
     },
     changeStateObservation() {
-      if(this.form.semester !== "") {            
+      if(this.form.semester !== "") {
         this.form.beneficiary = this.form.hierarchie = "";
         this.parameters = {
           action: this.form.action,
@@ -876,7 +816,7 @@ export default {
           first: true,
           page: this.options.page,
           per_page: this.options.itemsPerPage,
-        }        
+        }
         this.applicationProcess(this.parameters)
       }
     },
@@ -886,7 +826,7 @@ export default {
           element.send = send ?? false
           return
         }
-      })      
+      })
     },
     preProcessData(array) {
       if(array.length) {
@@ -894,35 +834,19 @@ export default {
           element.send = true;
         });
       }
-      
       return array;
     },
-    dataSync(response) {      
-      this.affiliates = this.preProcessData(response.data.data)   
-      // if(this.filter) {        
-      //   let diff = this.all_affiliates.filter(
-      //     element => this.affiliates.findIndex(
-      //       other => other.affiliate_id == element.affiliate_id
-      //       ) 
-      //     == -1
-      //   )  
-      //   diff.forEach((element) => {
-      //     this.all_affiliates.filter((key) => {
-      //       if(key.affiliate_id == element.affiliate_id) {
-      //         key.send = false
-      //       }
-      //     })
-      //   })
-      // }                      
+    dataSync(response) {
+      this.affiliates = this.preProcessData(response.data.data)
       if (this.all_affiliates.length) {
         this.affiliates.forEach((element) => {
           this.all_affiliates.filter((key) => {
             if (key.affiliate_id == element.affiliate_id) {
               element.send = key.send
-            } 
+            }
           })
         })
-      }      
+      }
     },
     clearAllFilters() {
       this.searching.affiliate_id = ""
@@ -931,13 +855,12 @@ export default {
       this.searching.first_name = ""
       this.searching.second_name = ""
       this.searching.identity_card = ""
-      const {affiliate_id, last_name, mothers_last_name, first_name, second_name, identity_card, ...think} = this.parameters  // más eficiente 
-      // this.applicationProcess(this.parameters, false)   
-      this.filter = false      
-      this.applicationProcess(think, false) 
+      const {affiliate_id, last_name, mothers_last_name, first_name, second_name, identity_card, ...think} = this.parameters  // más eficiente
+      this.filter = false
+      this.applicationProcess(think, false)
     },
-    checkAll() {      
-      this.check_all = !this.check_all      
+    checkAll() {
+      this.check_all = !this.check_all
       this.all_affiliates.forEach((element) => {
         element.send = this.check_all
         this.affiliates.filter((key) => {
@@ -945,24 +868,36 @@ export default {
             key.send = element.send
           }
         })
-      })      
+      })
     },
     fileUpload() {
       if(this.file !== null)
       console.log(this.$firebase.upload(this.file));
     },
     verify() {
-      if(this.text == null || this.text == "" || this.all_affiliates.length == 0 || this.amountToSend() === 0) {              
+      if(this.text == null || this.text == "" || this.all_affiliates.length == 0 || this.amountToSend() === 0) {
         if(this.text == null || this.text == "") {
           this.$toast.error('¡El cuerpo del mensaje no puede estar vacío!');
-        } else {          
+        } else {
           this.$toast.error('¡No hay afiliados para notificar!');
-        } 
+        }
         this.dialog_send_notification = false
       } else {
         this.dialog_send_notification = true
       }
     },
+    searchTimeOut() {
+      this.parameters.page = this.options.page
+      this.parameters.per_page = this.options.itemsPerPage
+      this.parameters.first = false
+      if(this.timer) {
+        clearTimeout(this.timer);
+        this.timer = null;
+      }
+      this.timer = setTimeout(() => {
+        this.applicationProcess(this.parameters, false)
+      }, 800);
+    }
   }
 }
 </script>

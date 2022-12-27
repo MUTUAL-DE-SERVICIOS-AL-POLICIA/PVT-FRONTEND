@@ -11,7 +11,7 @@
             </v-col>
           </v-row>
           <v-btn
-     
+            v-if="affiliate.credential_status.access_status == 'No asignadas'"
             small
             dark
             @click="getState_cellphone()"
@@ -20,7 +20,7 @@
             <span> ASIGNAR CREDENCIALES</span>
           </v-btn>
           <v-btn
-    
+            v-if="affiliate.credential_status.access_status != 'No asignadas'"
             small
             dark
             @click="printFormCredential()"
@@ -32,7 +32,6 @@
         </v-toolbar>
       </v-card-title>
       <v-card-text>
-        {{        affiliate.credential_status.access_status }}
         <v-tabs vertical v-model="tab">
           <v-card color="accent" class="pa-2" style="width:250px" align="center">
             <v-chip

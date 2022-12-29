@@ -319,9 +319,10 @@ export default {
         if (!this.sync_up.editable) {
           this.sync_up.editable = true;
         } else {
-          await this.$axios.patch(
-            `affiliate/affiliate/${this.affiliate.id}`,
-            this.affiliate
+          await this.$axios.patch(`affiliate/affiliate/${this.affiliate.id}`,
+            {
+              cell_phone_number: this.affiliate.cell_phone_number
+            }
           );
           this.getAffiliateAddress();
           this.$toast.success(

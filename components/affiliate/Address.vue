@@ -13,7 +13,7 @@
         <td>{{ props.item.street }}</td>
         <td>{{ props.item.number_address }}</td>
         <td>{{ props.item.description }}</td>
-        <td>
+        <!-- <td>
           <v-radio-group
             :value="id_street"
             @change="id_street = props.item.id"
@@ -40,7 +40,7 @@
           >
             mdi-delete
           </v-icon>
-        </td>
+        </td> -->
       </tr>
     </template>
 
@@ -161,7 +161,7 @@ export default {
       { text: "Calle", align: "left", value: "street" },
       { text: "Nro", align: "left", value: "number_address" },
       { text: "Descripción", align: "left", value: "description" },
-      { text: "Acciones", value: "actions", sortable: false },
+      //{ text: "Acciones", value: "actions", sortable: false },
     ],
     editedIndex: -1,
     editedItem: {

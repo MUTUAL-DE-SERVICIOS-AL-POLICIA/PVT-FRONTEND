@@ -319,9 +319,10 @@ export default {
         if (!this.sync_up.editable) {
           this.sync_up.editable = true;
         } else {
-          await this.$axios.patch(
-            `affiliate/affiliate/${this.affiliate.id}`,
-            this.affiliate
+          await this.$axios.patch(`affiliate/affiliate/${this.affiliate.id}`,
+            {
+              cell_phone_number: this.affiliate.cell_phone_number
+            }
           );
           this.getAffiliateAddress();
           this.$toast.success(
@@ -363,15 +364,27 @@ export default {
       try {
         if (this.affiliate.credential_status.access_status == "No asignadas" || this.affiliate.credential_status.access_status == "Inactivo") {
           let res = await this.$axios.post(`/affiliate/store`,{
-            affiliate_id: this.affiliate.id
+            affiliate_id: this.affiliate.id,
+            role_id:this.$store.getters.currentRole.id
           }
           );
-          this.options.response_message = res.message + " su usuario es: " +res.payload.username +" su password es " +res.payload.pin;
+          if (res.error==false) {
+            this.options.response_message =
+            res.message +
+            " su usuario es: " +
+            res.payload.username +
+            " su password es " +
+            res.payload.pin;
           this.watch_button_send = false;
-          this,loading= false
+          }
+          else{
+            this.options.response_message =res.message
+            this.watch_button_send = false;
+          }
         } else {
           this.$toast.info("ya cuenta con credenciales");
         }
+        this,loading= false
       } catch (e) {
         console.log(e);
       }

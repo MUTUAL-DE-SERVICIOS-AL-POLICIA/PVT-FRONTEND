@@ -1,4 +1,5 @@
 <template>
+  <div>
   <v-data-table
     dense
     :headers="headers"
@@ -6,6 +7,7 @@
     :options.sync="options"
     :loading="loading_table"
     :server-items-length="total_contributions"
+    :key="refresh_table"
   >
     <template v-slot:[`header.con_re`]="{ header }">
       <span :class="searching.con_re ? 'primary--text' : ''">{{
@@ -68,11 +70,41 @@
             class="filter-text"
             v-model="searching.breakdown"
             @keyup="searchTimeOut()"
-            ></v-text-field>
-            </td>
+          ></v-text-field>
+        </td>
       </tr>
     </template>
+    <template v-slot:[`item.actions`]="{ item }">
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on }">
+          <v-btn
+            v-if="item.can_deleted"
+            icon small
+            v-on="on"
+            @click="dialogDelete(item.con_re_id)"
+            color="error">
+            <v-icon>mdi-delete</v-icon>
+          </v-btn>
+        </template>
+        <span>Eliminar contribución</span>
+      </v-tooltip>
+    </template>
   </v-data-table>
+  <v-dialog v-model="dialog" max-width="500px">
+    <v-card>
+      <v-card-title class="text-h5">Esta seguro de eliminar el registro?</v-card-title
+      >
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn color="error" text @click="dialog=false">Cerrar</v-btn>
+        <v-btn color="success" text @click="deleteItem()"
+          >Confirmar</v-btn
+        >
+        <v-spacer></v-spacer>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+  </div>
 </template>
 
 <script>
@@ -106,7 +138,7 @@ export default {
       page: 1,
       itemsPerPage: 8,
       sortBy: ["month_year"],
-      sortDesc: [false],
+      sortDesc: [true],
     },
     total_contributions: 0,
     loading_table: false,
@@ -182,8 +214,17 @@ export default {
         class: ["table", "white--text"],
         width: "20%",
         sortable: false,
+      },{
+        text: "Acciones",
+        value: "actions",
+        class: ["table", "white--text"],
+        width: "20%",
+        sortable: false,
       },
     ],
+    dialog: false,
+    delete_id: null,
+    refresh_table:0
   }),
 
   watch: {
@@ -203,6 +244,10 @@ export default {
         this.options.page = 1;
       },
     },
+    refresh_table: function (newVal, oldVal) {
+      if(newVal != oldVal)
+        this.getSearchActiveAffiliateContribution()
+    }
   },
   mounted() {
     this.getSearchActiveAffiliateContribution();
@@ -247,6 +292,25 @@ export default {
         this.getSearchActiveAffiliateContribution()
       }, 800);
     },
+    dialogDelete(item){
+      this.dialog= true
+      this.delete_id=item
+    },
+    async deleteItem(){
+      try {
+        let res = await this.$axios.delete(`/contribution/contribution/${this.delete_id}`)
+        this.dialog = false
+        this.refresh_table ++
+        if(!res.error){
+          this.$toast.success(res.message)
+        }else{
+          this.$toast.error(res.message)
+        }
+      } catch (e) {
+        this.dialog = false
+        console.log(e)
+      }
+    }
   },
 };
 </script>

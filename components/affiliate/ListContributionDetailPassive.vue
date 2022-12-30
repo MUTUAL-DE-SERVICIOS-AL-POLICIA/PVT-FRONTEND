@@ -1,4 +1,5 @@
 <template>
+<div>
   <v-data-table
     dense
     :headers="headers"
@@ -6,6 +7,7 @@
     :options.sync="options"
     :loading="loading_table"
     :server-items-length="total_contributions"
+    :key="refresh_table"
   >
     <template v-slot:[`header.year`]="{ header }">
       <span :class="searching.year ? 'primary--text' : ''">{{
@@ -42,9 +44,63 @@
         <td><v-text-field disabled class="filter-text"></v-text-field></td>
         <td><v-text-field disabled class="filter-text"></v-text-field></td>
         <td><v-text-field disabled class="filter-text"></v-text-field></td>
+        <td>
+          <v-select
+            dense
+            :items="class_rent"
+            item-text = "name"
+            item-value = "value"
+            v-model="searching.affiliate_rent_class"
+            @change ="searchTimeOut()"
+            spellcheck = "false"
+            close-on-click
+          ></v-select>
+        </td>
+        <td>
+          <v-select
+            dense
+            :items="contribution_state"
+            item-text = "name"
+            item-value = "value"
+            v-model="searching.contribution_state_id"
+            @change ="searchTimeOut()"
+            spellcheck = "false"
+            close-on-click
+          ></v-select>
+        </td>
       </tr>
     </template>
+     <template v-slot:[`item.actions`]="{ item }">
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on }">
+          <v-btn
+            v-if="item.can_deleted"
+            icon small
+            v-on="on"
+            @click="dialogDelete(item.id)"
+            color="error">
+            <v-icon>mdi-delete</v-icon>
+          </v-btn>
+        </template>
+        <span>Eliminar contribución</span>
+      </v-tooltip>
+    </template>
   </v-data-table>
+  <v-dialog v-model="dialog" max-width="500px">
+    <v-card>
+      <v-card-title class="text-h5">Esta seguro de eliminar el registro?</v-card-title
+      >
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn color="error" text @click="dialog=false">Cerrar</v-btn>
+        <v-btn color="success" text @click="deleteItem()"
+          >Confirmar</v-btn
+        >
+        <v-spacer></v-spacer>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+  </div>
 </template>
 
 <script>
@@ -60,15 +116,43 @@ export default {
       year: "",
       month: "",
       contributionable_type: "",
-      contributionable_type_name: " ",
+      contributionable_type_name: "",
+      affiliate_rent_class:"",
+      contribution_state_id:""
     },
     options: {
       page: 1,
       itemsPerPage: 8,
       sortBy: ["month_year"],
-      sortDesc: [false],
+      sortDesc: [true],
     },
-
+    class_rent: [
+      {
+        name: "Vejez",
+        value: 'VEJEZ',
+      },{
+        name: "Viudedad",
+        value: 'VIUDEDAD',
+      },{
+        name: "Todos",
+        value: '',
+      },
+    ],
+    contribution_state: [
+      {
+        name: "En proceso",
+        value: '1',
+      },{
+        name: "Pagado",
+        value: '2',
+      },{
+        name: "Devuelto",
+        value: '3',
+      },{
+        name: "Todos",
+        value: '',
+      },
+    ],
     total_contributions: 0,
     loading_table: false,
     active: true,
@@ -125,7 +209,30 @@ export default {
         width: "15%",
         sortable: false,
       },
+      {
+        text: "Clase renta",
+        value: "affiliate_rent_class",
+        class: ["table", "white--text"],
+        width: "15%",
+        sortable: false,
+      },
+            {
+        text: "Estado",
+        value: "contribution_state.description",
+        class: ["table", "white--text"],
+        width: "15%",
+        sortable: false,
+      },{
+        text: "Acciones",
+        value: "actions",
+        class: ["table", "white--text"],
+        width: "20%",
+        sortable: false,
+      }
     ],
+    dialog: false,
+    delete_id: null,
+    refresh_table:0
   }),
 
   watch: {
@@ -145,6 +252,10 @@ export default {
         this.options.page = 1;
       },
     },
+    refresh_table: function (newVal, oldVal) {
+      if(newVal != oldVal)
+        this.getSearchPassiveAffiliateContribution()
+    }
   },
   mounted() {
     this.getSearchPassiveAffiliateContribution();
@@ -160,6 +271,8 @@ export default {
             year: this.searching.year,
             month: this.searching.month,
             contributionable_type: this.searching.contributionable_type,
+            affiliate_rent_class: this.searching.affiliate_rent_class,
+            contribution_state_id: this.searching.contribution_state_id,
             page: this.options.page,
             per_page: this.options.itemsPerPage,
             sortBy: this.options.sortBy,
@@ -178,6 +291,35 @@ export default {
       } finally {
         this.loading_table = false;
       }
+    },
+    dialogDelete(item){
+      this.dialog= true
+      this.delete_id=item
+      console.log(this.delete_id)
+    },
+    async deleteItem(){
+      try {
+        let res = await this.$axios.delete(`/contribution/contributions_passive/${this.delete_id}`)
+        this.dialog = false
+        this.refresh_table ++
+        if(!res.error){
+          this.$toast.success(res.message)
+        }else{
+          this.$toast.error(res.message)
+        }
+      } catch (e) {
+        this.dialog = false
+        console.log(e)
+      }
+    },
+    searchTimeOut() {
+      if (this.timer) {
+        clearTimeout(this.timer);
+        this.timer = null;
+      }
+      this.timer = setTimeout(() => {
+        this.getSearchPassiveAffiliateContribution()
+      }, 800);
     },
   },
 };

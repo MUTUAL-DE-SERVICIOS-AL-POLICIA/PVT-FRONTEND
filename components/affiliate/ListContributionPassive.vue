@@ -2,7 +2,26 @@
   <v-row>
     <template >
       <v-col cols="6" class="text-left" >
-        <v-toolbar-title >APORTES PASIVO</v-toolbar-title>
+        <v-toolbar-title >APORTES PASIVO
+          <v-tooltip top v-if="show">
+            <template v-slot:activator="{ on }">
+              <v-btn top
+                small
+                dark
+                icon
+                color="success"
+                class="my-2 mr-4"
+                v-on="on"
+                @click="showDetailPassive()"
+              >
+                <v-icon> mdi-arrow-right-bold </v-icon>
+              </v-btn>
+            </template>
+          <div>
+            <span>Detalle de Aportes</span>
+          </div>
+        </v-tooltip>
+      </v-toolbar-title>
       </v-col>
       <v-col cols="6"  class="text-right " v-if="show">
         <v-tooltip top class="my-0">
@@ -44,16 +63,6 @@
             <span>Certificación de Aportes Viudedad</span>
           </div>
         </v-tooltip>
-        <v-btn
-          x-small
-          color="secondary"
-          class="ma-2 pa-3"
-          @click="showDetailPassive()"
-          outlined
-          elevation="2"
-        >
-          <v-icon> mdi-cash</v-icon>Detalle
-        </v-btn>
       </v-col>
       <v-col cols="12" v-if="show">
         <v-data-table

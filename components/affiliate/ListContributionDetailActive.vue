@@ -138,7 +138,7 @@ export default {
       page: 1,
       itemsPerPage: 8,
       sortBy: ["month_year"],
-      sortDesc: [false],
+      sortDesc: [true],
     },
     total_contributions: 0,
     loading_table: false,

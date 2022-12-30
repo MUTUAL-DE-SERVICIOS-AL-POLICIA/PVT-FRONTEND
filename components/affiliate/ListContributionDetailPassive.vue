@@ -124,7 +124,7 @@ export default {
       page: 1,
       itemsPerPage: 8,
       sortBy: ["month_year"],
-      sortDesc: [false],
+      sortDesc: [true],
     },
     class_rent: [
       {
@@ -254,7 +254,7 @@ export default {
     },
     refresh_table: function (newVal, oldVal) {
       if(newVal != oldVal)
-        this.getSearchActiveAffiliateContribution()
+        this.getSearchPassiveAffiliateContribution()
     }
   },
   mounted() {

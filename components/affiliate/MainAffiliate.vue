@@ -364,7 +364,8 @@ export default {
       try {
         if (this.affiliate.credential_status.access_status == "No asignadas" || this.affiliate.credential_status.access_status == "Inactivo") {
           let res = await this.$axios.post(`/affiliate/store`,{
-            affiliate_id: this.affiliate.id
+            affiliate_id: this.affiliate.id,
+            role_id:this.$store.getters.currentRole.id
           }
           );
           this.options.response_message = res.message + " su usuario es: " +res.payload.username +" su password es " +res.payload.pin;

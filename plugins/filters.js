@@ -1,5 +1,5 @@
 'use strict'
-
+import Moment from 'moment'
 export default (context, inject) => {
   const Filters = {
     money (value) {
@@ -12,6 +12,16 @@ export default (context, inject) => {
         else 
         return parseFloat(value).toLocaleString("de-DE", {minimumFractionDigits: 0, maximumFractionDigits: 0})
     },
+    dateTime(value){
+      if(value != null)
+      return Moment(value).format('DD/MM/YYYY HH:mm:ss')
+      else ''
+    },
+    date(value){
+      if(value != null)
+      return Moment(value).format('DD/MM/YYYY')
+      else ''
+    }
 
   }
 

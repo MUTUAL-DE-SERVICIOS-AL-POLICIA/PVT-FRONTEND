@@ -1,6 +1,33 @@
  <template>
   <v-container fluid>
-    <v-form>
+    <v-form ref="forProfile">
+      <v-row class="text-right">
+        <v-col cols="12" class="ma-0 pa-0 pt-0">
+          <template>
+             <!--TODO corregir permission.secondaryy una vez defina la edicion de  afiliado-->
+            <v-btn
+              x-small
+              right
+              color="success"
+              dark
+              @click.stop="validateFormProfile()"
+              v-if="permission.secondaryy"
+            >
+              <span v-if="!sync_up.editable"> EDITAR</span>
+              <span v-else> Confirmar</span>
+            </v-btn>
+            <v-btn
+              x-small
+              color="error"
+              dark
+              v-show="sync_up.editable"
+              @click.stop="$nuxt.$emit('eventResetForm', true)"
+            >
+              <span> Cancelar</span>
+            </v-btn>
+          </template>
+        </v-col>
+      </v-row>
       <v-row justify="center">
         <v-col cols="12" md="6">
           <v-container class="py-0">
@@ -12,9 +39,12 @@
                 <v-text-field
                   dense
                   v-model="affiliate.first_name"
-                  :disabled="!editable"
-                  :outlined="editable"
                   label="Primer Nombre"
+                  :readonly="!sync_up.editable || !permission.primary"
+                  :outlined="sync_up.editable && permission.primary"
+                  :disabled="sync_up.editable && !permission.primary"
+                  @keyup.enter="validateForm()"
+                  :rules="[$rules.obligatoria('Primer Nombre'),$rules.soloLetras(),$rules.longitudMinima(3),$rules.longitudMaxima(20)]"
                 >
                 </v-text-field>
               </v-col>
@@ -22,9 +52,12 @@
                 <v-text-field
                   dense
                   v-model="affiliate.second_name"
-                  :disabled="!editable"
-                  :outlined="editable"
                   label="Segundo Nombre"
+                  :readonly="!sync_up.editable || !permission.primary"
+                  :outlined="sync_up.editable && permission.primary"
+                  :disabled="sync_up.editable && !permission.primary"
+                  @keyup.enter="validateForm()"
+                  :rules="[$rules.soloLetras(),$rules.longitudMinima(3),$rules.longitudMaxima(20)]"
                   >
                 </v-text-field>
               </v-col>
@@ -32,9 +65,12 @@
                 <v-text-field
                   dense
                   v-model="affiliate.last_name"
-                  :disabled="!editable"
-                  :outlined="editable"
                   label="Apellido Paterno"
+                  :readonly="!sync_up.editable || !permission.primary"
+                  :outlined="sync_up.editable && permission.primary"
+                  :disabled="sync_up.editable && !permission.primary"
+                  @keyup.enter="validateForm()"
+                  :rules="(affiliate.mothers_last_name == null || affiliate.mothers_last_name == '')?[$rules.obligatoria('Apellido Paterno'),$rules.soloLetras(),$rules.longitudMinima(3),$rules.longitudMaxima(20)]:[$rules.soloLetras(),$rules.longitudMinima(3),$rules.longitudMaxima(20)]"
                 >
                 </v-text-field>
               </v-col>
@@ -42,9 +78,12 @@
                 <v-text-field
                   dense
                   v-model="affiliate.mothers_last_name"
-                  :disabled="!editable"
-                  :outlined="editable"
                   label="Apellido Materno"
+                  :readonly="!sync_up.editable || !permission.primary"
+                  :outlined="sync_up.editable && permission.primary"
+                  :disabled="sync_up.editable && !permission.primary"
+                  @keyup.enter="validateForm()"
+                  :rules="(affiliate.last_name == null || affiliate.last_name == '')?[$rules.obligatoria('Apellido Materno'),$rules.soloLetras(),$rules.longitudMinima(3),$rules.longitudMaxima(20)]:[$rules.soloLetras(),$rules.longitudMinima(3),$rules.longitudMaxima(20)]"
                 >
                 </v-text-field>
               </v-col>
@@ -52,9 +91,12 @@
                 <v-text-field
                   dense
                   v-model="affiliate.surname_husband"
-                  :disabled="!editable"
-                  :outlined="editable"
                   label="Apellido de Casada"
+                  :readonly="!sync_up.editable || !permission.primary"
+                  :outlined="sync_up.editable && permission.primary"
+                  :disabled="sync_up.editable && !permission.primary"
+                  @keyup.enter="validateForm()"
+                  :rules="[$rules.soloLetras(),$rules.longitudMinima(3),$rules.longitudMaxima(20)]"
                 >
                 </v-text-field>
               </v-col>
@@ -64,10 +106,13 @@
                   :items="genders"
                   item-text="name"
                   item-value="value"
-                  :disabled="!editable"
-                  :outlined="editable"
                   label="Género"
                   v-model="affiliate.gender"
+                  :readonly="!sync_up.editable || !permission.secondary"
+                  :outlined="sync_up.editable && permission.secondary"
+                  :disabled="sync_up.editable && !permission.secondary"
+                  @keyup.enter="validateForm()"
+                  :rules="[$rules.obligatoria('Género')]"
                 >
                 </v-select>
               </v-col>
@@ -75,9 +120,12 @@
                 <v-text-field
                   dense
                   v-model="affiliate.identity_card"
-                  :disabled="!editable"
-                  :outlined="editable"
                   label="Cédula de Identidad"
+                  :readonly="!sync_up.editable || !permission.primary"
+                  :outlined="sync_up.editable && permission.primary"
+                  :disabled="sync_up.editable && !permission.primary"
+                  @keyup.enter="validateForm()"
+                  :rules="[$rules.obligatoria('Cédula de Identidad'),$rules.longitudMinima(5),$rules.longitudMaxima(15)]"
                 >
                 </v-text-field>
               </v-col>
@@ -88,9 +136,12 @@
                   item-text="name"
                   item-value="id"
                   label="Ciudad de Expedición"
-                  :disabled="!editable"
-                  :outlined="editable"
                   v-model="affiliate.city_identity_card_id"
+                  :readonly="!sync_up.editable || !permission.secondary"
+                  :outlined="sync_up.editable && permission.secondary"
+                  :disabled="sync_up.editable && !permission.secondary"
+                  @keyup.enter="validateForm()"
+                  :rules="[$rules.obligatoria('Ciudad de Expedición')]"
                   >
                 </v-select>
               </v-col>
@@ -98,9 +149,12 @@
                 <v-text-field
                   dense
                   v-model="affiliate.registration"
-                  :disabled="!editable"
-                  :outlined="editable"
                   label="Matrícula"
+                  :readonly="!sync_up.editable || !permission.secondary"
+                  :outlined="sync_up.editable && permission.secondary"
+                  :disabled="sync_up.editable && !permission.secondary"
+                  @keyup.enter="validateForm()"
+                  :rules="[$rules.longitudMinima(5),$rules.longitudMaxima(15)]"
                 >
                 </v-text-field>
               </v-col>
@@ -111,10 +165,10 @@
                   label="Fecha Vencimiento C.I"
                   hint="Día/Mes/Año"
                   type="date"
-                  :clearable="editable"
-                  :readonly="!editable"
-                  :outlined="editable"
-                  :disabled="!editable"
+                  :clearable="sync_up.editable"
+                  :readonly="!sync_up.editable || !permission.secondary"
+                  :outlined="sync_up.editable && permission.secondary"
+                  :disabled="sync_up.editable && !permission.secondary"
                 >
                 </v-text-field>
               </v-col>
@@ -122,10 +176,10 @@
                 <v-checkbox
                   dense
                   v-model="affiliate.is_duedate_undefined"
-                  :readonly="!editable"
-                  :outlined="editable"
-                  :disabled="!editable"
                   :label="`Indefinido`"
+                  :readonly="!sync_up.editable || !permission.secondary"
+                  :outlined="sync_up.editable && permission.secondary"
+                  :disabled="sync_up.editable && !permission.secondary"
                 >
                 </v-checkbox>
               </v-col>
@@ -138,9 +192,11 @@
                   item-value="value"
                   label="Estado Civil"
                   v-model="affiliate.civil_status"
-                  :readonly="!editable"
-                  :outlined="editable"
-                  :disabled="!editable"
+                  :readonly="!sync_up.editable || !permission.secondary"
+                  :outlined="sync_up.editable && permission.secondary"
+                  :disabled="sync_up.editable && !permission.secondary"
+                  @keyup.enter="validateForm()"
+                  :rules="[$rules.obligatoria('Estado Civil')]"
                 >
                 </v-select>
               </v-col>
@@ -151,9 +207,9 @@
                   label="Fecha Nacimiento"
                   hint="Día/Mes/Año"
                   type="date"
-                  :readonly="!editable"
-                  :outlined="editable"
-                  :disabled="!editable"
+                  :readonly="!sync_up.editable || !permission.secondary"
+                  :outlined="sync_up.editable && permission.secondary"
+                  :disabled="sync_up.editable && !permission.secondary"
                 >
                 </v-text-field>
               </v-col>
@@ -166,9 +222,11 @@
                   item-value="id"
                   label="Ciudad de Nacimiento"
                   v-model="affiliate.city_birth_id"
-                  :readonly="!editable"
-                  :outlined="editable"
-                  :disabled="!editable"
+                  :readonly="!sync_up.editable || !permission.secondary"
+                  :outlined="sync_up.editable && permission.secondary"
+                  :disabled="sync_up.editable && !permission.secondary"
+                  @keyup.enter="validateForm()"
+                  :rules="[$rules.obligatoria('Ciudad de Nacimiento')]"
                 >
                 </v-select>
               </v-col>
@@ -190,9 +248,11 @@
                   label="Estado"
                   v-model="affiliate.affiliate_state_id"
                   :Onchange="Onchange()"
-                  :readonly="!editable"
-                  :outlined="editable"
-                  :disabled="!editable"
+                  :readonly="!sync_up.editable || !permission.primary"
+                  :outlined="sync_up.editable && permission.primary"
+                  :disabled="sync_up.editable && !permission.primary"
+                  @keyup.enter="validateForm()"
+                  :rules="[$rules.obligatoria('Estado')]"
                 ></v-select>
               </v-col>
             <v-col cols="12" md="6" v-if="!visible">
@@ -209,9 +269,9 @@
                 label="Fecha Fallecimiento"
                 hint="Día/Mes/Año"
                 type="date"
-                :readonly="!editable"
-                :outlined="editable"
-                :disabled="!editable"
+                :readonly="!sync_up.editable || !permission.secondary"
+                :outlined="sync_up.editable && permission.secondary"
+                :disabled="sync_up.editable && !permission.secondary"
               >
               </v-text-field>
             </v-col>
@@ -220,9 +280,9 @@
                 dense
                 v-model="affiliate.death_certificate_number"
                 label="N° de Certificado de Defunción"
-                :readonly="!editable"
-                :outlined="editable"
-                :disabled="!editable"
+                :readonly="!sync_up.editable || !permission.secondary"
+                :outlined="sync_up.editable && permission.secondary"
+                :disabled="sync_up.editable && !permission.secondary"
               >
               </v-text-field>
             </v-col>
@@ -231,9 +291,9 @@
                 dense
                 v-model="affiliate.reason_death"
                 label="Causa Fallecimiento"
-                :readonly="!editable"
-                :outlined="editable"
-                :disabled="!editable"
+                :readonly="!sync_up.editable || !permission.secondary"
+                :outlined="sync_up.editable && permission.secondary"
+                :disabled="sync_up.editable && !permission.secondary"
               >
               </v-text-field>
             </v-col>
@@ -244,10 +304,10 @@
                 label="Fecha Ingreso a la Institución Policial"
                 hint="Día/Mes/Año"
                 type="date"
-                :clearable="editable"
-                :readonly="!editable"
-                :outlined="editable"
-                :disabled="!editable"
+                :clearable="sync_up.editable"
+                :readonly="!sync_up.editable || !permission.secondary"
+                :outlined="sync_up.editable && permission.secondary"
+                :disabled="sync_up.editable && !permission.secondary"
               >
               </v-text-field>
             </v-col>
@@ -261,9 +321,11 @@
                 label="Grado"
                 name="Grado"
                 v-model="affiliate.degree_id"
-                :readonly="!editable "
-                :outlined="editable "
-                :disabled="!editable"
+                :readonly="!sync_up.editable || !permission.primary"
+                :outlined="sync_up.editable && permission.primary"
+                :disabled="sync_up.editable && !permission.primary"
+                @keyup.enter="validateForm()"
+                :rules="[$rules.obligatoria('Grado')]"
               ></v-select>
             </v-col>
             <v-col cols="12" md="6">
@@ -276,9 +338,11 @@
                 label="Categoria"
                 name="categoria"
                 v-model="affiliate.category_id"
-                :readonly="!editable "
-                :outlined="editable "
-                :disabled="!editable "
+                :readonly="!sync_up.editable || !permission.primary"
+                :outlined="sync_up.editable && permission.primary"
+                :disabled="sync_up.editable && !permission.primary"
+                @keyup.enter="validateForm()"
+                :rules="[$rules.obligatoria('Categoria')]"
               ></v-select>
             </v-col>
             <v-col cols="12" md="6">
@@ -291,9 +355,9 @@
                 label="Unidad"
                 v-model="affiliate.unit_id"
                 persistent-hint
-                :readonly="!editable "
-                :outlined="editable "
-                :disabled="!editable "
+                :readonly="!sync_up.editable || !permission.secondary"
+                :outlined="sync_up.editable && permission.secondary"
+                :disabled="sync_up.editable && !permission.secondary"
               ></v-select>
             </v-col>
             <v-col cols="12" md="12">
@@ -301,9 +365,9 @@
                 dense
                 v-model="affiliate.unit_police_description"
                 label="Descripcion de Unidad"
-                :readonly="!editable "
-                :outlined="editable "
-                :disabled="!editable "
+                :readonly="!sync_up.editable || !permission.secondary"
+                :outlined="sync_up.editable && permission.secondary"
+                :disabled="sync_up.editable && !permission.secondary"
               ></v-text-field>
             </v-col>
             <v-col cols="12" md="6">
@@ -316,19 +380,21 @@
                 label="Ente Gestor"
                 name="Grado"
                 v-model="affiliate.pension_entity_id"
-                :readonly="!editable "
-                :outlined="editable "
-                :disabled="!editable "
+                :readonly="!sync_up.editable || !permission.secondary"
+                :outlined="sync_up.editable && permission.secondary"
+                :disabled="sync_up.editable && !permission.secondary"
               ></v-select>
             </v-col>
             <v-col cols="12" md="6">
               <v-text-field
                 dense
                 v-model="affiliate.date_derelict"
-                :disabled="!editable "
                 label="Fecha Desvinculacion"
                 hint="Día/Mes/Año"
                 type="date"
+                :readonly="!sync_up.editable || !permission.secondary"
+                :outlined="sync_up.editable && permission.secondary"
+                :disabled="sync_up.editable && !permission.secondary"
               ></v-text-field>
             </v-col>
           </v-row>
@@ -345,8 +411,12 @@ export default {
       type: Object,
       required: true,
     },
-    editable: {
-      type: Boolean,
+    sync_up: {
+      type: Object,
+      required: true,
+    },
+    permission: {
+      type: Object,
       required: true,
     },
   },
@@ -386,11 +456,19 @@ export default {
           formatted: null,
           picker: false
         },
-        birthDate: {
+        dateEntry: {
+          formatted: null,
+          picker: false
+        },
+        dateDerelict: {
           formatted: null,
           picker: false
         },
         dateDeath: {
+          formatted: null,
+          picker: false
+        },
+        birthDate: {
           formatted: null,
           picker: false
         }
@@ -524,7 +602,19 @@ export default {
         this.visible = false;
       }
     },
-
+    validateFormProfile() { 
+        if (!this.sync_up.editable) {
+          this.sync_up.editable = true;
+        } else {
+          if (this.$refs.forProfile) {
+            if (this.$refs.forProfile.validate()) {
+              this.$nuxt.$emit('eventSaveAffiliate', true)
+            } else {
+              console.log("no valido");
+            }
+          }
+        }
+    },
   },
 }
 </script>

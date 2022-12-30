@@ -1,11 +1,11 @@
 <template>
   <v-app>
-    <template v-if="isAuthenticated && currentRole">
-      <Navbar :expanded.sync="expandNavbar" />
-    </template>
-
     <template v-if="isAuthenticated">
       <Appbar :expanded.sync="expandNavbar" />
+    </template>
+
+    <template v-if="isAuthenticated && currentRole" >
+      <Navbar :expanded.sync="expandNavbar" />
     </template>
 
     <v-main>

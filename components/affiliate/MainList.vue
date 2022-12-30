@@ -23,73 +23,30 @@
           </v-tooltip>
         </v-toolbar>
       </v-card-title>
+
       <v-card-text>
-        <v-data-table
-          dense
-          class="inputSearch"
-          :headers="headers"
-          :items="affiliates"
-          :options.sync="options"
-          :item-class="hovertable"
-          :server-items-length="total_affiliates"
-          :footer-props="{ itemsPerPageOptions: [8, 15, 50,100] }"
-          :loading = loading_table
-        >
-          <!--Estilos de busqueda para las cabeceras -->
-          <template v-slot:[`header.identity_card_affiliate`]="{ header }">
-            <span :class="searching.identity_card_affiliate? 'primary--text' : ''">{{ header.text }}</span>
-          </template>
 
-          <template v-slot:[`header.full_name_affiliate`]="{ header }">
-            <span :class="searching.full_name_affiliate? 'primary--text' : ''">{{ header.text }}</span>
-          </template>
+      <v-tabs left background-color="backgroundTab">
+        <v-tab  :href="`#tab-1`" > Lista de Afiliados </v-tab>
+        <v-tab  :href="`#tab-2`" > Lista de Cónyuges </v-tab>
 
-          <template v-slot:[`header.registration_affiliate`]="{ header }">
-            <span :class="searching.registration_affiliate? 'primary--text' : ''">{{ header.text }}</span>
-          </template>
+        <v-tab-item  :value="'tab-1'">
+          <v-card flat tile>
+            <v-card-text>
+              <ListAffiliates />
+            </v-card-text>
+          </v-card>
+        </v-tab-item>
+        <v-tab-item :value="'tab-2'">
+          <v-card flat tile>
+            <v-card-text>
+              <ListSpouses />
+            </v-card-text>
+          </v-card>
+        </v-tab-item>
+      </v-tabs>
 
-          <template v-slot:[`header.name_degree`]="{ header }">
-            <span :class="searching.name_degree? 'primary--text' : ''">{{ header.text }}</span>
-          </template>
-
-          <template v-slot:[`header.name_affiliate_state`]="{ header }">
-            <span :class="searching.name_affiliate_state? 'primary--text' : ''">{{ header.text }}</span>
-         </template>
-          <!--Fin de estilos de busqueda-->
-            <template v-slot:[`item.actions`]="{ item }">
-              <v-tooltip bottom >
-                <template v-slot:activator="{ on }">
-                   <nuxt-link :to="`PageAffiliate/${item.id_affiliate}`" class="button is-primary">
-                    <v-btn
-                      icon
-                      small
-                      v-on="on"
-                      to="#"
-                      color="success"
-                      ><v-icon>mdi-account-eye</v-icon>
-                    </v-btn>
-                  </nuxt-link>
-                </template>
-                <span>Ver información afiliado</span>
-              </v-tooltip>
-            </template>
-
-
-
-          <!-- Vista de los filtros -->
-          <template slot="body.prepend">
-            <tr v-if="show_filter">
-                <!--<td><v-text-field placeholder="C.I. Afiliado" spellcheck="false" class="filter-text" v-model="searching.identity_card_affiliate" @keydown.enter="getListAffiliates"></v-text-field></td>-->
-                <td><v-text-field placeholder="C.I. Afiliado" spellcheck="false" class="filter-text" v-model="searching.identity_card_affiliate" @input="getListAffiliates"></v-text-field></td>
-                <td><v-text-field placeholder="Nombre Completo" spellcheck="false" class="filter-text" v-model="searching.full_name_affiliate" @input="getListAffiliates"></v-text-field></td>
-                <td><v-text-field placeholder="Matricula" spellcheck="false" class="filter-text" v-model="searching.registration_affiliate" @input="getListAffiliates"></v-text-field></td>
-                <td><v-text-field placeholder="Grado" spellcheck="false" class="filter-text" v-model="searching.name_degree" @input="getListAffiliates"></v-text-field></td>
-                <td><v-text-field placeholder="Estado" spellcheck="false" class="filter-text" v-model="searching.name_affiliate_state" @input="getListAffiliates"></v-text-field></td>
-                <td><v-text-field disabled class="filter-text"></v-text-field></td>
-            </tr>
-          </template>
-        </v-data-table>
-      </v-card-text>
+    </v-card-text>
     </v-card>
   </v-container>
 </template>
@@ -99,17 +56,22 @@
 import Add from '@/components/affiliate/AdditionalInformation';
 import GlobalBreadCrumb from "@/components/common/GlobalBreadCrumb.vue";
 import GlobalLoading from "@/components/common/GlobalLoading.vue";
+import ListSpouses from "@/components/affiliate/ListSpouses"
+import ListAffiliates from "@/components/affiliate/ListAffiliates"
 
 export default {
-  name: "MainListAffiliate",
+  name: "MainList",
   components: {
     GlobalBreadCrumb,
     GlobalLoading,
-    Add
+    Add,
+    ListSpouses,
+    ListAffiliates
   },
   data: () => ({
     // Cabeceras de la tabla
     headers: [
+      { text: 'Nup', value:'id_affiliate', class: ['table', 'white--text'],width: '2%', sortable: false },
       { text: 'CI Afiliado', value:'identity_card_affiliate', class: ['table', 'white--text'],width: '5%', sortable: false },
       { text: 'Nombre Completo Afiliado', value:'full_name_affiliate', class: ['table', 'white--text'],width: '10%', sortable: false },
       { text: 'Matrícula', value:'registration_affiliate', class: ['table', 'white--text'],width: '5%', sortable: false },
@@ -129,7 +91,7 @@ export default {
     affiliates: [],
     options: {
       page: 1,
-      items_per_page: 8,
+      itemsPerPage: 8,
       sortDesc: [false],
     },
     total_affiliates: 0,
@@ -142,9 +104,8 @@ export default {
     options: function (newVal, oldVal) {
       if (
         newVal.page != oldVal.page ||
-        newVal.items_per_page != oldVal.items_per_page ||
-        newVal.sortDesc != oldVal.sortDesc
-      ) {
+        newVal.itemsPerPage != oldVal.itemsPerPage ||
+        newVal.sortDesc != oldVal.sortDesc) {
         this.getListAffiliates()
       }
     },
@@ -174,7 +135,7 @@ export default {
             full_name_affiliate: this.searching.full_name_affiliate,
             name_affiliate_state: this.searching.name_affiliate_state,
             page: this.options.page,
-            per_page: this.options.items_per_page,
+            per_page: this.options.itemsPerPage,
             sortDesc: this.options.sortDesc,
           },
         });
@@ -184,7 +145,7 @@ export default {
         /*delete res.data["data"]*/
         this.options.page = res.payload.affiliates.current_page
 
-        this.options.items_per_page = parseInt(res.payload.affiliates.per_page)
+        this.options.itemsPerPage = parseInt(res.payload.affiliates.per_page)
         this.loading_table = false
       } catch (e) {
         console.log(e)
@@ -198,6 +159,7 @@ export default {
         return 'row-white'
     },
     clearAll() {
+      this.searching.id_affiliate= "",
       this.searching.identity_card_affiliate= "",
       this.searching.full_name_affiliate= "",
       this.searching.registration_affiliate = "",
@@ -205,6 +167,15 @@ export default {
       this.searching.name_affiliate_state= "",
       this.getListAffiliates()
     },
+    searchTimeOut() {
+      if (this.timer) {
+          clearTimeout(this.timer);
+          this.timer = null;
+      }
+      this.timer = setTimeout(() => {
+        this.getListAffiliates()
+      }, 800);
+    }
   },
 };
 </script>

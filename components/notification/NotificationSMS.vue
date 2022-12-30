@@ -1,45 +1,10 @@
 <template>
-  <v-container fluid>
-    <v-card flat>
-      <v-card-title>
-        <v-toolbar dense color="tertiary" class="caption">
-          <GlobalBreadCrumb />
-          <v-spacer></v-spacer>
-        </v-toolbar>
-      </v-card-title>
-      <v-card-text>
+  <div class="mt-2 pb-8 mx-0 px-0 backgroundCard">
         <v-form ref="forNotification">
           <v-row>
             <v-col cols="6" align="center">
-              <v-card class="ma-0 pa-3">
-                <v-text-field
-                  dense
-                  label="Titulo"
-                  outlined
-                  clearable
-                  v-model="form.title"
-                  :rules="[
-                    $rules.obligatoria('Titulo'),
-                    $rules.longitudMinima(4),
-                  ]"
-                >
-                </v-text-field>
-
-                <v-textarea
-                  dense
-                  label="Mensaje"
-                  outlined
-                  clearable
-                  v-model="form.message"
-                  :rules="[
-                    $rules.obligatoria('Mensaje'),
-                    $rules.longitudMinima(4),
-                  ]"
-                >
-                </v-textarea>
-
+              <v-card class="ma-4 pa-4 elevation-0">
                 <v-alert
-                  class="ml-2"
                   text
                   dense
                   color="info"
@@ -50,7 +15,10 @@
                     Consideraciones para el archivo:<br />
                     - Debe tener el formato xls.<br />
                     - La primera columna debe contener el NUP del afiliado, sin
-                    encabezado.
+                    encabezado.<br />
+                    - La segunda columna debe contener el número de celular del
+                    afiliado. Ej. 65432100.<br />
+                    - La tercer columna debe contener el mensaje. (160 caracteres máx)<br />
                   </div>
                 </v-alert>
 
@@ -70,9 +38,12 @@
                   ></v-file-input
                 >
                 <v-btn
-                  color="success"
+                  color="primary"
+                  block
+                  elevation="2"
                   right
                   @click="validateFormNotification()"
+                  class="ma-0"
                 >
                   ENVIAR
                 </v-btn>
@@ -80,12 +51,11 @@
             </v-col>
           </v-row>
         </v-form>
-      </v-card-text>
-    </v-card>
-    <v-dialog v-model="dialog_send_notification" max-width="500" persistent>
+
+    <v-dialog v-model="dialog_send_notification" max-width="400" persistent>
       <v-card>
         <v-card-title>
-          Esta seguro de realizar el envio de notificaciones?
+          ¿Está seguro de realizar el envío de <br>notificaciones?
         </v-card-title>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -108,7 +78,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-  </v-container>
+</div>
 </template>
 
 <script>
@@ -136,15 +106,14 @@ export default {
   methods: {
     async sendNotification() {
       try {
+        console.log("sms enviado")
         this.btn_send_notification = true;
         let formData = new FormData();
         formData.append("file", this.form.file);
-        formData.append("title", this.form.title);
-        formData.append("message", this.form.message);
-        formData.append("attached", this.form.attached);
+        formData.append("user_id", this.$store.getters.user.id)
 
         let res = await this.$axios.post(
-          "/notification/send_notifications",
+          "/notification/file",
           formData
         );
         if (!res.error) {
@@ -152,9 +121,7 @@ export default {
           this.btn_send_notification = false;
           this.dialog_send_notification = false;
           this.$toast.success(
-            "Se ha enviado correctamente la notificación a " +
-              res.data.success_count +
-              " destinatarios"
+            "Se está notificando a los afiliados"
           );
           this.clearInputs();
         } else {

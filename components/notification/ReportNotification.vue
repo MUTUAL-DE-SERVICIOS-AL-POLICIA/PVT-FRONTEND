@@ -91,9 +91,9 @@
               <v-btn color="primary" @click="downloadReport()"  :loading="loading">Descargar reporte </v-btn>
             </v-card>
           </v-col>
-          <v-col cols="6" md="6" lg="4">
+          <!-- <v-col cols="6" md="6" lg="4">
             <CellBalance />
-          </v-col>
+          </v-col> -->
         </v-row>
       </div>
     </v-card-text>

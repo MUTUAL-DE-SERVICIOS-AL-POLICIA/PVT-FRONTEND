@@ -368,12 +368,23 @@ export default {
             role_id:this.$store.getters.currentRole.id
           }
           );
-          this.options.response_message = res.message + " su usuario es: " +res.payload.username +" su password es " +res.payload.pin;
+          if (res.error==false) {
+            this.options.response_message =
+            res.message +
+            " su usuario es: " +
+            res.payload.username +
+            " su password es " +
+            res.payload.pin;
           this.watch_button_send = false;
-          this,loading= false
+          }
+          else{
+            this.options.response_message =res.message
+            this.watch_button_send = false;
+          }
         } else {
           this.$toast.info("ya cuenta con credenciales");
         }
+        this,loading= false
       } catch (e) {
         console.log(e);
       }

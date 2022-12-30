@@ -48,6 +48,10 @@
             :readonly="!sync_up.editable || !permission.secondary"
             :outlined="sync_up.editable && permission.secondary"
             :disabled="sync_up.editable && !permission.secondary"
+            :rules="[
+                  $rules.longitudMinima(11),
+                  $rules.longitudMaxima(11),
+            ]"
           ></v-text-field>
           <v-text-field
             v-model="affiliate.cell_phone_number[1]"

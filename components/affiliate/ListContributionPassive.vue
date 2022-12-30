@@ -3,7 +3,7 @@
     <template >
       <v-col cols="6" class="text-left" >
         <v-toolbar-title >APORTES PASIVO
-          <v-tooltip top>
+          <v-tooltip top v-if="show">
             <template v-slot:activator="{ on }">
               <v-btn top
                 small

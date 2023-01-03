@@ -169,6 +169,12 @@ export default {
   mounted() {
     this.getPassiveAffiliateContribution(this.$route.params.id);
   },
+  computed: {
+    //permisos del selector global por rol
+    permissionSimpleSelected () {
+      return this.$store.getters.permissionSimpleSelected
+    },
+  },
   methods: {
     expand(props) {
       props.expand(!props.isExpanded && this.active);

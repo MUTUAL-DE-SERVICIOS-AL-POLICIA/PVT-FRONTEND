@@ -200,7 +200,7 @@
                 </v-card-subtitle>
               </v-card>
               <v-img
-                :src="require('@/assets/images/MUSERPOL.jpg')"
+                :src="require('@/assets/images/img_notification.jpg')"
               >
               </v-img>
               <v-card

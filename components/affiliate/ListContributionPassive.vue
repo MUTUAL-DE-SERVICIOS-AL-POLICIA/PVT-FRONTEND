@@ -27,6 +27,7 @@
         <v-tooltip top class="my-0">
           <template v-slot:activator="{ on }">
             <v-btn
+              v-if="permissionSimpleSelected.includes('download-certifications')"
               x-small
               color="info"
               :loading="loading_passive_old_age"
@@ -46,6 +47,7 @@
         <v-tooltip top class="my-0">
           <template v-slot:activator="{ on }">
             <v-btn
+              v-if="permissionSimpleSelected.includes('download-certifications')"
               x-small
               color="success"
               :loading="loading_passive_widow"

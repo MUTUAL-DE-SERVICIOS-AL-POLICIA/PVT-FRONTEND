@@ -26,6 +26,7 @@
       <v-tooltip top class="my-0">
         <template v-slot:activator="{ on }">
           <v-btn
+            v-if="permissionSimpleSelected.includes('download-certifications')"
             x-small
             color="info"
             :loading="loading_print_active"
@@ -141,6 +142,12 @@ export default {
   }),
   mounted() {
     this.getActiveAffiliateContribution(this.$route.params.id);
+  },
+  computed: {
+    //permisos del selector global por rol
+    permissionSimpleSelected () {
+      return this.$store.getters.permissionSimpleSelected
+    },
   },
   methods: {
     expand(props) {

@@ -78,7 +78,7 @@
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <v-btn
-            v-if="item.can_deleted"
+            v-if="item.can_deleted && permissionSimpleSelected.includes('delete-contribution')"
             icon small
             v-on="on"
             @click="dialogDelete(item.con_re_id)"
@@ -249,6 +249,14 @@ export default {
         this.getSearchActiveAffiliateContribution()
     }
   },
+
+  computed: {
+    //permisos del selector global por rol
+    permissionSimpleSelected () {
+      return this.$store.getters.permissionSimpleSelected
+    },
+  },
+
   mounted() {
     this.getSearchActiveAffiliateContribution();
   },

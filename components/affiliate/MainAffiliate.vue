@@ -10,25 +10,27 @@
               Datos del afiliado
             </v-col>
           </v-row>
-          <v-btn
-            v-if="affiliate.credential_status.access_status == 'No asignadas'"
-            small
-            dark
-            @click="getState_cellphone()"
-            color="info"
-          >
-            <span> ASIGNAR CREDENCIALES</span>
-          </v-btn>
-          <v-btn
-            v-if="affiliate.credential_status.access_status != 'No asignadas'"
-            small
-            dark
-            @click="printFormCredential()"
-            color="secondary"
-            :loading="loading_btn_print"
-          >
-            <span> <v-icon>mdi-printer</v-icon>CREDENCIALES</span>
-          </v-btn>
+          <template v-if="permissionSimpleSelected.includes('create-credentials')">
+            <v-btn
+              v-if="affiliate.credential_status.access_status == 'No asignadas'"
+              small
+              dark
+              @click="getState_cellphone()"
+              color="info"
+            >
+              <span> ASIGNAR CREDENCIALES</span>
+            </v-btn>
+            <v-btn
+              v-if="affiliate.credential_status.access_status != 'No asignadas'"
+              small
+              dark
+              @click="printFormCredential()"
+              color="secondary"
+              :loading="loading_btn_print"
+            >
+              <span> <v-icon>mdi-printer</v-icon>CREDENCIALES</span>
+            </v-btn>
+          </template>
         </v-toolbar>
       </v-card-title>
       <v-card-text>

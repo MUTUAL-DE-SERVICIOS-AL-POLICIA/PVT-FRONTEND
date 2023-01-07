@@ -643,6 +643,8 @@ export default {
                         image: this.url_file,
                         attached: "Comunicado",
                         sends: this.all_affiliates,
+                        action: this.form.action,
+                        semester_id: this.form.semester,
                       }
                     );
                     let error = response.data.error

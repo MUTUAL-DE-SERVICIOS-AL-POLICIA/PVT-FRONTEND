@@ -30,7 +30,7 @@
                 <template v-slot:activator="{ on, attrs }">
                   <v-text-field
                     v-model="start_date"
-                    label="Fecha fin"
+                    label="Fecha inicio"
                     prepend-icon="mdi-calendar"
                     readonly
                     v-bind="attrs"

@@ -78,10 +78,10 @@
           </v-row>
         </v-form>
 
-    <v-dialog v-model="dialog_send_notification" max-width="500" persistent>
+    <v-dialog v-model="dialog_send_notification" max-width="400" persistent>
       <v-card>
         <v-card-title>
-          Esta seguro de realizar el envio de notificaciones?
+          ¿Está seguro de realizar el envío de <br>notificaciones?
         </v-card-title>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -136,6 +136,8 @@ export default {
         formData.append("title", this.form.title);
         formData.append("message", this.form.message);
         formData.append("attached", this.form.attached);
+        formData.append("user_id", this.$store.getters.user.id);
+        formData.append("is_file", true);
         let res = await this.$axios.post(
           "/notification/send_notifications",
           formData
@@ -145,18 +147,22 @@ export default {
           this.btn_send_notification = false;
           this.dialog_send_notification = false;
           this.$toast.success(
-            "Se ha enviado correctamente la notificación a " +
-              res.data.success_count +
-              " destinatarios"
+            res.message
+            // "Se ha enviado correctamente la notificación a " +
+            //   res.data.success_count +
+            //   " destinatarios"
           );
           this.clearInputs();
         } else {
+          this.dialog_send_notification = false;
+          this.btn_send_notification = false;
           this.$toast.error(res.message);
         }
       } catch (e) {
         console.log(e);
         this.$toast.error("Ocurrio un error durante el envio");
         this.dialog_send_notification = false;
+        this.btn_send_notification = false;
       }
     },
     validateFormNotification() {

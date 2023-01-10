@@ -148,9 +148,6 @@ export default {
           this.dialog_send_notification = false;
           this.$toast.success(
             res.message
-            // "Se ha enviado correctamente la notificación a " +
-            //   res.data.success_count +
-            //   " destinatarios"
           );
           this.clearInputs();
         } else {

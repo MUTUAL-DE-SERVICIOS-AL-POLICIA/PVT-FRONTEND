@@ -92,6 +92,7 @@
   </v-row>
 </template>
 <script>
+
 export default {
   name: "ListContributionActive",
   props: {
@@ -108,13 +109,13 @@ export default {
       require: true,
     },
   },
-  components: {},
+
   data: () => ({
     itemsPerPage: 0,
     loading: true,
     search: "",
     active: true,
-    show: false,
+    show: true,
     loading_print_active: false,
     contributions: [],
     headers: [

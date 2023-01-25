@@ -5,7 +5,7 @@
         <v-col cols="12"  class="text-left mt-0">
           <v-toolbar-title>APORTES</v-toolbar-title>
         </v-col>
-        <v-col cols="4" class="my-0 py-0">
+        <v-col cols="4">
           <span
             ><strong class="text-uppercase">Fecha ingreso a la Institución Policial: </strong
             >{{
@@ -15,7 +15,7 @@
             }}</span
           ><br />
         </v-col>
-        <v-col cols="4" class="my-0 py-0">
+        <v-col cols="4">
           <span
             ><strong class="text-uppercase">Fecha desvinculación: </strong
             >{{
@@ -26,7 +26,7 @@
             }}</span
           ><br />
         </v-col>
-        <v-col cols="4" class="my-0 py-0">
+        <v-col cols="4" >
           <span
             ><strong class="text-uppercase">Último período según Listas de Revista: </strong
             >{{
@@ -38,69 +38,76 @@
           ><br />
         </v-col>
       </v-row>
-      <template v-if="!state.active" class="my-0 py-0">
-        <ListContributionActive :affiliate.sync="affiliate" :show_detail="show_detail" :state.sync="state"/>
-        <ListContributionPassive :affiliate.sync="affiliate" :show_detail="show_detail" :state.sync="state"/>
+      <template v-if="!state.active">
+        <v-tabs left background-color="backgroundTab" class= "pt-2" v-model="tab">
+        <v-tab :href="`#tab-1`">APORTES ACTIVO</v-tab>
+        <v-tab :href="`#tab-2`">APORTES PASIVO</v-tab>
+          <v-tab-item :value="'tab-1'">
+            <ListContributionActive :affiliate.sync="affiliate" :show_detail="show_detail" :state.sync="state"/>
+          </v-tab-item>
+          <v-tab-item :value="`tab-2`">
+            <ListContributionPassive :affiliate.sync="affiliate" :show_detail="show_detail" :state.sync="state"/>
+          </v-tab-item>
+        </v-tabs>
       </template>
-      <template v-else-if="state.active">
-        <template v-if="show_detail.active">
-          <v-row >
-            <v-col cols="12" class="text-left">
-              <v-toolbar-title>
-                <v-tooltip top>
-                  <template v-slot:activator="{ on }">
-                    <v-btn
-                      small
-                      dark
-                      icon
-                      v-model="show_detail.active"
-                      color="success"
-                      v-on="on"
-                      class="my-2 mr-4"
-                      @click="showContribution()"
-                    >
-                      <v-icon>mdi-arrow-left-bold </v-icon>
-                    </v-btn>
-                  </template>
-                  <div>
-                    <span>Aportes</span>
-                  </div>
-                </v-tooltip>
-                DETALLE DE APORTES ACTIVO
-             </v-toolbar-title>
-            </v-col>
-          </v-row>
-          <ListContributionDetailActive />
-        </template>
-        <template v-if="show_detail.passive">
-          <v-row>
-            <v-col cols="12" class="text-left">
-              <v-toolbar-title>
-                <v-tooltip top>
-                  <template v-slot:activator="{ on }">
-                    <v-btn
-                      small
-                      dark
-                      icon
-                      v-model="show_detail.passive"
-                      color="success"
-                      v-on="on"
-                      class="my-2 mr-4"
-                      @click="showContribution()"
-                    >
-                      <v-icon>mdi-arrow-left-bold </v-icon>
-                    </v-btn>
-                  </template>
-                  <div>
-                    <span>Aportes</span>
-                  </div>
-                </v-tooltip>
-                DETALLE DE APORTES PASIVO
-              </v-toolbar-title>
-            </v-col>
-          </v-row>
-          <ListContributionDetailPassive />
-        </template>
+
+      <template v-if="show_detail.active && state.active">
+        <v-row >
+          <v-col cols="12">
+            <v-toolbar-title>
+              <v-tooltip top>
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    small
+                    dark
+                    icon
+                    v-model="show_detail.active"
+                    color="success"
+                    v-on="on"
+                    class="my-2 mr-4"
+                    @click="showContribution()"
+                  >
+                    <v-icon>mdi-arrow-left-bold </v-icon>
+                  </v-btn>
+                </template>
+                <div>
+                  <span>Aportes Activo</span>
+                </div>
+              </v-tooltip>
+              DETALLE DE APORTES ACTIVO
+           </v-toolbar-title>
+          </v-col>
+        </v-row>
+        <ListContributionDetailActive />
+      </template>
+      <template v-if="show_detail.passive && state.active">
+        <v-row>
+          <v-col cols="12">
+            <v-toolbar-title>
+              <v-tooltip top>
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    small
+                    dark
+                    icon
+                    v-model="show_detail.passive"
+                    color="success"
+                    v-on="on"
+                    class="my-2 mr-4"
+                    @click="showContribution()"
+                  >
+                    <v-icon>mdi-arrow-left-bold </v-icon>
+                  </v-btn>
+                </template>
+                <div>
+                  <span>Aportes Pasivo</span>
+                </div>
+              </v-tooltip>
+              DETALLE DE APORTES PASIVO
+            </v-toolbar-title>
+          </v-col>
+        </v-row>
+        <ListContributionDetailPassive />
       </template>
     </v-form>
   </v-container>
@@ -141,6 +148,11 @@ export default {
     },
     contributions: [],
     list: [],
+    tab: 0,
+    state_affiliate:[
+      {name_tab:"ACTIVO", value:"0"},
+      {name_tab:"PASIVO", value:"1"}
+    ],
   }),
   mounted() {
 

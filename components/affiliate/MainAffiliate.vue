@@ -328,7 +328,7 @@ export default {
           );
           this.getAffiliateAddress();
           this.$toast.success(
-            "Se actualizao correctamente los datos del afiliado."
+            "Se actualizó correctamente los datos del afiliado."
           );
           this.sync_up.editable = false;
         }
@@ -356,7 +356,7 @@ export default {
         this.watch_button_send = true;
       } else {
         this.watch_button_send = false;
-        this.options.response_message ="El afiliado y cuenta con credencialea asignados como: " +
+        this.options.response_message ="El afiliado ya cuenta con credencialea asignados como: " +
           this.affiliate.credential_status.access_status;
       }
     },

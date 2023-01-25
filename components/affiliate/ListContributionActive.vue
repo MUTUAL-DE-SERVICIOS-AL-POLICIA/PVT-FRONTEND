@@ -1,7 +1,7 @@
 <template>
   <v-row >
-    <v-col cols="6"  class="text-left ma-0 pb-0">
-      <v-toolbar-title>APORTES ACTIVO
+    <v-col cols="6"  class="text-left pb-0"  v-if="show">
+      DETALLE APORTES ACTIVO
         <v-tooltip top>
           <template v-slot:activator="{ on }">
             <v-btn top
@@ -17,12 +17,11 @@
             </v-btn>
           </template>
           <div>
-            <span>Detalle de Aportes</span>
+            <span>Detalle de Aportes Activo</span>
           </div>
         </v-tooltip>
-      </v-toolbar-title>
     </v-col>
-    <v-col cols="6" class="text-right ma-0 pb-0"  v-if="show">
+    <v-col cols="6" class="text-right pb-0"  v-if="show">
       <v-tooltip top class="my-0">
         <template v-slot:activator="{ on }">
           <v-btn
@@ -44,7 +43,7 @@
         </div>
       </v-tooltip>
     </v-col>
-    <v-col cols="12"  v-if="show">
+    <v-col cols="12" class="pt-0" v-if="show">
       <v-data-table
         :headers="headers"
         :items="contributions"
@@ -86,12 +85,13 @@
         </template>
       </v-data-table>
     </v-col>
-    <v-col cols="12"  v-else>
+    <v-col cols="12" class="ma-2" v-else>
       NO SE ENCONTRARON REGISTROS.
     </v-col>
   </v-row>
 </template>
 <script>
+
 export default {
   name: "ListContributionActive",
   props: {
@@ -108,13 +108,13 @@ export default {
       require: true,
     },
   },
-  components: {},
+
   data: () => ({
     itemsPerPage: 0,
     loading: true,
     search: "",
     active: true,
-    show: false,
+    show: true,
     loading_print_active: false,
     contributions: [],
     headers: [

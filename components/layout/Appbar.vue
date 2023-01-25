@@ -70,13 +70,13 @@ export default {
     bar() {
       if (process.env.NODE_ENV != 'production') {
         return {
-          color: `primary`,
-          text: `PLATAFORMA VIRTUAL DE TRÁMITES (VERSIÓN DE PRUEBA)`
+          color: `error`,
+          text: `SEGUIMIENTO DE TRAMITES INTEGRAL (VERSIÓN DE PRUEBA)`
         }
       } else {
         return {
           color: `primary`,
-          text: `PLATAFORMA VIRTUAL DE TRÁMITES`
+          text: `SEGUIMIENTO DE TRAMITES INTEGRAL`
         }
       }
     },

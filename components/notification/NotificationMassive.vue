@@ -121,6 +121,7 @@ export default {
       title: null,
       message: null,
       attached: null,
+      notification_type: 7,
     },
     notification: [],
     dialog_send_notification: false,
@@ -138,6 +139,7 @@ export default {
         formData.append("attached", this.form.attached);
         formData.append("user_id", this.$store.getters.user.id);
         formData.append("is_file", true);
+        formData.append("action", this.form.notification_type);
         let res = await this.$axios.post(
           "/notification/send_notifications",
           formData

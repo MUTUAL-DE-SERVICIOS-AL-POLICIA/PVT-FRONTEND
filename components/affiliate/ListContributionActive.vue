@@ -1,19 +1,17 @@
 <template>
   <v-row >
     <v-col cols="6"  class="text-left pb-0"  v-if="show">
-      DETALLE APORTES ACTIVO
         <v-tooltip top>
           <template v-slot:activator="{ on }">
-            <v-btn top
-              small
-              dark
-              icon
+            <v-btn
+              x-small
               color="success"
-              class="my-2 mr-4"
+              class="ma-2 pa-3"
               v-on="on"
+              elevation="2"
               @click="showDetailActive()"
             >
-              <v-icon> mdi-arrow-right-bold </v-icon>
+              <v-icon> mdi-text-box-plus </v-icon>Detalle aportes
             </v-btn>
           </template>
           <div>
@@ -62,7 +60,7 @@
         <template v-slot:expanded-item="{item}">
           <tr>
             <td :colspan="13" class="px-0">
-              <v-data-table 
+              <v-data-table
                 :items="item.contributions"
                 :hide-default-footer="true"
                 :itemsPerPage="12"
@@ -142,6 +140,9 @@ export default {
   }),
   mounted() {
     this.getActiveAffiliateContribution(this.$route.params.id);
+    import('print-js').then(()=> {
+      //this.print_ready = true;
+    })
   },
   computed: {
     //permisos del selector global por rol
@@ -184,7 +185,9 @@ export default {
         link.href = url;
         link.setAttribute("download", "Aporte_Activo.pdf");
         document.body.appendChild(link);
+        console.log(window.URL.createObjectURL(new Blob([res])))
         link.click();
+        printJS('http://localhost:3001/bfbdeab9-369d-4f4d-9e31-ba3a1f12421d')
       } catch (e) {
         console.log(e);
         this.loading_print_active = false;
@@ -197,6 +200,7 @@ export default {
       this.state.active = true;
       this.show_detail.active = true;
     },
+
   },
 };
 </script>

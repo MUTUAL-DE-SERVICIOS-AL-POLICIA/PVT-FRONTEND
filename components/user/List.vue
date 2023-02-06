@@ -5,9 +5,17 @@
     :loading="loading"
     :options.sync="options"
     :server-items-length="totalUsers"
-    :footer-props="{ itemsPerPageOptions: [8, 15, 30] }"
     multi-sort
     single-expand
+    :footer-props="{
+      showFirstLastPage: true,
+      firstIcon: 'mdi-arrow-collapse-left',
+      lastIcon: 'mdi-arrow-collapse-right',
+      prevIcon: 'mdi-minus',
+      nextIcon: 'mdi-plus',
+      'items-per-page-text':'Filas por página',
+      itemsPerPageOptions: [12, 30, 50, 100]
+    }"
   >
     <template slot="body.prepend" >
       <tr>
@@ -103,7 +111,7 @@ export default {
     active: true,
     options: {
       page: 1,
-      itemsPerPage: 8,
+      itemsPerPage: 12,
       sortBy: ['last_name'],
       sortDesc: [false]
     },

@@ -278,7 +278,15 @@
         :items="affiliates"
         :options.sync="options"
         :server-items-length="total_affiliates"
-        :footer-props="{ itemsPerPageOptions: [8, 15, 50, 100] }"
+        :footer-props="{
+          showFirstLastPage: true,
+          firstIcon: 'mdi-arrow-collapse-left',
+          lastIcon: 'mdi-arrow-collapse-right',
+          prevIcon: 'mdi-minus',
+          nextIcon: 'mdi-plus',
+          'items-per-page-text':'Filas por página',
+          itemsPerPageOptions: [12, 30, 50, 100]
+         }"
         :loading="loading_table"
         no-data-text="No hay datos disponibles"
       >
@@ -524,7 +532,7 @@ export default {
     affiliates: [],
     options: {
       page: 1,
-      itemsPerPage: 8,
+      itemsPerPage: 12,
     },
     total_affiliates: 0,
     loading_table: false,

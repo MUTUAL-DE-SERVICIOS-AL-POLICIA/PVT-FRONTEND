@@ -1,8 +1,23 @@
 <template>
   <v-card-text>
-    <v-data-table dense class="inputSearch" :headers="headers" :items="affiliates" :options.sync="options"
-      :item-class="hovertable" :server-items-length="total_affiliates"
-      :footer-props="{ itemsPerPageOptions: [8, 15, 50, 100] }" :loading=loading_table>
+    <v-data-table 
+        dense class="inputSearch"
+        :headers="headers"
+        :items="affiliates"
+        :options.sync="options"
+        :item-class="hovertable" 
+        :server-items-length="total_affiliates"
+        :loading="loading_table"
+        :footer-props="{
+          showFirstLastPage: true,
+          firstIcon: 'mdi-arrow-collapse-left',
+          lastIcon: 'mdi-arrow-collapse-right',
+          prevIcon: 'mdi-minus',
+          nextIcon: 'mdi-plus',
+          'items-per-page-text':'Filas por página',
+          itemsPerPageOptions: [12, 30, 50, 100]
+        }"
+      >
       <!--Estilos de busqueda para las cabeceras -->
       <template v-slot:[`header.affiliate_id`]="{ header }">
         <span :class="searching.affiliate_id ? 'primary--text' : ''">{{ header.text }}</span>
@@ -93,7 +108,7 @@ export default {
     affiliates: [],
     options: {
       page: 1,
-      itemsPerPage: 8,
+      itemsPerPage: 12,
       sortDesc: [false],
     },
     total_affiliates: 0,

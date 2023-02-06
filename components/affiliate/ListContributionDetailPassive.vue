@@ -8,6 +8,15 @@
     :loading="loading_table"
     :server-items-length="total_contributions"
     :key="refresh_table"
+    :footer-props="{
+      showFirstLastPage: true,
+      firstIcon: 'mdi-arrow-collapse-left',
+      lastIcon: 'mdi-arrow-collapse-right',
+      prevIcon: 'mdi-minus',
+      nextIcon: 'mdi-plus',
+      'items-per-page-text':'Filas por página',
+      itemsPerPageOptions: [12, 30, 50, 100]
+    }"
   >
     <template v-slot:[`header.year`]="{ header }">
       <span :class="searching.year ? 'primary--text' : ''">{{

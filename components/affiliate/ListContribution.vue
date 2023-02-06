@@ -54,7 +54,7 @@
       <template v-if="show_detail.active && state.active">
         <v-row >
           <v-col cols="12">
-            <v-toolbar-title>
+            <v-toolbar-title class="subtitle-2">
               <v-tooltip top>
                 <template v-slot:activator="{ on }">
                   <v-btn
@@ -71,7 +71,7 @@
                   </v-btn>
                 </template>
                 <div>
-                  <span>Aportes Activo</span>
+                  <span>Regresar a Aportes Activo</span>
                 </div>
               </v-tooltip>
               DETALLE DE APORTES ACTIVO
@@ -83,7 +83,7 @@
       <template v-if="show_detail.passive && state.active">
         <v-row>
           <v-col cols="12">
-            <v-toolbar-title>
+            <v-toolbar-title class="subtitle-2">
               <v-tooltip top>
                 <template v-slot:activator="{ on }">
                   <v-btn
@@ -100,7 +100,7 @@
                   </v-btn>
                 </template>
                 <div>
-                  <span>Aportes Pasivo</span>
+                  <span>Regresar a Aportes Pasivo</span>
                 </div>
               </v-tooltip>
               DETALLE DE APORTES PASIVO

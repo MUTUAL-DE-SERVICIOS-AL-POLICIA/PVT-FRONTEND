@@ -1,19 +1,17 @@
 <template>
   <v-row>
     <v-col cols="6" class="text-left pb-0"  v-if="show">
-      DETALLE APORTES PASIVO
         <v-tooltip top v-if="show">
           <template v-slot:activator="{ on }">
-            <v-btn top
-              small
-              dark
-              icon
+            <v-btn
+              x-small
               color="success"
-              class="my-2 mr-4"
+              class="ma-2 pa-3"
               v-on="on"
+              elevation="2"
               @click="showDetailPassive()"
             >
-              <v-icon> mdi-arrow-right-bold </v-icon>
+              <v-icon> mdi-text-box-plus </v-icon>Detalle aportes
             </v-btn>
           </template>
         <div>
@@ -84,7 +82,11 @@
         <template v-slot:expanded-item="{item}">
           <tr>
             <td :colspan="13" class="px-0">
-              <v-data-table :items="item.contributions" :hide-default-footer="true" :itemsPerPage="12" class="tertiary">
+              <v-data-table
+                :items="item.contributions"
+                :hide-default-footer="true"
+                :itemsPerPage="12"
+                class="tertiary">
                 <template v-slot:body="{ items }">
                   <tbody>
                     <tr v-for="header in headersDetail" :key="header.id">

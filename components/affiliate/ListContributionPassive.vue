@@ -1,112 +1,113 @@
 <template>
   <v-row>
-    <template >
-      <v-col cols="6" class="text-left" >
-        <v-toolbar-title >APORTES PASIVO
-          <v-tooltip top v-if="show">
-            <template v-slot:activator="{ on }">
-              <v-btn top
-                small
-                dark
-                icon
-                color="success"
-                class="my-2 mr-4"
-                v-on="on"
-                @click="showDetailPassive()"
-              >
-                <v-icon> mdi-arrow-right-bold </v-icon>
-              </v-btn>
-            </template>
-          <div>
-            <span>Detalle de Aportes</span>
-          </div>
-        </v-tooltip>
-      </v-toolbar-title>
-      </v-col>
-      <v-col cols="6"  class="text-right " v-if="show">
-        <v-tooltip top class="my-0">
-          <template v-slot:activator="{ on }">
-            <v-btn
-              x-small
-              color="info"
-              :loading="loading_passive_old_age"
-              v-on="on"
-              class="ma-2 pa-3"
-              @click="printContributionsPassive('VEJEZ')"
-              outlined
-              elevation="2"
-            >
-              <v-icon> mdi-download</v-icon>Cert. Titular
-            </v-btn>
-          </template>
-          <div>
-            <span>Certificación de Aportes Vejez</span>
-          </div>
-        </v-tooltip>
-        <v-tooltip top class="my-0">
+    <v-col cols="6" class="text-left pb-0"  v-if="show">
+        <v-tooltip top v-if="show">
           <template v-slot:activator="{ on }">
             <v-btn
               x-small
               color="success"
-              :loading="loading_passive_widow"
-              v-show="affiliate.dead && affiliate.spouse!=null"
-              v-on="on"
               class="ma-2 pa-3"
-              @click="printContributionsPassive('VIUDEDAD')"
-              outlined
+              v-on="on"
               elevation="2"
+              @click="showDetailPassive()"
             >
-              <v-icon> mdi-download</v-icon>Cert. Viudedad
+              <v-icon> mdi-text-box-plus </v-icon>Detalle aportes
             </v-btn>
           </template>
-          <div>
-            <span>Certificación de Aportes Viudedad</span>
-          </div>
-        </v-tooltip>
-      </v-col>
-      <v-col cols="12" v-if="show">
-        <v-data-table
-          :headers="headers"
-          :items="contributions"
-          :loading="loading"
-          single-expand
-          item-key="year"
-          :itemsPerPage="contributions.length"
-          hide-default-footer
-        >
-          <template v-slot:item="props">
-            <tr :class="props.isExpanded ? 'secondary white--text': ''">
-              <td class="text-left" @click.stop="expand(props)">{{ props.item.year }}</td>
-              <td class="text-right" @click.stop="expand(props)" v-for="(key,index) in props.item.contributions" :key="index" >{{Object.entries(key.detail).length !==0 ? key.detail.total:'0,00' }}</td>
-              <!--<td @click.stop="expand(props)">{{ Object.entries(props.item.contributions[0].detail).length !==0 ? props.item.contributions[0].detail.total: '0,00'}}</td> a 11 borrar -->
-            </tr>
-          </template>
-          <template v-slot:expanded-item="{item}">
-            <tr>
-              <td :colspan="13" class="px-0">
-                <v-data-table :items="item.contributions" :hide-default-footer="true" :itemsPerPage="12" class="tertiary">
-                  <template v-slot:body="{ items }">
-                    <tbody>
-                      <tr v-for="header in headersDetail" :key="header.id">
-                        <td class="font-weight-bold">
-                          {{ header.text }}
-                        </td>
-                        <td class="text-right"  v-for="item in items" :key="item.id">
-                          {{ Object.entries(item.detail).length !==0 ? item.detail[header.value]: '0,00'}}
-                        </td>
-                      </tr>
-                    </tbody>
-                  </template>
-                </v-data-table>
-              </td>
-            </tr>
-          </template>
-        </v-data-table>
-      </v-col>
-      <v-col cols="12"  v-else>
-        NO SE ENCONTRARON REGISTROS.
-      </v-col>
-    </template>
+        <div>
+          <span>Detalle de Aportes Pasivo</span>
+        </div>
+      </v-tooltip>
+    </v-col>
+    <v-col cols="6"  class="text-right pb-0" v-if="show">
+      <v-tooltip top class="my-0">
+        <template v-slot:activator="{ on }">
+          <v-btn
+            v-if="permissionSimpleSelected.includes('download-certifications')"
+            x-small
+            color="info"
+            :loading="loading_passive_old_age"
+            v-on="on"
+            class="ma-2 pa-3"
+            @click="printContributionsPassive('VEJEZ')"
+            outlined
+            elevation="2"
+          >
+            <v-icon> mdi-download</v-icon>Cert. Titular
+          </v-btn>
+        </template>
+        <div>
+          <span>Certificación de Aportes Vejez</span>
+        </div>
+      </v-tooltip>
+      <v-tooltip top class="my-0">
+        <template v-slot:activator="{ on }">
+          <v-btn
+            v-if="permissionSimpleSelected.includes('download-certifications')"
+            x-small
+            color="success"
+            :loading="loading_passive_widow"
+            v-show="affiliate.dead && affiliate.spouse!=null"
+            v-on="on"
+            class="ma-2 pa-3"
+            @click="printContributionsPassive('VIUDEDAD')"
+            outlined
+            elevation="2"
+          >
+            <v-icon> mdi-download</v-icon>Cert. Viudedad
+          </v-btn>
+        </template>
+        <div>
+          <span>Certificación de Aportes Viudedad</span>
+        </div>
+      </v-tooltip>
+    </v-col>
+    <v-col cols="12" class="pt-0" v-if="show">
+      <v-data-table
+        :headers="headers"
+        :items="contributions"
+        :loading="loading"
+        single-expand
+        item-key="year"
+        :itemsPerPage="contributions.length"
+        hide-default-footer
+      >
+        <template v-slot:item="props">
+          <tr :class="props.isExpanded ? 'secondary white--text': ''">
+            <td class="text-left" @click.stop="expand(props)">{{ props.item.year }}</td>
+            <td class="text-right" @click.stop="expand(props)" v-for="(key,index) in props.item.contributions" :key="index" >{{Object.entries(key.detail).length !==0 ? key.detail.total:'0,00' }}</td>
+            <!--<td @click.stop="expand(props)">{{ Object.entries(props.item.contributions[0].detail).length !==0 ? props.item.contributions[0].detail.total: '0,00'}}</td> a 11 borrar -->
+          </tr>
+        </template>
+        <template v-slot:expanded-item="{item}">
+          <tr>
+            <td :colspan="13" class="px-0">
+              <v-data-table
+                :items="item.contributions"
+                :hide-default-footer="true"
+                :itemsPerPage="12"
+                class="tertiary">
+                <template v-slot:body="{ items }">
+                  <tbody>
+                    <tr v-for="header in headersDetail" :key="header.id">
+                      <td class="font-weight-bold">
+                        {{ header.text }}
+                      </td>
+                      <td class="text-right"  v-for="item in items" :key="item.id">
+                        {{ Object.entries(item.detail).length !==0 ? item.detail[header.value]: '0,00'}}
+                      </td>
+                    </tr>
+                  </tbody>
+                </template>
+              </v-data-table>
+            </td>
+          </tr>
+        </template>
+      </v-data-table>
+    </v-col>
+    <v-col cols="12"  class="ma-2" v-else>
+      NO SE ENCONTRARON REGISTROS.
+    </v-col>
   </v-row>
 </template>
 
@@ -128,13 +129,12 @@ export default {
       require: true,
     },
   },
-  components: {},
   data: () => ({
     itemsPerPage: 0,
     loading: true,
     search: "",
     active: true,
-    show:false,
+    show:true,
     contributions: [],
     loading_passive_old_age: false,
     loading_passive_widow: false,
@@ -166,6 +166,12 @@ export default {
   }),
   mounted() {
     this.getPassiveAffiliateContribution(this.$route.params.id);
+  },
+  computed: {
+    //permisos del selector global por rol
+    permissionSimpleSelected () {
+      return this.$store.getters.permissionSimpleSelected
+    },
   },
   methods: {
     expand(props) {

@@ -13,7 +13,6 @@
                   pb-10
                 "
               >
-                <p>LOGIN</p>
               </div>
               <v-text-field
                 class="pl-5 pr-5"

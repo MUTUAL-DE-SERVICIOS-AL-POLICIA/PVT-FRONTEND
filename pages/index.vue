@@ -12,7 +12,7 @@
               <v-row justify="center" align="center" style="height: 848px">
                 <v-col class="text-center" lg="6" md="12" sm="12">
                     <h1 class="textPrimary--text" id="letra">
-                      BIENVENIDOS A LA PLATAFORMA VIRTUAL DE TRAMITES
+                      BIENVENIDOS A LA PLATAFORMA DE SEGUIMIENTO DE TRAMITES INTEGRAL
                     </h1>
                 </v-col>
               </v-row>

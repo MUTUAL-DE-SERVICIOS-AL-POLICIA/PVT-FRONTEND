@@ -54,8 +54,7 @@ export default {
   modules: [
     '@nuxtjs/axios',
     '@nuxtjs/moment',
-    "vue-toastification/nuxt",
-    "nuxt-sweetalert2",
+    "vue-toastification/nuxt"
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios

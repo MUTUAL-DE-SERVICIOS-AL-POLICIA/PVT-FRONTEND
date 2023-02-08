@@ -1,8 +1,24 @@
 <template>
   <v-card-text>
-    <v-data-table dense class="inputSearch" :headers="headers" :items="spouses" :options.sync="options"
-      :item-class="hovertable" :server-items-length="total_spouses"
-      :footer-props="{ itemsPerPageOptions: [8, 15, 50, 100] }" :loading=loading_table>
+    <v-data-table
+        dense
+        class="inputSearch"
+        :headers="headers"
+        :items="spouses"
+        :options.sync="options"
+        :item-class="hovertable"
+        :server-items-length="total_spouses"
+        :loading="loading_table"
+        :footer-props="{
+          showFirstLastPage: true,
+          firstIcon: 'mdi-arrow-collapse-left',
+          lastIcon: 'mdi-arrow-collapse-right',
+          prevIcon: 'mdi-minus',
+          nextIcon: 'mdi-plus',
+          'items-per-page-text':'Filas por página',
+          itemsPerPageOptions: [12, 30, 50, 100]
+        }"
+      >
       <template v-slot:[`header.affiliate_id`]="{ header }">
         <span :class="searching.affiliate_id ? 'primary--text' : ''">{{ header.text }}</span>
       </template>
@@ -67,7 +83,7 @@ export default {
     spouses: [],
     options: {
       page: 1,
-      itemsPerPage: 8,
+      itemsPerPage: 12,
       sortDesc: [false],
     },
     total_spouses: 0,

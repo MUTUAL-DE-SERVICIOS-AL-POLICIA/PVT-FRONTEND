@@ -10,25 +10,27 @@
               Datos del afiliado
             </v-col>
           </v-row>
-          <v-btn
-            v-if="affiliate.credential_status.access_status == 'No asignadas'"
-            small
-            dark
-            @click="getState_cellphone()"
-            color="info"
-          >
-            <span> ASIGNAR CREDENCIALES</span>
-          </v-btn>
-          <v-btn
-            v-if="affiliate.credential_status.access_status != 'No asignadas'"
-            small
-            dark
-            @click="printFormCredential()"
-            color="secondary"
-            :loading="loading_btn_print"
-          >
-            <span> <v-icon>mdi-printer</v-icon>CREDENCIALES</span>
-          </v-btn>
+          <template v-if="permissionSimpleSelected.includes('create-credentials')">
+            <v-btn
+              v-if="affiliate.credential_status.access_status == 'No asignadas'"
+              small
+              dark
+              @click="getState_cellphone()"
+              color="info"
+            >
+              <span> ASIGNAR CREDENCIALES</span>
+            </v-btn>
+            <v-btn
+              v-if="affiliate.credential_status.access_status != 'No asignadas'"
+              small
+              dark
+              @click="printFormCredential()"
+              color="secondary"
+              :loading="loading_btn_print"
+            >
+              <span> <v-icon>mdi-printer</v-icon>CREDENCIALES</span>
+            </v-btn>
+          </template>
         </v-toolbar>
       </v-card-title>
       <v-card-text>
@@ -326,7 +328,7 @@ export default {
           );
           this.getAffiliateAddress();
           this.$toast.success(
-            "Se actualizao correctamente los datos del afiliado."
+            "Se actualizó correctamente los datos del afiliado."
           );
           this.sync_up.editable = false;
         }
@@ -354,7 +356,7 @@ export default {
         this.watch_button_send = true;
       } else {
         this.watch_button_send = false;
-        this.options.response_message ="El afiliado y cuenta con credencialea asignados como: " +
+        this.options.response_message ="El afiliado ya cuenta con credencialea asignados como: " +
           this.affiliate.credential_status.access_status;
       }
     },

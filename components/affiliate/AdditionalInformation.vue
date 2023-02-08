@@ -3,7 +3,7 @@
     <v-form ref="refAdditionalInformation">
       <v-row class="text-right">
         <v-col cols="12" class="ma-0 pa-0 pt-0">
-          <template>
+          <template v-if="permission.primary || permission.secondary">
             <v-btn
               x-small
               right

@@ -1,31 +1,29 @@
 <template>
   <v-row >
-    <v-col cols="6"  class="text-left ma-0 pb-0">
-      <v-toolbar-title>APORTES ACTIVO
+    <v-col cols="6"  class="text-left pb-0"  v-if="show">
         <v-tooltip top>
           <template v-slot:activator="{ on }">
-            <v-btn top
-              small
-              dark
-              icon
+            <v-btn
+              x-small
               color="success"
-              class="my-2 mr-4"
+              class="ma-2 pa-3"
               v-on="on"
+              elevation="2"
               @click="showDetailActive()"
             >
-              <v-icon> mdi-arrow-right-bold </v-icon>
+              <v-icon> mdi-text-box-plus </v-icon>Detalle aportes
             </v-btn>
           </template>
           <div>
-            <span>Detalle de Aportes</span>
+            <span>Detalle de Aportes Activo</span>
           </div>
         </v-tooltip>
-      </v-toolbar-title>
     </v-col>
-    <v-col cols="6" class="text-right ma-0 pb-0"  v-if="show">
+    <v-col cols="6" class="text-right pb-0"  v-if="show">
       <v-tooltip top class="my-0">
         <template v-slot:activator="{ on }">
           <v-btn
+            v-if="permissionSimpleSelected.includes('download-certifications')"
             x-small
             color="info"
             :loading="loading_print_active"
@@ -43,7 +41,7 @@
         </div>
       </v-tooltip>
     </v-col>
-    <v-col cols="12"  v-if="show">
+    <v-col cols="12" class="pt-0" v-if="show">
       <v-data-table
         :headers="headers"
         :items="contributions"
@@ -62,7 +60,7 @@
         <template v-slot:expanded-item="{item}">
           <tr>
             <td :colspan="13" class="px-0">
-              <v-data-table 
+              <v-data-table
                 :items="item.contributions"
                 :hide-default-footer="true"
                 :itemsPerPage="12"
@@ -85,12 +83,13 @@
         </template>
       </v-data-table>
     </v-col>
-    <v-col cols="12"  v-else>
+    <v-col cols="12" class="ma-2" v-else>
       NO SE ENCONTRARON REGISTROS.
     </v-col>
   </v-row>
 </template>
 <script>
+
 export default {
   name: "ListContributionActive",
   props: {
@@ -107,13 +106,13 @@ export default {
       require: true,
     },
   },
-  components: {},
+
   data: () => ({
     itemsPerPage: 0,
     loading: true,
     search: "",
     active: true,
-    show: false,
+    show: true,
     loading_print_active: false,
     contributions: [],
     headers: [
@@ -141,6 +140,15 @@ export default {
   }),
   mounted() {
     this.getActiveAffiliateContribution(this.$route.params.id);
+    import('print-js').then(()=> {
+      //this.print_ready = true;
+    })
+  },
+  computed: {
+    //permisos del selector global por rol
+    permissionSimpleSelected () {
+      return this.$store.getters.permissionSimpleSelected
+    },
   },
   methods: {
     expand(props) {
@@ -177,7 +185,9 @@ export default {
         link.href = url;
         link.setAttribute("download", "Aporte_Activo.pdf");
         document.body.appendChild(link);
+        console.log(window.URL.createObjectURL(new Blob([res])))
         link.click();
+        printJS('http://localhost:3001/bfbdeab9-369d-4f4d-9e31-ba3a1f12421d')
       } catch (e) {
         console.log(e);
         this.loading_print_active = false;
@@ -190,6 +200,7 @@ export default {
       this.state.active = true;
       this.show_detail.active = true;
     },
+
   },
 };
 </script>

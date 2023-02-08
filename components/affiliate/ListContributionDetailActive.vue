@@ -8,6 +8,15 @@
     :loading="loading_table"
     :server-items-length="total_contributions"
     :key="refresh_table"
+    :footer-props="{
+      showFirstLastPage: true,
+      firstIcon: 'mdi-arrow-collapse-left',
+      lastIcon: 'mdi-arrow-collapse-right',
+      prevIcon: 'mdi-minus',
+      nextIcon: 'mdi-plus',
+      'items-per-page-text':'Filas por página',
+      itemsPerPageOptions: [12, 30, 50, 100]
+    }"
   >
     <template v-slot:[`header.con_re`]="{ header }">
       <span :class="searching.con_re ? 'primary--text' : ''">{{
@@ -78,7 +87,7 @@
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <v-btn
-            v-if="item.can_deleted"
+            v-if="item.can_deleted && permissionSimpleSelected.includes('delete-contribution')"
             icon small
             v-on="on"
             @click="dialogDelete(item.con_re_id)"
@@ -136,7 +145,7 @@ export default {
       ],
     options: {
       page: 1,
-      itemsPerPage: 8,
+      itemsPerPage: 12,
       sortBy: ["month_year"],
       sortDesc: [true],
     },
@@ -249,6 +258,14 @@ export default {
         this.getSearchActiveAffiliateContribution()
     }
   },
+
+  computed: {
+    //permisos del selector global por rol
+    permissionSimpleSelected () {
+      return this.$store.getters.permissionSimpleSelected
+    },
+  },
+
   mounted() {
     this.getSearchActiveAffiliateContribution();
   },

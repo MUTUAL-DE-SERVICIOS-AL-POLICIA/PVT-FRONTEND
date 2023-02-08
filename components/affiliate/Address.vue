@@ -5,6 +5,7 @@
     sort-by="city_address_id"
     class="elevation-1"
     :key="refreshAddressTable"
+    hide-default-footer
   >
     <template v-slot:item="props">
       <tr>

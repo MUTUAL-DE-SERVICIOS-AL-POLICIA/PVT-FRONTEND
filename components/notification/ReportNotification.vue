@@ -30,7 +30,7 @@
                 <template v-slot:activator="{ on, attrs }">
                   <v-text-field
                     v-model="start_date"
-                    label="Fecha fin"
+                    label="Fecha inicio"
                     prepend-icon="mdi-calendar"
                     readonly
                     v-bind="attrs"
@@ -91,9 +91,6 @@
               <v-btn color="primary" @click="downloadReport()"  :loading="loading">Descargar reporte </v-btn>
             </v-card>
           </v-col>
-          <!-- <v-col cols="6" md="6" lg="4">
-            <CellBalance />
-          </v-col> -->
         </v-row>
       </div>
     </v-card-text>

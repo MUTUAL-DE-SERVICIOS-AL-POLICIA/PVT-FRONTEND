@@ -4,7 +4,7 @@
   "private": true,
   "config": {
     "nuxt": {
-      "host": "192.168.2.69",
+      "host": "localhost",
       "port": "3001"
     }
   },

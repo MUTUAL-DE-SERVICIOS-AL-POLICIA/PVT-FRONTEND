@@ -70,7 +70,7 @@
           <v-btn
             color="sucess"
             text
-            @click="sendNotification()"
+            @click.stop="sendNotification()"
             :loading="btn_send_notification"
           >
             Enviar
@@ -96,6 +96,7 @@ export default {
       title: null,
       message: null,
       attached: null,
+      notification_type: 7,
     },
     notification: [],
     dialog_send_notification: false,
@@ -106,12 +107,11 @@ export default {
   methods: {
     async sendNotification() {
       try {
-        console.log("sms enviado")
         this.btn_send_notification = true;
         let formData = new FormData();
         formData.append("file", this.form.file);
         formData.append("user_id", this.$store.getters.user.id)
-
+        formData.append("action", this.form.notification_type);
         let res = await this.$axios.post(
           "/notification/file",
           formData

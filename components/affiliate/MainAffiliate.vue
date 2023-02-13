@@ -257,7 +257,7 @@ export default {
   },
   mounted() {
     this.getAffiliate(this.affiliate_id);
-    this.sync_up.editable = false;
+    this.sync_up.editable = false
   },
   watch: {
     tab: function(newVal, oldVal){

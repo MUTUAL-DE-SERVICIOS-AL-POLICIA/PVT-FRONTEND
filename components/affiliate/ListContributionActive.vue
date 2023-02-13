@@ -140,9 +140,6 @@ export default {
   }),
   mounted() {
     this.getActiveAffiliateContribution(this.$route.params.id);
-    import('print-js').then(()=> {
-      //this.print_ready = true;
-    })
   },
   computed: {
     //permisos del selector global por rol
@@ -175,19 +172,13 @@ export default {
     async printContributionsActive() {
       this.loading_print_active = true;
       try {
-        let res = await this.$axios.get(
-          `/contribution/print_contributions_active/${this.$route.params.id}`,
-          undefined,
-          { responseType: "blob" }
-        );
-        const url = window.URL.createObjectURL(new Blob([res]));
-        const link = document.createElement("a");
-        link.href = url;
-        link.setAttribute("download", "Aporte_Activo.pdf");
-        document.body.appendChild(link);
-        console.log(window.URL.createObjectURL(new Blob([res])))
-        link.click();
-        printJS('http://localhost:3001/bfbdeab9-369d-4f4d-9e31-ba3a1f12421d')
+        let res = await this.$axios.get(`/contribution/print_contributions_active/${this.$route.params.id}`);
+        printJS({
+          printable: res.content,
+          type: res.type,
+          documentTitle: res.file_name,
+          base64: true
+        })
       } catch (e) {
         console.log(e);
         this.loading_print_active = false;

@@ -202,17 +202,18 @@ export default {
        this.loading_passive_widow = true;
       }
         try {
-          let res = await this.$axios.get(
-            `/contribution/print_contributions_passive/${this.$route.params.id}`,undefined,{ responseType: "blob"  ,params: {
-              affiliate_rent_class: type_contribution,}
-               },
+          let res = await this.$axios.get(`/contribution/print_contributions_passive/${this.$route.params.id}`,undefined,{ 
+              params: {
+                affiliate_rent_class: type_contribution
+              }
+            },
           );
-          const url = window.URL.createObjectURL(new Blob([res]));
-          const link = document.createElement("a");
-          link.href = url;
-          link.setAttribute("download", "Aporte_Pasivo.pdf");
-          document.body.appendChild(link);
-          link.click();
+        printJS({
+          printable: res.content,
+          type: res.type,
+          documentTitle: res.file_name,
+          base64: true
+        })
         } catch (e) {
           console.log(e);
           this.loading_passive_widow = false;

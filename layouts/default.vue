@@ -36,6 +36,10 @@ export default {
       expandNavbar: false,
     };
   },
+  mounted(){
+    //TODO Revisar como importar libreria print-js coo plugin
+    import('print-js').then(()=> {})
+  },
 
   computed: {
     ...mapGetters(["currentRole"]),

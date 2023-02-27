@@ -83,12 +83,16 @@
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <v-btn
-            v-if="item.can_deleted && permissionSimpleSelected.includes('delete-contribution-passive')"
-            icon small
+            
+            icon
+            small
             v-on="on"
             @click="dialogDelete(item.id)"
-            color="error">
-            <v-icon>mdi-delete</v-icon>
+            color="error"
+            :disabled="!(item.can_deleted && permissionSimpleSelected.includes('delete-contribution-passive'))">
+            <v-icon v-if="permissionSimpleSelected.includes('delete-contribution-passive')">
+              mdi-delete
+            </v-icon>
           </v-btn>
         </template>
         <span>Eliminar contribución</span>

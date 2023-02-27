@@ -15,7 +15,7 @@
       prevIcon: 'mdi-minus',
       nextIcon: 'mdi-plus',
       'items-per-page-text':'Filas por página',
-      itemsPerPageOptions: [12, 30, 50, 100]
+      itemsPerPageOptions: [12, -1]
     }"
   >
     <template v-slot:[`header.year`]="{ header }">

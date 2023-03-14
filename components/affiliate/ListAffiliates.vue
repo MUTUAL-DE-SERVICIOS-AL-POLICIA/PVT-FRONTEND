@@ -74,7 +74,6 @@
 </template>
 <script>
 
-import Add from '@/components/affiliate/AdditionalInformation';
 import GlobalBreadCrumb from "@/components/common/GlobalBreadCrumb.vue";
 import GlobalLoading from "@/components/common/GlobalLoading.vue";
 
@@ -83,7 +82,6 @@ export default {
   components: {
     GlobalBreadCrumb,
     GlobalLoading,
-    Add
   },
   data: () => ({
     // Cabeceras de la tabla
@@ -132,10 +130,12 @@ export default {
         this.options.page = 1
       }
     },
-    // undefined newVal y oldVal
   },
   mounted() {
     this.getListAffiliates()
+  },
+  created () {
+    this.$nuxt.$on('clear_all', this.clearAll)
   },
   methods: {
     async getListAffiliates() {
@@ -156,9 +156,7 @@ export default {
           },
         });
         this.affiliates = res.payload.affiliates.data
-        console.log(this.affiliates)
         this.total_affiliates = res.payload.affiliates.total
-        /*delete res.data["data"]*/
         this.options.page = res.payload.affiliates.current_page
         this.options.itemsPerPage = parseInt(res.payload.affiliates.per_page)
         this.loading_table = false
@@ -173,14 +171,17 @@ export default {
     hovertable: function (item) {
       return 'row-white'
     },
-    clearAll() {
-      this.searching.id_affiliate = "",
+    clearAll(tab) {
+      if(tab == 1) {
+        console.log("se ejecuta afiliado")
+        this.searching.id_affiliate = "",
         this.searching.identity_card_affiliate = "",
         this.searching.full_name_affiliate = "",
         this.searching.registration_affiliate = "",
         this.searching.name_degree = "",
         this.searching.name_affiliate_state = "",
         this.getListAffiliates()
+      }
     },
     searchTimeOut() {
       if (this.timer) {

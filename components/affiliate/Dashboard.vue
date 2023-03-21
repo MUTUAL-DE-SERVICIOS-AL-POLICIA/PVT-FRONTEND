@@ -3,8 +3,7 @@
     <v-row>
       <v-col cols="12" md="3" class="ma-0 pa-2 pt-0" align="center">
         <v-card>
-          SIN TRAMITES
-          <v-divider class="mx-4"></v-divider>
+
         </v-card>
       </v-col>
     </v-row>

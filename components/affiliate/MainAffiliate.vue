@@ -245,15 +245,18 @@ export default {
     this.$nuxt.$on('eventGetSpouse', (val) => {
       this.getSpouse(val)
     })
-    this.$nuxt.$on('eventSaveAffiliate', (val) => {
-      this.saveAffiliate()
-    })
+    // this.$nuxt.$on('eventSaveAffiliate', (val) => {
+    //   this.saveAffiliate()
+    // })
     this.$nuxt.$on('eventSaveAffiliate2', (val) => {
       this.saveAffiliate()
     })
     this.$nuxt.$on('eventResetForm', (val) => {
       this.resetForm()
     })
+  },
+    beforeDestroy(){
+    this.$nuxt.$off('eventSaveAffiliate2')
   },
   mounted() {
     this.getAffiliate(this.affiliate_id);

@@ -50,12 +50,13 @@
         "href": "/notification/PageNotification",
         "title": "Notificaciones",
         "icon": "mdi-send"
-      },
-      {
-        "href": "/notification/PageReportNotification",
-        "title": "Reporte",
-        "icon": "mdi-file-chart"
       }
     ]
+  },
+  {
+    "href": "/reports/PageReportNotification",
+    "title": "Reporte",
+    "icon": "mdi-file-chart",
+    "permission": "show-report"
   }
 ]

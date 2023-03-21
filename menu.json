@@ -44,14 +44,8 @@
   {
     "title": "Notificaciones App-Movil",
     "icon": "mdi-bell-badge",
-    "permission": "show-notification",
-    "group": [
-      {
-        "href": "/notification/PageNotification",
-        "title": "Notificaciones",
-        "icon": "mdi-send"
-      }
-    ]
+    "href": "/notification/PageNotification",
+    "permission": "show-notification"
   },
   {
     "href": "/reports/PageReportNotification",

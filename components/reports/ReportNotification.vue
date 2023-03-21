@@ -9,7 +9,7 @@
 
     <v-card-text>
       <!-- Opciones del tab -->
-      <v-tabs dark active-class="secondary" v-model="tab">
+      <v-tabs left background-color="backgroundTab" v-model="tab">
         <v-tab v-for="item in actions" :key="item.nameTab">{{item.nameTab}}</v-tab>
       </v-tabs>
       <!-- Fin de las opciones del tab -->
@@ -17,7 +17,7 @@
       <!-- Contenido de los tabs -->
       <v-tabs-items v-model="tab">
         <v-tab-item v-for="item in actions" :key="item.nameTab">
-          <div class="mt-2 pb-8 mx-0 px-0 backgroundCard">
+          <div class="mt-3 pt-3 pb-8 mx-0 px-0 backgroundCard">
             <v-row>
               <v-col cols="6" md="6" lg="4">
                 <v-card class="mx-5 px-5 py-6 elevation-0">

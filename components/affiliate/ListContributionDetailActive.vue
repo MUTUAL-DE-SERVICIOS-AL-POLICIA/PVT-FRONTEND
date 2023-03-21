@@ -15,7 +15,8 @@
       prevIcon: 'mdi-minus',
       nextIcon: 'mdi-plus',
       'items-per-page-text':'Filas por página',
-      itemsPerPageOptions: [12, 30, 50, 100]
+      itemsPerPageOptions: [12, -1],
+     
     }"
   >
     <template v-slot:[`header.con_re`]="{ header }">
@@ -87,12 +88,16 @@
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <v-btn
-            v-if="item.can_deleted && permissionSimpleSelected.includes('delete-contribution')"
-            icon small
+            icon
+            small
             v-on="on"
             @click="dialogDelete(item.con_re_id)"
-            color="error">
-            <v-icon>mdi-delete</v-icon>
+            color="error"
+            :disabled="!(item.can_deleted && permissionSimpleSelected.includes('delete-contribution'))"
+          >
+            <v-icon v-if="permissionSimpleSelected.includes('delete-contribution')">
+                mdi-delete
+            </v-icon>
           </v-btn>
         </template>
         <span>Eliminar contribución</span>
@@ -145,7 +150,7 @@ export default {
       ],
     options: {
       page: 1,
-      itemsPerPage: 12,
+      itemsPerPage: 0,
       sortBy: ["month_year"],
       sortDesc: [true],
     },

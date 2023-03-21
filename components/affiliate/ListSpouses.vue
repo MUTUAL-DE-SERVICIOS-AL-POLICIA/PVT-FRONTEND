@@ -56,7 +56,6 @@
 </template>
 <script>
 
-import Add from '@/components/affiliate/AdditionalInformation';
 import GlobalBreadCrumb from "@/components/common/GlobalBreadCrumb.vue";
 import GlobalLoading from "@/components/common/GlobalLoading.vue";
 
@@ -65,7 +64,6 @@ export default {
   components: {
     GlobalBreadCrumb,
     GlobalLoading,
-    Add
   },
   data: () => ({
     headers: [
@@ -98,7 +96,7 @@ export default {
         newVal.page != oldVal.page ||
         newVal.itemsPerPage != oldVal.itemsPerPage ||
         newVal.sortDesc != oldVal.sortDesc) {
-        this.getListAffiliates()
+        this.getListSpouses()
       }
     },
     searching: {
@@ -109,11 +107,13 @@ export default {
     },
   },
   mounted() {
-    this.getListAffiliates()
+    this.getListSpouses()
+  },
+  created () {
+    this.$nuxt.$on('clear_all', this.clearAll)
   },
   methods: {
-    async getListAffiliates() {
-
+    async getListSpouses() {
       this.loading_table = true
       try {
         let res = await this.$axios.get("/affiliate/spouse", undefined, {
@@ -126,9 +126,7 @@ export default {
             sortDesc: this.options.sortDesc,
           },
         });
-        console.log(res)
         this.spouses = res.payload.spouses.data
-        console.log(this.spouse)
         this.total_spouses = res.payload.spouses.total
         this.options.page = res.payload.spouses.current_page
         this.options.itemsPerPage = parseInt(res.payload.spouses.per_page)
@@ -144,11 +142,14 @@ export default {
     hovertable: function(item) {
       return 'row-white'
     },
-    clearAll() {
-      this.searching.id_affiliate = "",
-      this.searching.identity_card_spouses = "",
-      this.searching.full_name_spouses = "",
-      this.getListAffiliates()
+    clearAll(tab) {
+      if(tab == 2) {
+        console.log("se ejecuta esposa")
+        this.searching.id_affiliate = "",
+        this.searching.identity_card_spouses = "",
+        this.searching.full_name_spouses = "",
+        this.getListSpouses()
+      }
     },
     searchTimeOut() {
       if (this.timer) {
@@ -156,7 +157,7 @@ export default {
         this.timer = null;
       }
       this.timer = setTimeout(() => {
-        this.getListAffiliates()
+        this.getListSpouses()
       }, 800);
     }
   },

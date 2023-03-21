@@ -68,15 +68,20 @@ export default {
       return this.$store.getters.currentRole
     },
     bar() {
-      if (process.env.NODE_ENV != 'production') {
-        return {
-          color: `error`,
-          text: `SEGUIMIENTO DE TRAMITES INTEGRAL (VERSIÓN DE PRUEBA)`
-        }
-      } else {
+      if (process.env.NODE_ENV == 'production') {
         return {
           color: `primary`,
           text: `SEGUIMIENTO DE TRAMITES INTEGRAL`
+        }
+      } else if(process.env.NODE_ENV == 'testing') {
+        return {
+          color: `info`,
+          text: `SEGUIMIENTO DE TRAMITES INTEGRAL (TESTING)`
+        }
+      } else {
+        return {
+          color: `error`,
+          text: `SEGUIMIENTO DE TRAMITES INTEGRAL (VERSIÓN DE PRUEBA)`
         }
       }
     },

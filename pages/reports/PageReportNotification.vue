@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import ReportNotification from "@/components/notification/ReportNotification.vue";
+import ReportNotification from "@/components/reports/ReportNotification.vue";
 export default {
   name: "MainReportNotication",
   components: {

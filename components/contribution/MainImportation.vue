@@ -15,7 +15,6 @@
               v-if="permissionSimpleSelected.includes(item.permissions_create)"
               :value="item.name"
             > {{item.name}}</v-btn>
-            <!-- <v-btn v-if="permissionSimpleSelected.includes('create-import-payroll-senasir')" value="SENASIR"> Senasir </v-btn> -->
           </span>
           </v-btn-toggle>
           <v-divider class="mx-2" inset vertical></v-divider>
@@ -40,7 +39,7 @@
                 right
                 v-on="on"
                 class="mx-2"
-                @click.stop="openDialog(year_selected)"
+                @click.stop="openDialog()"
               >
                 <v-icon>mdi-plus</v-icon>
               </v-btn>
@@ -406,12 +405,12 @@ export default {
     this.getYears();
     this.type_import = this.items_import[0]//Toma por defecto la importacion del item 0 = Seanasir
     //seleccionar el mes en caso de null
-    if(this.year_selected){
-      this.getMonths()
-    }else{
-      this.year_selected = new Date().getFullYear()
-      this.getMonths()
-    }
+    // if(this.year_selected){
+    //   this.getMonths()
+    // }else{
+    //   this.year_selected = new Date().getFullYear()
+    //   this.getMonths()
+    // }
   },
   computed: {
     //permisos del selector global por rol
@@ -474,28 +473,41 @@ export default {
     async getMonths() {
       this.loading_circular = true
       try {
-        this.list_months_not_import = [];
-        let res = await this.$axios.post(`${this.type_import.route_get_months}`,{
+          let res = await this.$axios.post(`${this.type_import.route_get_months}`,{
             period_year: this.year_selected,
           }
         );
         this.list_months = res.payload.list_months;
-        for (let i = 0; i < res.payload.list_months.length; i++) {
-          if (res.payload.list_months[i].state_importation == false) {
-            this.list_months_not_import.push(res.payload.list_months[i]);
-          }
-        }
-        //console.log(this.year_selected);
         this.loading_circular = false
       } catch (e) {
         console.log(e);
         this.loading_circular = false
       }
     },
-    openDialog(year_selected) {
+
+    async getSimpleMonths() {
+      try {
+        let res = await this.$axios.post(`${this.type_import.route_get_months}`,{
+            period_year: this.year_selected,
+            with_data_count: false
+          }
+        );
+        let months_not_import =[]
+        for (let i = 0; i < res.payload.list_months.length; i++) {
+          if (res.payload.list_months[i].state_importation == false) {
+            months_not_import.push(res.payload.list_months[i]);
+          }
+          console.log(months_not_import)
+        }
+        this.list_months_not_import = months_not_import;
+      } catch (e) {
+        console.log(e);
+      }
+    },
+    openDialog() {
       this.dialog = true;
       this.month_selected= null,
-      console.log(year_selected);
+      this.getSimpleMonths()
     },
     close() {
       this.dialog = false;

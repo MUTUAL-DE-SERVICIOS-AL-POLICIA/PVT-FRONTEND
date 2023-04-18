@@ -248,23 +248,30 @@
                         color="success"
                         text
                         @click="validateData()"
-                        :loading="btn_validate_data"
                     >
                     Aceptar
                     </v-btn>
+                    <!--
+                        :loading="btn_validate_data"
+                    -->
                 </v-card-actions>
             </v-card>
         </v-dialog>
+        <div v-if="loading_circular">
+            <GlobalLoading />
+        </div>
     </v-container>
 </template>
 
 
 <script>
 import Information from '@/components/contribution/Information.vue'
+import GlobalLoading from '@/components/common/GlobalLoading.vue'
 export default {
     name: "PayrollImportProcessTranscript",
     components: {
-        Information
+        Information,
+        GlobalLoading
     },
     data: () => ({
         list_months_not_import: [],
@@ -301,7 +308,9 @@ export default {
 
         // variables para los dialogos
         dialog_confirm: false,
-        dialog_confirm_import: false
+        dialog_confirm_import: false,
+
+        loading_circular: false
     }),
     props: {
         dialog: {
@@ -468,11 +477,14 @@ export default {
             }
         },
         async validateData() {
+            this.dialog_confirm_import = false
             this.btn_validate_data = true
+            this.loading_circular = true
             try {
                 let res  = await this.$axios.post(`${this.type_import.route_validate_data}`, {
                     date_payroll: this.dateFormat
                 })
+
 
                 if(res.payload.successfully) {
                     this.data_count = res.payload.data_count
@@ -481,10 +493,12 @@ export default {
                     this.$toast.success("Se ha realizado la validación de los afiliados")
                 }
                 this.downloadFile(res.payload.route, res.payload.route_file_name)
-                this.dialog_confirm_import = false
+                // this.dialog_confirm_import = false
                 this.btn_validate_data = false
+                this.loading_circular = false
             } catch(e) {
                 console.log(e)
+                this.loading_circular = false
                 this.btn_validate_data = false
             }
         },

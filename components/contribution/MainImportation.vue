@@ -191,8 +191,8 @@ export default {
       {
         id: 3,
         name: 'TRANSCRIPCIÓN',
-        // permissions_create: 'create-import-payroll-command',
-        // permissions_download: 'download-report-payroll-command',
+        permissions_create: 'create-import-payroll-command',
+        permissions_download: 'download-report-payroll-command',
         route_get_months: '/contribution/list_months_import_contribution_transcript',
         route_upload_file: '/contribution/upload_copy_payroll_transcript', // Paso 1
         route_validate_data: '/contribution/validation_affiliate_transcript', // Paso 2

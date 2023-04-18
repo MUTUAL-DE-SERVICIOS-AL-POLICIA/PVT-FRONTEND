@@ -17,3 +17,10 @@ export default {
   name: 'loading'
 }
 </script>
+
+<style scoped>
+.v-progress-circular {
+  position: absolute;
+  z-index: 9999;
+}
+</style>

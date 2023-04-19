@@ -18,7 +18,7 @@
                     <v-col cols="8">
                         <v-toolbar-title class="pb-5">
                             <center><b>GESTIÓN {{year_selected}}</b></center>
-                            <div class="text-right"><Information /></div>
+                            <div class="text-right"><Information :title="information.title" :parameters="information.parameters"/></div>
                         </v-toolbar-title>
                         <v-select
                             dense
@@ -194,6 +194,9 @@
                     </v-col>
                 </v-row>
             </v-card>
+        <div class="overlay" v-if="loading_circular">
+            <GlobalLoading />
+        </div>
         </v-dialog>
         <v-dialog
             v-model="dialog_confirm"
@@ -257,9 +260,6 @@
                 </v-card-actions>
             </v-card>
         </v-dialog>
-        <div v-if="loading_circular">
-            <GlobalLoading />
-        </div>
     </v-container>
 </template>
 
@@ -310,7 +310,28 @@ export default {
         dialog_confirm: false,
         dialog_confirm_import: false,
 
-        loading_circular: false
+        loading_circular: false,
+        information: {
+            title: "IMPORTACIÓN",
+            parameters: [
+                {
+                    title: "FORMATO ARCHIVO",
+                    body: "tipo CSV delimitado por \"dos puntos\" (:)"
+                },
+                {
+                    title: "NOMBRE ARCHIVO",
+                    body: "tipo-mes-año.csv Ejm. transcripcion-01-1999.csv"
+                },
+                {
+                    title: "MONTO TOTAL",
+                    body: "El monto total debe ser el mismo a del archivo a importar"
+                },
+                {
+                    title: "CANTIDAD REGISTROS",
+                    body: "La cantidad de registros debe ser la misma a del archivo a importar"
+                }
+            ]
+        }
     }),
     props: {
         dialog: {
@@ -535,3 +556,14 @@ export default {
     },
 }
 </script>
+<style scoped>
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.3);
+  z-index: 1;
+}
+</style>

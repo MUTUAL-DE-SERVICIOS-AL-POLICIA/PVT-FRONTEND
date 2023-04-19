@@ -19,7 +19,7 @@
                 <v-col cols="8">
                     <v-toolbar-title class="pb-5">
                         <center><b>GESTIÓN {{year_selected}}</b></center>
-                        <div class="text-right"><Information /></div>
+                        <div class="text-right"><Information :title="information.title" :parameters="information.parameters"/></div>
                     </v-toolbar-title>
                     <!-- P E R I O D O   A   I M P O R T A R -->
                     <v-select
@@ -228,6 +228,20 @@ export default {
         btn_rollback: false,
         dialog_confirm: false,
         dialog_confirm_import: false,
+
+        information: {
+            title: "IMPORTACIÓN",
+            parameters: [
+                {
+                    title: "FORMATO ARCHIVO",
+                    body: "tipo CSV delimitado por \"dos puntos\" (:)",
+                },
+                {
+                    title: "NOMBRE ARCHIVO",
+                    body: "tipo-mes-año.csv Ejemplo: senasir-04-2021.csv"
+                }
+            ]
+        }
     }),
     props: {
         dialog: {

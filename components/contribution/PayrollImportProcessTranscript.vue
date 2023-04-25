@@ -29,7 +29,7 @@
                             v-model="month_selected"
                             outlined
                             :rules="[ $rules.obligatoria('Periódo') ]"
-                            :disabled="progress.query_step_1"
+                            :disabled="block_select"
                             @change="importProgressBar()"
                         ></v-select>
                         <v-stepper v-model="e1" editable>
@@ -139,13 +139,13 @@
                                             </v-card>
                                         </v-card-text>
                                     </v-card>
-                                    <v-btn color="error" @click="dialog_confirm=true">
+                                    <v-btn color="error" @click="redo=true">
                                         Rehacer
                                     </v-btn>
-                                    <v-btn color="primary" @click="dialog_confirm_import=true" :disabled="btn_validate">
+                                    <v-btn color="primary" @click="show=true" :disabled="btn_validate">
                                         Validar archivo
                                     </v-btn>
-                                    <v-btn color="secundary" @click="nextStep(2)" :disabled="!progress.query_step_2">
+                                    <v-btn color="secundary" @click="nextStep(2)" :disabled="!btn_next">
                                         Siguiente
                                     </v-btn>
                                 </v-stepper-content>
@@ -156,16 +156,19 @@
                                             <v-card color="white" class="pa-2">
                                                 <v-row>
                                                     <v-col cols="12" md="6">
-                                                        Este es el tercer paso
+                                                    <strong>Número total de registros en la planilla: </strong>{{$filters.thousands(data_count.num_total_data_payroll)}}<br>
                                                     </v-col>
                                                 </v-row>
                                             </v-card>
                                         </v-card-text>
                                     </v-card>
-                                    <v-btn color="error">
+                                    <v-btn color="error" @click="redo=true" :disabled="btn_redo">
                                         Rehacer
                                     </v-btn>
-                                    <v-btn color="secundary" @click="nextStep(3)">
+                                    <v-btn color="primary" @click="show=true" :disabled="btn_import">
+                                        Importar
+                                    </v-btn>
+                                    <v-btn color="secundary" @click="nextStep(3)" :disabled="!btn_next">
                                         Siguiente
                                     </v-btn>
                                 </v-stepper-content>
@@ -176,17 +179,14 @@
                                             <v-card color="white" class="pa-2">
                                                 <v-row>
                                                     <v-col cols="12" md="6">
-                                                        Este es el cuarto paso
+                                                        <strong>Número de aportes importados: </strong>{{$filters.thousands(data_count.num_total_data_contribution)}}<br>
                                                     </v-col>
                                                 </v-row>
                                             </v-card>
                                         </v-card-text>
                                     </v-card>
-                                    <v-btn color="error" @click="nextStep(3)">
-                                        Rehacer
-                                    </v-btn>
-                                    <v-btn color="secundary" @click="nextStep(4)">
-                                        Siguiente
+                                    <v-btn color="secundary" @click="show=true" >
+                                        Importar
                                     </v-btn>
                                 </v-stepper-content>
                             </v-stepper-items>
@@ -199,7 +199,7 @@
         </div>
         </v-dialog>
         <v-dialog
-            v-model="dialog_confirm"
+            v-model="redo"
             max-width="600"
             persistent
         >
@@ -214,7 +214,7 @@
                     <v-btn
                         color="error"
                         text
-                        @click="dialog_confirm=false"
+                        @click="redo=false"
                     >
                     Cancelar
                     </v-btn>
@@ -229,34 +229,32 @@
             </v-card>
         </v-dialog>
         <v-dialog
-            v-model="dialog_confirm_import"
-            max-width="500"
+            v-model="show"
+            max-width="600"
             persistent
         >
             <v-card>
                 <v-card-title>
-                    ¿Está seguro de realizar la validación?
+                    {{title_dialog}}
+                    <br v-if="small_dialog !== ''">
+                    <br> <small class='caption'>{{small_dialog}}</small>
                 </v-card-title>
                 <v-card-actions>
                     <v-spacer></v-spacer>
                     <v-btn
                         color="error"
                         text
-                        @click="dialog_confirm_import=false"
-                        :disabled="btn_validate_data"
+                        @click="show=false"
                     >
-                    Cerrar
+                    Cancelar
                     </v-btn>
                     <v-btn
                         color="success"
                         text
-                        @click="validateData()"
+                        @click="action()"
                     >
                     Aceptar
                     </v-btn>
-                    <!--
-                        :loading="btn_validate_data"
-                    -->
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -276,7 +274,7 @@ export default {
     data: () => ({
         list_months_not_import: [],
         import_export: {},
-        e1: 1,
+        e1: 1, // current_step
         month_selected: null,
         progress: {
             file_exists: false,
@@ -292,7 +290,6 @@ export default {
             count_data_automatic_link: 0,
             count_data_creation: 0,
             count_data_revision: 0,
-            // total_data_count: 0
             num_total_data_payroll: 0,
             num_total_data_contribution: 0
         },
@@ -300,15 +297,14 @@ export default {
         btn_validate_data: false,
         btn_rollback: false,
         btn_validate: false,
+        btn_import: false,
+        btn_redo: false,
+        btn_next: false,
 
         // Datos para paso 1
         amount: 0,
         number_of_records: 0,
         take_picture: null,
-
-        // variables para los dialogos
-        dialog_confirm: false,
-        dialog_confirm_import: false,
 
         loading_circular: false,
         information: {
@@ -331,7 +327,15 @@ export default {
                     body: "La cantidad de registros debe ser la misma a del archivo a importar"
                 }
             ]
-        }
+        },
+
+        // Dialog dinámico
+        show: false,
+        title_dialog: '',
+        small_dialog: '',
+        redo: false,
+
+        block_select: false,
     }),
     props: {
         dialog: {
@@ -348,20 +352,31 @@ export default {
     },
     computed: {
         dateFormat() {
-            if(this.month_selected < 10) {
+            if(this.month_selected < 10)
                 return this.year_selected + "-" + "0" + this.month_selected + "-" + "01"
-            }
             else
                 return this.year_selected + "-" + this.month_selected + "-" + "01"
-        }
+        },
     },
     watch: {
         dialog: function() {
             this.getSimpleMonths()
+        },
+        show: function() {
+            if(this.e1 == 2) {
+                this.title_dialog = "¿Está seguro de realizar la validación?"
+            } else if(this.e1 == 3) {
+                this.title_dialog = "¿Está seguro de realizar la importación de plantilla?"
+            } else if(this.e1 >= 4) {
+                this.title_dialog = "¿Está seguro de realizar la importación de aportes?"
+            }
         }
     },
     methods: {
         async uploadFile() {
+            console.log("cargado archivo")
+            console.log(this.$data)
+            console.log("---------------")
             this.btn_update_file = true
             let formData = new FormData()
             // Datos para la ruta
@@ -380,20 +395,10 @@ export default {
                         this.data_count.num_total_data_copy = res.payload.data_count.num_total_data_copy
                         this.$toast.success(res.message)
                         this.progress.query_step_1 = true
-                        // Descarga
-                        res = await this.$axios.post(`${this.type_import.route_download_file_error_data_archive}`, {
-                            date_payroll: formData.get("date_payroll")
-                        },
-                        { 'Accept': 'application/vnd.ms-excel' },
-                        { 'responseType': 'blob'}
-                        );
-                        const url = window.URL.createObjectURL(new Blob([res]));
-                        const link = document.createElement("a");
-                        link.href = url;
-                        link.setAttribute("download", `${this.type_import.name_download_file}`);
-                        document.body.appendChild(link);
-                        link.click();
                     } else {
+                        if(res.payload.route !== '' && res.payload.route.length !== 0) {
+                            this.downloadFile(res.payload.route, res.payload.route_file_name);
+                        }
                         this.$toast.error(res.payload.error)
                     }
                     this.btn_update_file = false
@@ -404,7 +409,6 @@ export default {
             } catch(e) {
                 console.log(e)
                 this.btn_update_file = false
-                console.log(e)
                 this.$toast.error(e.message)
             }
         },
@@ -426,66 +430,93 @@ export default {
             }
         },
         async importProgressBar() {
+            console.log("progress_bar")
+            console.log(this.$data)
+            console.log("-------------")
             try {
                 let res = await this.$axios.post(`${this.type_import.route_import_progressBar}`,{
                     date_payroll: this.dateFormat
                 });
                 this.progress = res.payload.import_progress_bar
                 this.data_count = res.payload.data_count
-                if(this.progress.query_step_1) {
-                    this.e1 = 2
-                    this.progress.percentage = this.progress.percentage
-                } else if(this.progress.query_step_2) {
-                    this.e1 = 3
-                    this.progress.percentage = this.progress.percentage
-                } else {
+
+                // const steps = ['query_step_1', 'query_step_2', 'query_step_3', 'query_step_4'];
+
+                const steps = Object.entries(this.progress).reduce((accumulator, [key, value]) => {
+                    if(key.includes('query_step')) accumulator.push(key)
+                    return accumulator
+                },[])
+
+                const values = Object.entries(this.progress).reduce((accumulator, [key, value]) => {
+                    if(steps.includes(key)) accumulator.push(value)
+                    return accumulator;
+                },[])
+
+                this.e1 = values.indexOf(true) + 1
+
+                if(this.e1 === 0) { // si es el primer paso
                     this.e1 = 1
-                    this.progress.percentage = 0
                 }
+                this.btn_next = false
+
+                if(this.e1 > 1) {
+                    this.block_select = true
+                }
+
             } catch(e) {
                 console.log(e)
             }
         },
         async rollbackContribution() {
+            console.log("rollback")
+            console.log(this.$data)
+            console.log("----------")
             this.btn_rollback = true
+            // this.block_select = false
             try {
-                console.log("Esto es dateFormat " +this.dateFormat)
                 let res = await this.$axios.post(`${this.type_import.route_rollback_contribution}`,{
                     date_payroll: this.dateFormat,
                 });
                 if (res.payload.valid_rollback) {
-                    console.log("entra aca")
                     this.$toast.info(res.message + ". Se ha realizado el borrado de datos")
                     this.clearData()
-                    this.dialog_confirm = false
+                    this.redo = false
                 } else {
-                    console.log("no, entra aca")
+                    this.redo = false
                     this.$toast.error(res.message)
                 }
                 this.btn_rollback = false
             } catch (e) {
+                this.redo = false
                 this.btn_rollback = false
                 console.log(e)
             }
         },
         close() {
+            this.block_select = false
             this.$emit('open-close-transcript', !this.dialog)
         },
         nextStep(n) {
-            if(n == this.steps) {
-                this.e1 = 1
-            } else {
-                if (n == 1) {
-                    this.progress.percentage = this.progress.percentage + 25
-                }
-                if (n == 2) {
-                    this.progress.percentage = this.progress.percentage + 25
-                }
-                if (n == 3) {
-                    this.progress.percentage = this.progress.percentage + 25
-                }
-                console.log(this.e1)
-                this.e1 = n + 1
+            console.log("siguiente")
+            console.log(this.$data)
+            console.log("----------")
+            this.btn_next = false
+            if (n == 1) {
+                this.block_select = true
+                this.progress.percentage = this.progress.percentage + 25
+            }
+            if (n == 2) {
+                this.progress.percentage = this.progress.percentage + 25
+            }
+            if (n == 3) {
+                this.progress.percentage = this.progress.percentage + 25
+            }
+            if (n == 4) {
+                this.progress.percentage = this.progress.percentage + 25
+            }
+            this.e1 = n + 1
+            if(this.e1 > 1) {
+                this.block_select = true
             }
         },
         validateForm1() {
@@ -498,29 +529,58 @@ export default {
             }
         },
         async validateData() {
-            this.dialog_confirm_import = false
-            this.btn_validate_data = true
+            console.log("validar")
+            console.log(this.$data)
+            console.log("----------")
+            this.show = false
             this.loading_circular = true
             try {
                 let res  = await this.$axios.post(`${this.type_import.route_validate_data}`, {
                     date_payroll: this.dateFormat
                 })
-
-
                 if(res.payload.successfully) {
-                    this.data_count = res.payload.data_count
                     this.btn_validate = true
-                    this.progress.query_step_2 = true
+                    this.btn_next = true
                     this.$toast.success("Se ha realizado la validación de los afiliados")
                 }
-                this.downloadFile(res.payload.route, res.payload.route_file_name)
-                // this.dialog_confirm_import = false
-                this.btn_validate_data = false
+                if(res.payload.route !== '' && res.payload.route !== 0) {
+                    this.downloadFile(res.payload.route, res.payload.route_file_name)
+                }
+                this.data_count = res.payload.data_count
+                console.log(this.data_count)
                 this.loading_circular = false
             } catch(e) {
                 console.log(e)
+                this.show = false
                 this.loading_circular = false
-                this.btn_validate_data = false
+                this.$toast.error("Hubo un error")
+            }
+        },
+        async importPayroll() {
+            console.log("importar planilla")
+            console.log(this.$data)
+            console.log("----------")
+            try {
+                this.loading_circular = true
+                this.show = false
+                let res = await this.$axios.post(`${this.type_import.route_import_payroll}`, {
+                    date_payroll: this.dateFormat
+                })
+                if(res.payload.successfully) {
+                    this.data_count = res.payload.data_count
+                    this.$toast.success(res.message)
+                    this.btn_import = true
+                    this.btn_redo = true
+                    this.btn_next = true
+                } else {
+                    this.$toast.error(res.message)
+                }
+                this.loading_circular = false
+            } catch (e) {
+                this.show = false
+                this.loading_circular = false
+                this.$toast.error("Hubo un error")
+                console.log(e)
             }
         },
         async downloadFile(route, name) {
@@ -552,7 +612,41 @@ export default {
             this.progress.query_step_3 = false
             this.progress.query_step_4 = false
             this.btn_validate = false
+            this.btn_next = false
+            // this.block_select = false
         },
+        async action() {
+            // no puedo basarme en el query_step
+            if(this.e1 == 2) {
+                this.validateData()
+            } else if(this.e1 == 3) {
+                this.importPayroll()
+            } else if(this.e1 = 4) {
+                this.nextStep(4)
+                this.importContribution()
+            }
+        },
+        async importContribution() {
+            try {
+                this.loading_circular = true
+                this.show = false
+                let res = await this.$axios.post(`${this.type_import.route_import_contribution}`, {
+                    date_payroll: this.dateFormat
+                })
+                if(res.payload.successfully) {
+                    this.data_count.num_total_data_contribution = res.payload.num_total_data_contribution
+                    this.clearData()
+                    this.close()
+                } else {
+                    this.$toast.error(res.message)
+                }
+                this.loading_circular = false
+            } catch(e) {
+                this.loading_circular = false
+                this.$toast.error("Hubo un error")
+                console.log(e)
+            }
+        }
     },
 }
 </script>

@@ -265,7 +265,6 @@ export default {
     },
     watch: {
         dialog: function() {
-            // this.$nuxt.$on('add_period', this.getSimpleMonths())
             this.getSimpleMonths()
         }
     },
@@ -385,7 +384,6 @@ export default {
 
                     this.progress.percentage = 100
                     this.dialog_confirm_import = false
-                    // this.dialog = false // mutación
                     // this.dialog_component = false (aca nos falta) [ojo] tiene que cerrarse automaticamente
                     this.close() // con esto se solucionará? lo del ojo
                     // this.getMonths();

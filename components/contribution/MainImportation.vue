@@ -152,7 +152,13 @@ export default {
     loading_pos_index: -1,
     loading_rep_state: false,
     items_import: [],
-    type_import:{}
+    type_import:{},
+    import_type_name: {
+      SENASIR: 'senasir',
+      COMANDO: 'command',
+      TRANSCRIPCIÓN: 'transcript'
+    },
+    cancelToken: null,
   }),
   created() {
     this.items_import= [
@@ -196,36 +202,42 @@ export default {
         route_get_months: '/contribution/list_months_import_contribution_transcript',
         route_upload_file: '/contribution/upload_copy_payroll_transcript', // Paso 1
         route_validate_data: '/contribution/validation_affiliate_transcript', // Paso 2
-        route_download_file_error_data_archive: '/contribution/download_error_data_archive', // (1)
-        route_download_file_data_affiliate: '/contribution/download_data_revision', // 
-        // message_validate_data: 'El archivo excel contiene informacion de los afiliados creados',
+        route_import_payroll: '/contribution/import_payroll_transcript', // Paso 3
+        route_import_contribution: '/contribution/import_contribution_transcript', // Paso 4
+        // route_download_file_error_data_archive: '/contribution/download_error_data_archive', // (1)
+        // route_download_file_data_affiliate: '/contribution/download_data_revision', //
         route_rollback_contribution: '/contribution/rollback_payroll_copy_transcripts',
         route_import_progressBar: '/contribution/import_payroll_transcript_progress_bar',
-        // route_download_file: '/contribution/download_new_affiliates_payroll_command',
-        name_download_file: "ReporteValidaciónArchivo.xls", // (1)
-        // route_report: '/contribution/report_payroll_command',
-        name_report_file: "ReporteDatosComando.xls", // (para el paso 4 )
+        // name_download_file: "ReporteValidaciónArchivo.xls", // (1)
+        // name_report_file: "ReporteDatosComando.xls", // (para el paso 4 )
       }
-
     ],
-    this.getYears();
     this.type_import = this.items_import[1]//Toma por defecto la importacion del item 0 = Seanasir
+    this.getYears();
   },
   computed: {
     //permisos del selector global por rol
     permissionSimpleSelected () {
       return this.$store.getters.permissionSimpleSelected
     },
+    dateFormat() {
+        if(this.month_selected < 10)
+            return this.year_selected + "-" + "0" + this.month_selected + "-" + "01"
+        else
+            return this.year_selected + "-" + this.month_selected + "-" + "01"
+    },
   },
 
   watch: {
     active(newVal, oldVal) {
+      // como hago para que ya no llame a la ruta anterior
       if (newVal != oldVal) {
         for(let i=0; i < this.items_import.length; i++){
           if(this.active == this.items_import[i].name){
             this.type_import = this.items_import[i]
           }
         }
+        this.getYears()
         this.getMonths()
       }
     },
@@ -239,7 +251,8 @@ export default {
     async getYears() {
       try {
         this.loading = true;
-        let res = await this.$axios.get("/contribution/list_years");
+        let import_type_name = this.import_type_name[this.type_import.name]
+        let res = await this.$axios.get(`/contribution/list_years/${import_type_name}`, undefined);
         this.years = res.payload.list_years;
         this.year_selected = this.years[0];
         this.loading = false;
@@ -253,7 +266,7 @@ export default {
       try {
           let res = await this.$axios.post(`${this.type_import.route_get_months}`,{
             period_year: this.year_selected,
-          }
+          },
         );
         this.list_months = res.payload.list_months;
         this.loading_circular = false
@@ -263,13 +276,10 @@ export default {
       }
     },
     openDialog() {
-      console.log(this.type_import.name)
       if(this.type_import.name != 'TRANSCRIPCIÓN') {
-        console.log("No es transcript")
         this.dialog = true;
         this.dialog_transcript = false;
       } else {
-        console.log("Es transcript")
         this.dialog_transcript = true;
         this.dialog = false;
       }
@@ -299,8 +309,9 @@ export default {
       }
     },
     openClose(newValue) {
+      console.log("evento")
       this.dialog = newValue
-      // this.getMonths() // esto creo que es necesario
+      this.getMonths()
     },
     openCloseTranscript(newValue) {
       this.dialog_transcript = newValue

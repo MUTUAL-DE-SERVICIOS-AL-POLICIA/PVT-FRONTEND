@@ -94,6 +94,13 @@
                   <span class="info--text">N° reg. nuevos: </span><strong>{{$filters.thousands(item.data_count.num_data_new)}}</strong><br>
                   <span class="info--text">N° reg. regulares: </span><strong>{{$filters.thousands(item.data_count.num_data_regular)}}</strong><br>
                 </template>
+                <template v-if="type_import.name == 'TRANSCRIPCIÓN'">
+                  <span class="info--text"></span>
+                  <span class="info--text">N° reg. enlazados: </span><strong>{{$filters.thousands(item.data_count.count_data_automatic_link)}}</strong><br>
+                  <span class="info--text">N° afiliados creados. </span><strong></strong>{{$filters.thousands(item.data_count.count_data_creation)}}<br>
+                  <span class="info--text">N° total datos planilla: </span><strong></strong>{{$filters.thousands(item.data_count.num_total_data_payroll)}}<br>
+                  <span class="info--text">N° total de aportes: </span><strong></strong>{{$filters.thousands(item.data_count.num_total_data_contribution)}}<br>
+                </template>
                   <div class="text-right pb-1" v-if="permissionSimpleSelected.includes(type_import.permissions_download)">
                     <v-tooltip top class="my-0">
                       <template v-slot:activator="{ on }">
@@ -264,6 +271,7 @@ export default {
       try {
           let res = await this.$axios.post(`${this.type_import.route_get_months}`,{
             period_year: this.year_selected,
+            with_data_count: true
           },
         );
         this.list_months = res.payload.list_months;

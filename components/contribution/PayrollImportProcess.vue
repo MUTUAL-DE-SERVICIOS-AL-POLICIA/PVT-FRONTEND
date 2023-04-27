@@ -376,7 +376,6 @@ export default {
                     if(this.type_import.name == 'COMANDO'){
                         this.data_count.num_data_new = res.payload.data_count.num_data_new
                         if(res.payload.data_count.num_data_new > 0){
-                        // console.log(res.payload.data_count.num_data_new)
                         this.$toast.info(this.type_import.message_validate_data);
                         this.downloadFile();
                         }

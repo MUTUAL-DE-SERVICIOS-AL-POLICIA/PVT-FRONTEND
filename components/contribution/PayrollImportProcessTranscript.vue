@@ -156,7 +156,12 @@
                                             <v-card color="white" class="pa-2">
                                                 <v-row>
                                                     <v-col cols="12" md="6">
-                                                    <strong>Número total de registros en la planilla: </strong>{{$filters.thousands(data_count.num_total_data_payroll)}}<br>
+                                                        <strong>Total de registros copiados: </strong>{{$filters.thousands(data_count.num_total_data_copy)}}<br>
+                                                        <strong class="sucess--text">Total de registros relacionados: </strong>{{$filters.thousands(data_count.count_data_automatic_link)}}<br>
+                                                    </v-col>
+                                                    <v-col cols="12" md="6">
+                                                        <strong>Total de registros para creación: </strong>{{$filters.thousands(data_count.count_data_creation)}}<br>
+                                                        <strong>Número total de registros en la planilla: </strong>{{$filters.thousands(data_count.num_total_data_payroll)}}<br>
                                                     </v-col>
                                                 </v-row>
                                             </v-card>
@@ -293,13 +298,13 @@ export default {
             num_total_data_payroll: 0,
             num_total_data_contribution: 0
         },
-        btn_update_file: false,
-        btn_validate_data: false,
-        btn_rollback: false,
-        btn_validate: false,
-        btn_import: false,
-        btn_redo: false,
-        btn_next: false,
+        btn_update_file: false, // yes
+        // btn_validate_data: false,
+        btn_rollback: false, // yes
+        btn_validate: false, // yes
+        btn_import: false, // yes
+        btn_redo: false, // yes
+        btn_next: false, // yes
 
         // Datos para paso 1
         amount: 0,
@@ -335,7 +340,7 @@ export default {
         small_dialog: '',
         redo: false,
 
-        block_select: false,
+        block_select: false, // yes
     }),
     props: {
         dialog: {
@@ -374,18 +379,13 @@ export default {
     },
     methods: {
         async uploadFile() {
-            console.log("cargado archivo")
-            console.log(this.$data)
-            console.log("---------------")
             this.btn_update_file = true
             let formData = new FormData()
-            // Datos para la ruta
             formData.append("total_amount", parseFloat(this.amount))
             formData.append("number_records", parseInt(this.number_of_records))
             formData.append("image", this.take_picture)
             formData.append("file", this.import_export.file)
             formData.append("date_payroll", this.dateFormat)
-            // fin datos de la ruta
             try {
                 if(this.month_selected != null) {
                     let res = await this.$axios.post(`${this.type_import.route_upload_file}`,
@@ -396,6 +396,7 @@ export default {
                         this.$toast.success(res.message)
                         this.progress.query_step_1 = true
                     } else {
+                        console.log("entra aca")
                         if(res.payload.route !== '' && res.payload.route.length !== 0) {
                             this.downloadFile(res.payload.route, res.payload.route_file_name);
                         }
@@ -430,17 +431,12 @@ export default {
             }
         },
         async importProgressBar() {
-            console.log("progress_bar")
-            console.log(this.$data)
-            console.log("-------------")
             try {
                 let res = await this.$axios.post(`${this.type_import.route_import_progressBar}`,{
                     date_payroll: this.dateFormat
                 });
                 this.progress = res.payload.import_progress_bar
                 this.data_count = res.payload.data_count
-
-                // const steps = ['query_step_1', 'query_step_2', 'query_step_3', 'query_step_4'];
 
                 const steps = Object.entries(this.progress).reduce((accumulator, [key, value]) => {
                     if(key.includes('query_step')) accumulator.push(key)
@@ -468,11 +464,7 @@ export default {
             }
         },
         async rollbackContribution() {
-            console.log("rollback")
-            console.log(this.$data)
-            console.log("----------")
             this.btn_rollback = true
-            // this.block_select = false
             try {
                 let res = await this.$axios.post(`${this.type_import.route_rollback_contribution}`,{
                     date_payroll: this.dateFormat,
@@ -497,9 +489,6 @@ export default {
             this.$emit('open-close-transcript', !this.dialog)
         },
         nextStep(n) {
-            console.log("siguiente")
-            console.log(this.$data)
-            console.log("----------")
             this.btn_next = false
             if (n == 1) {
                 this.block_select = true
@@ -529,9 +518,6 @@ export default {
             }
         },
         async validateData() {
-            console.log("validar")
-            console.log(this.$data)
-            console.log("----------")
             this.show = false
             this.loading_circular = true
             try {
@@ -547,7 +533,6 @@ export default {
                     this.downloadFile(res.payload.route, res.payload.route_file_name)
                 }
                 this.data_count = res.payload.data_count
-                console.log(this.data_count)
                 this.loading_circular = false
             } catch(e) {
                 console.log(e)
@@ -557,9 +542,6 @@ export default {
             }
         },
         async importPayroll() {
-            console.log("importar planilla")
-            console.log(this.$data)
-            console.log("----------")
             try {
                 this.loading_circular = true
                 this.show = false
@@ -613,10 +595,8 @@ export default {
             this.progress.query_step_4 = false
             this.btn_validate = false
             this.btn_next = false
-            // this.block_select = false
         },
         async action() {
-            // no puedo basarme en el query_step
             if(this.e1 == 2) {
                 this.validateData()
             } else if(this.e1 == 3) {

@@ -204,12 +204,10 @@ export default {
         route_validate_data: '/contribution/validation_affiliate_transcript', // Paso 2
         route_import_payroll: '/contribution/import_payroll_transcript', // Paso 3
         route_import_contribution: '/contribution/import_contribution_transcript', // Paso 4
-        // route_download_file_error_data_archive: '/contribution/download_error_data_archive', // (1)
-        // route_download_file_data_affiliate: '/contribution/download_data_revision', //
         route_rollback_contribution: '/contribution/rollback_payroll_copy_transcripts',
         route_import_progressBar: '/contribution/import_payroll_transcript_progress_bar',
-        // name_download_file: "ReporteValidaciónArchivo.xls", // (1)
-        // name_report_file: "ReporteDatosComando.xls", // (para el paso 4 )
+        route_report: '/contribution/report_import_contribution_transcript',
+        name_report_file: 'ReporteImportaciónTranscripciónContribución.xls',
       }
     ],
     this.type_import = this.items_import[1]//Toma por defecto la importacion del item 0 = Seanasir
@@ -315,6 +313,7 @@ export default {
     },
     openCloseTranscript(newValue) {
       this.dialog_transcript = newValue
+      this.getMonths()
     }
   },
 };

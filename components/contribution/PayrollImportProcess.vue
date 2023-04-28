@@ -12,7 +12,6 @@
                 <v-btn icon dark @click="close()">
                     <v-icon>mdi-close</v-icon>
                 </v-btn>
-                <!-- T I T U L O -->
                 <v-toolbar-title>IMPORTACIÓN {{type_import.name}}</v-toolbar-title>
             </v-toolbar>
             <v-row justify="center" class="mt-5">
@@ -21,7 +20,6 @@
                         <center><b>GESTIÓN {{year_selected}}</b></center>
                         <div class="text-right"><Information :title="information.title" :parameters="information.parameters"/></div>
                     </v-toolbar-title>
-                    <!-- P E R I O D O   A   I M P O R T A R -->
                     <v-select
                         dense
                         :items="list_months_not_import"
@@ -33,7 +31,6 @@
                         @change="importProgressBar()"
                         :disabled="progress.query_step_1"
                     ></v-select>
-                    <!-- P A S O S   P A R A   I M P O R T A R -->
                     <v-stepper v-model="e1" editable>
                         <v-stepper-header>
                             <v-stepper-step :complete="e1 > 1 " step="1">
@@ -87,7 +84,6 @@
                                     Siguiente
                                 </v-btn>
                             </v-stepper-content>
-                            <!-- S E G U N D O   P A S O  -->
                             <v-stepper-content step="2">
                                 <v-card class="mb-12" color="grey lighten-1">
                                     <v-card-text>
@@ -131,7 +127,6 @@
             </v-row>
         </v-card>
     </v-dialog>
-    <!-- D I A L O G O S   D E   R E S P U E S T A -->
     <v-dialog
       v-model="dialog_confirm"
       max-width="600"
@@ -357,7 +352,7 @@ export default {
             }
         },
         async validateData() {
-            this.btn_validate_data = true;
+            this.btn_validate_data = true
             try {
                 let res = await this.$axios.post(`${this.type_import.route_validate_data}`,{
                     date_payroll: this.dateFormat,
@@ -369,30 +364,28 @@ export default {
 
                     if(this.type_import.name == 'SENASIR'){
                         if(res.message == 'Excel'){
-                        this.$toast.info(this.type_import.message_validate_data);
-                        this.downloadFile();
+                        this.$toast.info(this.type_import.message_validate_data)
+                        this.downloadFile()
                         }
                     }
                     if(this.type_import.name == 'COMANDO'){
                         this.data_count.num_data_new = res.payload.data_count.num_data_new
                         if(res.payload.data_count.num_data_new > 0){
-                        this.$toast.info(this.type_import.message_validate_data);
-                        this.downloadFile();
+                        this.$toast.info(this.type_import.message_validate_data)
+                        this.downloadFile()
                         }
                     }
 
                     this.progress.percentage = 100
                     this.dialog_confirm_import = false
-                    // this.dialog_component = false (aca nos falta) [ojo] tiene que cerrarse automaticamente
-                    this.close() // con esto se solucionará? lo del ojo
-                    // this.getMonths();
-                    this.$toast.success("Se ha realizado la validación de "+ res.payload.data_count.num_data_validated+" registros");
+                    this.close() 
+                    this.$toast.success("Se ha realizado la validación de "+ res.payload.data_count.num_data_validated+" registros")
 
                 } else {
                     this.e1 = 1
                     this.progress.query_step_1 = false
                     this.progress.percentage = 0
-                    this.$toast.error(res.message);
+                    this.$toast.error(res.message)
                 }
                 this.btn_validate_data = false;
             } catch (e) {

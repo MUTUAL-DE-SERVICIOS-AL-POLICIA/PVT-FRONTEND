@@ -298,13 +298,12 @@ export default {
             num_total_data_payroll: 0,
             num_total_data_contribution: 0
         },
-        btn_update_file: false, // yes
-        // btn_validate_data: false,
-        btn_rollback: false, // yes
-        btn_validate: false, // yes
-        btn_import: false, // yes
-        btn_redo: false, // yes
-        btn_next: false, // yes
+        btn_update_file: false,
+        btn_rollback: false,
+        btn_validate: false,
+        btn_import: false,
+        btn_redo: false,
+        btn_next: false,
 
         // Datos para paso 1
         amount: 0,
@@ -340,7 +339,7 @@ export default {
         small_dialog: '',
         redo: false,
 
-        block_select: false, // yes
+        block_select: false,
     }),
     props: {
         dialog: {
@@ -396,7 +395,6 @@ export default {
                         this.$toast.success(res.message)
                         this.progress.query_step_1 = true
                     } else {
-                        console.log("entra aca")
                         if(res.payload.route !== '' && res.payload.route.length !== 0) {
                             this.downloadFile(res.payload.route, res.payload.route_file_name);
                         }
@@ -410,7 +408,7 @@ export default {
             } catch(e) {
                 console.log(e)
                 this.btn_update_file = false
-                this.$toast.error(e.message)
+                this.$toast.error("Hubo un error")
             }
         },
         async getSimpleMonths() { // Obtener meses no importados
@@ -428,6 +426,7 @@ export default {
                 this.list_months_not_import = months_not_import
             } catch(e) {
                 console.log(e)
+                this.$toast.error("Hubo un error")
             }
         },
         async importProgressBar() {
@@ -461,6 +460,7 @@ export default {
 
             } catch(e) {
                 console.log(e)
+                this.$toast.error("Hubo un error")
             }
         },
         async rollbackContribution() {
@@ -482,6 +482,7 @@ export default {
                 this.redo = false
                 this.btn_rollback = false
                 console.log(e)
+                this.$toast.error("Hubo un error")
             }
         },
         close() {
@@ -581,6 +582,7 @@ export default {
                 link.click()
             } catch(e) {
                 console.log(e)
+                this.$toast.error("Hubo un error")
             }
         },
         clearData() {
@@ -602,7 +604,6 @@ export default {
             } else if(this.e1 == 3) {
                 this.importPayroll()
             } else if(this.e1 = 4) {
-                this.nextStep(4)
                 this.importContribution()
             }
         },
@@ -617,6 +618,7 @@ export default {
                     this.data_count.num_total_data_contribution = res.payload.num_total_data_contribution
                     this.clearData()
                     this.close()
+                    this.nextStep(4)
                 } else {
                     this.$toast.error(res.message)
                 }

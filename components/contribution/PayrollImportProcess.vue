@@ -32,6 +32,7 @@
                         :disabled="progress.query_step_1"
                     ></v-select>
                     <v-stepper v-model="e1" editable>
+                        <!-- C A B E C E R A S   P A S O S -->
                         <v-stepper-header>
                             <v-stepper-step :complete="e1 > 1 " step="1">
                                 Subir archivo
@@ -42,6 +43,7 @@
                             </v-stepper-step>
                         </v-stepper-header>
                         <v-stepper-items>
+                            <!-- B A R R A   D E   P O R C E N T A J E -->
                             <v-progress-linear
                                 color="info"
                                 height="20"
@@ -50,6 +52,7 @@
                             >
                                 <strong>Porcentaje de Importación: {{progress.percentage}}%</strong>
                             </v-progress-linear>
+                            <!-- P R I M E R   P A S O -->
                             <v-stepper-content step="1">
                                 <v-card class="mb-12">
                                     <v-card-text>
@@ -84,6 +87,7 @@
                                     Siguiente
                                 </v-btn>
                             </v-stepper-content>
+                            <!-- S E G U N D O   P A S O -->
                             <v-stepper-content step="2">
                                 <v-card class="mb-12" color="grey lighten-1">
                                     <v-card-text>
@@ -127,6 +131,7 @@
             </v-row>
         </v-card>
     </v-dialog>
+    <!-- D I Á L O G O   P A R A   R E H A C E R -->
     <v-dialog
       v-model="dialog_confirm"
       max-width="600"
@@ -157,6 +162,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <!-- D I Á L O G O   P A R A   E L   S I G U I E N T E   P A S O -->
     <v-dialog
       v-model="dialog_confirm_import"
       max-width="500"

@@ -33,6 +33,7 @@
                             @change="importProgressBar()"
                         ></v-select>
                         <v-stepper v-model="e1" editable>
+                            <!-- C A B E C E R Á S   P A S O S -->
                             <v-stepper-header>
                                 <v-stepper-step :complete="e1 > 1" step="1">
                                     Subir archivo
@@ -51,6 +52,7 @@
                                 </v-stepper-step>
                             </v-stepper-header>
                             <v-stepper-items>
+                                <!-- B A R R A   D E   P O R C E N T A J E -->
                                 <v-progress-linear
                                     color="info"
                                     height="20"
@@ -203,6 +205,7 @@
             <GlobalLoading />
         </div>
         </v-dialog>
+        <!-- D I Á L O G O   P A R A   R E H A C E R -->
         <v-dialog
             v-model="redo"
             max-width="600"
@@ -233,6 +236,7 @@
                 </v-card-actions>
             </v-card>
         </v-dialog>
+        <!-- D I Á L O G O   P A R A   L O S   P A S O S -->
         <v-dialog
             v-model="show"
             max-width="600"

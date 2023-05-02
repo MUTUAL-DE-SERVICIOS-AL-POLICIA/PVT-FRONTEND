@@ -6,6 +6,7 @@
           <GlobalBreadCrumb />
           <div class="flex-grow-1"></div>
 
+          <!-- B O T Ó N   S W I T C H -->
           <v-btn-toggle
             v-model="active"
             active-class="secondary white--text"
@@ -20,6 +21,7 @@
           </v-btn-toggle>
           <v-divider class="mx-2" inset vertical></v-divider>
 
+          <!-- S E L E C C I O N A R   G E S T I Ó N -->
           <v-select
             :items="years"
             :loading="loading"
@@ -31,6 +33,7 @@
             close-on-click
           ></v-select>
 
+          <!-- B O T Ó N   A G R E G A R   G E S T I Ó N -->
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <v-btn
@@ -60,6 +63,7 @@
       <GlobalLoading />
     </div>
 
+    <!-- C O N T E N I D O   D E   L O S   T A B S -->
     <v-row justify="center" class="py-0 mt-2" v-if="!loading_circular">
        <v-card
         class="headline font-weight-bold ma-2"
@@ -201,8 +205,8 @@ export default {
       {
         id: 3,
         name: 'TRANSCRIPCIÓN',
-        permissions_create: 'create-import-payroll-command',
-        permissions_download: 'download-report-payroll-command',
+        permissions_create: 'create-import-payroll-transcript',
+        permissions_download: 'download-report-payroll-transcript',
         route_get_months: '/contribution/list_months_import_contribution_transcript',
         route_upload_file: '/contribution/upload_copy_payroll_transcript', // Step 1
         route_validate_data: '/contribution/validation_affiliate_transcript', // Step 2
@@ -232,7 +236,6 @@ export default {
 
   watch: {
     active(newVal, oldVal) {
-      // como hago para que ya no llame a la ruta anterior
       if (newVal != oldVal) {
         for(let i=0; i < this.items_import.length; i++){
           if(this.active == this.items_import[i].name){

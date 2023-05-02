@@ -5,7 +5,8 @@
         <v-toolbar dense color="tertiary" class="caption">
           <GlobalBreadCrumb />
           <div class="flex-grow-1"></div>
-          <!-- B O T Ó N   S W I T C H  -->
+
+          <!-- B O T Ó N   S W I T C H -->
           <v-btn-toggle
             v-model="active"
             active-class="secondary white--text"
@@ -20,7 +21,7 @@
           </v-btn-toggle>
           <v-divider class="mx-2" inset vertical></v-divider>
 
-          <!-- B O T Ó N   G E S T I Ó N -->
+          <!-- S E L E C C I O N A R   G E S T I Ó N -->
           <v-select
             :items="years"
             :loading="loading"
@@ -32,7 +33,7 @@
             close-on-click
           ></v-select>
 
-          <!-- B O T Ó N   + -->
+          <!-- B O T Ó N   A G R E G A R   G E S T I Ó N -->
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <v-btn
@@ -57,12 +58,12 @@
       </v-card-title>
       <v-card-text> </v-card-text>
     </v-card>
-    <!--contenido-->
+
     <div v-if="loading_circular">
       <GlobalLoading />
     </div>
 
-    <!-- C O N T E N I D O   D E L   B O T Ó N   S W I T C H -->
+    <!-- C O N T E N I D O   D E   L O S   T A B S -->
     <v-row justify="center" class="py-0 mt-2" v-if="!loading_circular">
        <v-card
         class="headline font-weight-bold ma-2"
@@ -97,9 +98,9 @@
                 <template v-if="type_import.name == 'TRANSCRIPCIÓN'">
                   <span class="info--text"></span>
                   <span class="info--text">N° reg. enlazados: </span><strong>{{$filters.thousands(item.data_count.count_data_automatic_link)}}</strong><br>
-                  <span class="info--text">N° afiliados creados. </span><strong></strong>{{$filters.thousands(item.data_count.count_data_creation)}}<br>
-                  <span class="info--text">N° total datos planilla: </span><strong></strong>{{$filters.thousands(item.data_count.num_total_data_payroll)}}<br>
-                  <span class="info--text">N° total de aportes: </span><strong></strong>{{$filters.thousands(item.data_count.num_total_data_contribution)}}<br>
+                  <span class="info--text">N° afiliados creados. </span><strong>{{$filters.thousands(item.data_count.count_data_creation)}}</strong><br>
+                  <span class="info--text">N° total datos planilla: </span><strong>{{$filters.thousands(item.data_count.num_total_data_payroll)}}</strong><br>
+                  <span class="info--text">N° total de aportes: </span><strong>{{$filters.thousands(item.data_count.num_total_data_contribution)}}</strong><br>
                 </template>
                   <div class="text-right pb-1" v-if="permissionSimpleSelected.includes(type_import.permissions_download)">
                     <v-tooltip top class="my-0">
@@ -204,20 +205,20 @@ export default {
       {
         id: 3,
         name: 'TRANSCRIPCIÓN',
-        permissions_create: 'create-import-payroll-command',
-        permissions_download: 'download-report-payroll-command',
+        permissions_create: 'create-import-payroll-transcript',
+        permissions_download: 'download-report-payroll-transcript',
         route_get_months: '/contribution/list_months_import_contribution_transcript',
-        route_upload_file: '/contribution/upload_copy_payroll_transcript', // Paso 1
-        route_validate_data: '/contribution/validation_affiliate_transcript', // Paso 2
-        route_import_payroll: '/contribution/import_payroll_transcript', // Paso 3
-        route_import_contribution: '/contribution/import_contribution_transcript', // Paso 4
+        route_upload_file: '/contribution/upload_copy_payroll_transcript', // Step 1
+        route_validate_data: '/contribution/validation_affiliate_transcript', // Step 2
+        route_import_payroll: '/contribution/import_payroll_transcript', // Step 3
+        route_import_contribution: '/contribution/import_contribution_transcript', // Step 4
         route_rollback_contribution: '/contribution/rollback_payroll_copy_transcripts',
         route_import_progressBar: '/contribution/import_payroll_transcript_progress_bar',
         route_report: '/contribution/report_import_contribution_transcript',
         name_report_file: 'ReporteImportaciónTranscripciónContribución.xls',
       }
     ],
-    this.type_import = this.items_import[1]//Toma por defecto la importacion del item 0 = Seanasir
+    this.type_import = this.items_import[1]
     this.getYears();
   },
   computed: {
@@ -235,7 +236,6 @@ export default {
 
   watch: {
     active(newVal, oldVal) {
-      // como hago para que ya no llame a la ruta anterior
       if (newVal != oldVal) {
         for(let i=0; i < this.items_import.length; i++){
           if(this.active == this.items_import[i].name){
@@ -315,7 +315,6 @@ export default {
       }
     },
     openClose(newValue) {
-      console.log("evento")
       this.dialog = newValue
       this.getMonths()
     },

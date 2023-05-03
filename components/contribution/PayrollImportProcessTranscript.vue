@@ -605,7 +605,6 @@ export default {
             this.amount = 0
             this.number_of_records = 0
             this.take_picture = null
-            this.month_selected = null
         },
         async action() {
             if(this.e1 == 2) {

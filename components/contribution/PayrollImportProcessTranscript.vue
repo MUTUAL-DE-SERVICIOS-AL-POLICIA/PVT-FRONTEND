@@ -30,7 +30,7 @@
                             outlined
                             :rules="[ $rules.obligatoria('Periódo') ]"
                             :disabled="block_select"
-                            @change="importProgressBar()"
+                            @change="importProgressBar(); clearData()"
                         ></v-select>
                         <v-stepper v-model="e1" editable>
                             <!-- C A B E C E R Á S   P A S O S -->
@@ -491,6 +491,7 @@ export default {
         },
         close() {
             this.block_select = false
+            this.clearData()
             this.$emit('open-close-transcript', !this.dialog)
         },
         nextStep(n) {
@@ -601,6 +602,10 @@ export default {
             this.progress.query_step_4 = false
             this.btn_validate = false
             this.btn_next = false
+            this.amount = 0
+            this.number_of_records = 0
+            this.take_picture = null
+            this.month_selected = null
         },
         async action() {
             if(this.e1 == 2) {

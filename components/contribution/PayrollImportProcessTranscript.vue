@@ -40,11 +40,11 @@
                                 </v-stepper-step>
                                 <v-divider></v-divider>
                                 <v-stepper-step :complete="e1 > 2" step="2">
-                                    Validar Datos Afiliado
+                                    Validar datos afiliado
                                 </v-stepper-step>
                                 <v-divider></v-divider>
                                 <v-stepper-step :complete="e1 > 3" step="3">
-                                    Importa planilla
+                                    Procesar planilla
                                 </v-stepper-step>
                                 <v-divider></v-divider>
                                 <v-stepper-step :complete="e1 > 4" step="4">
@@ -173,7 +173,7 @@
                                         Rehacer
                                     </v-btn>
                                     <v-btn color="primary" @click="show=true" :disabled="btn_import">
-                                        Importar
+                                        Procesar
                                     </v-btn>
                                     <v-btn color="secundary" @click="nextStep(3)" :disabled="!btn_next">
                                         Siguiente
@@ -374,7 +374,7 @@ export default {
             if(this.e1 == 2) {
                 this.title_dialog = "¿Está seguro de realizar la validación?"
             } else if(this.e1 == 3) {
-                this.title_dialog = "¿Está seguro de realizar la importación de plantilla?"
+                this.title_dialog = "¿Está seguro de crear afiliados e importar la plantilla?"
             } else if(this.e1 >= 4) {
                 this.title_dialog = "¿Está seguro de realizar la importación de aportes?"
             }

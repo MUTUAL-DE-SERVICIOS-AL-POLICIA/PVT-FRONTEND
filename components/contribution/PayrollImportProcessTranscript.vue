@@ -93,7 +93,7 @@
                                                             small-chips
                                                             label="Cargar imágen"
                                                             :rules="[
-                                                                $rules.obligatoria('Archivo'),
+                                                                $rules.soloArchivosTipoImagen()
                                                             ]"
                                                         ></v-file-input>
                                                         <v-file-input
@@ -105,7 +105,9 @@
                                                             small-chips
                                                             label="Cargar Archivo"
                                                             :disabled="progress.query_step_1"
-                                                            :rules="[$rules.obligatoria('Archivo')]"
+                                                            :rules="[
+                                                                $rules.soloArchivoCSV()
+                                                            ]"
                                                         ></v-file-input>
                                                     </v-col>
                                                     <v-col cols="12" md="6" v-if="progress.query_step_1">

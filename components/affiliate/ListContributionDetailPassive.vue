@@ -203,7 +203,7 @@ export default {
       },
       {
         text: "Cotizable",
-        value: "quotable",
+        value: "rent_pension",
         class: ["table", "white--text"],
         width: "10%",
         sortable: false,

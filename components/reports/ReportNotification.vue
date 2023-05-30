@@ -144,6 +144,7 @@ export default {
         name: "Reporte de Notificaciones Complemento Económico",
         tab: 0,
         criterios: ["start_date", "end_date"],
+        service: "/notification/report_notifications",
         type: "xls",
         permissions: "download-report-notification",
       },

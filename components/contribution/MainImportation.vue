@@ -112,6 +112,56 @@
           </v-card-text>
         </template>
       </v-card>
+      <template v-if="type_import.name == 'COMANDO'">>
+        <v-card
+          class="headline font-weight-bold ma-2"
+          max-width="250px"
+          v-for="(item, i) in list_months_re"
+          :key="i"
+        >
+          <template v-if="item.state_importation">
+            <v-card-title class="secondary">
+              <v-row justify="center">
+                <h3 class="white--text">Reintegro {{ item.period_month_name }}</h3></v-row
+              >
+            </v-card-title>
+            <v-divider inset></v-divider>
+            <v-card-text class="backgroundCard">
+              <v-row>
+                <v-col cols="12" md="12" class="py-0">
+                  <b>{{ type_import.name }} <v-icon small>mdi-home-analytics</v-icon></b>
+                </v-col>
+                <v-divider inset></v-divider>
+                <v-col cols="12" md="12" class="py-0">
+                  <span class="info--text">N° reg. copiados: </span><strong>{{$filters.thousands(item.data_count.num_total_data_copy)}}</strong><br>
+                  <span class="info--text">N° reg. nuevos: </span><strong>{{$filters.thousands(item.data_count.num_data_new)}}</strong><br>
+                  <span class="info--text">N° reg. regulares: </span><strong>{{$filters.thousands(item.data_count.num_data_regular)}}</strong><br>
+
+                    <div class="text-right pb-1" v-if="permissionSimpleSelected.includes(type_import.permissions_download)">
+                      <v-tooltip top class="my-0">
+                        <template v-slot:activator="{ on }">
+                          <v-btn
+                            small
+                            :color="'primary'"
+                            fab
+                            v-on="on"
+                            :loading="loading_rep_state && i == loading_pos_index"
+                            @click.stop="loading_pos_index = i; reportPayroll(item.period_month)"
+                          >
+                            <v-icon>mdi-file-document</v-icon>
+                          </v-btn>
+                        </template>
+                        <div>
+                          <span>Detalle de Importación de registros válidos</span>
+                        </div>
+                      </v-tooltip>
+                    </div>
+                </v-col>
+              </v-row>
+            </v-card-text>
+          </template>
+        </v-card>
+      </template>
     </v-row>
     <!--fin contenido-->
     <!--steps-->
@@ -137,10 +187,16 @@
                 <Information />
               </div>
               </v-toolbar-title>
-
+              <v-checkbox
+                v-model="command_reimbursement"
+                :label="`La importación es reintegro? ${command_reimbursement.toString()}`"
+                class="py-0 my-0"
+                color="teal"
+              ></v-checkbox>
+              <template>
               <v-select
                 dense
-                :items="list_months_not_import"
+                :items="command_reimbursement? list_months_not_import_re :list_months_not_import"
                 item-text="period_month_name"
                 item-value="period_month"
                 :label="'Periódo para importar '"
@@ -148,7 +204,10 @@
                 outlined
                 @change ="importProgressBar()"
                 :disabled="progress.query_step_1"
+                :loading="this.loading_circular"
               ></v-select>
+              </template>
+
 
             <v-stepper v-model="e1" v-if="month_selected != null" editable>
               <v-stepper-header>
@@ -336,6 +395,8 @@ export default {
     year_selected: null,
     list_months: [],
     list_months_not_import: [],
+    list_months_re: [],
+    list_months_not_import_re: [],
     dialog: false,
     e1: 1,
     import_export: {},
@@ -366,7 +427,8 @@ export default {
     loading_pos_index: -1,
     loading_rep_state: false,
     items_import: [],
-    type_import:{}
+    type_import:{},
+    command_reimbursement:false
   }),
   created() {
     this.items_import= [
@@ -480,6 +542,16 @@ export default {
           }
         );
         this.list_months = res.payload.list_months;
+
+        if(this.type_import.name == 'COMANDO'){
+          this.list_months_re = res.payload.list_months_re;
+          for (let i = 0; i < res.payload.list_months_re.length; i++) {
+            if (res.payload.list_months_re[i].state_importation == false) {
+              this.list_months_not_import_re.push(res.payload.list_months_re[i]);
+            }
+          }
+        }
+
         for (let i = 0; i < res.payload.list_months.length; i++) {
           if (res.payload.list_months[i].state_importation == false) {
             this.list_months_not_import.push(res.payload.list_months[i]);
@@ -508,7 +580,10 @@ export default {
       let formData = new FormData();
       formData.append("file", this.import_export.file);
       formData.append("date_payroll", this.dateFormat);
-      try {
+      if (this.type_import.name == 'COMANDO') {
+        formData.append("reimbursement", this.command_reimbursement?'TRUE':'FALSE');
+      }
+     try {
         let res = await this.$axios.post(`${this.type_import.route_upload_file}`,
           formData
         );
@@ -542,10 +617,15 @@ export default {
     async validateData() {
       this.btn_validate_data = true;
       try {
-        let res = await this.$axios.post(`${this.type_import.route_validate_data}`,{
-            date_payroll: this.dateFormat,
-          }
-        );
+        let params = {
+          date_payroll: this.dateFormat
+        };
+
+        if (this.type_import.name == 'COMANDO') {
+          params.reimbursement = this.command_reimbursement?'TRUE':'FALSE';
+        }
+        let res = await this.$axios.post(`${this.type_import.route_validate_data}`, params);
+
         if (res.payload.successfully) {
           this.data_count.num_data_not_validated = res.payload.data_count.num_data_not_validated
           this.data_count.num_data_validated = res.payload.data_count.num_data_validated
@@ -597,9 +677,13 @@ export default {
         let res = (await response.blob())*/
 
         // Se debe enviar el responseType como configuracion, NO como header
-        let res = await this.$axios.post(`${this.type_import.route_download_file}`,{
-            date_payroll: this.dateFormat,
-          },
+        let params = {
+          date_payroll: this.dateFormat
+        };
+        if (this.type_import.name == 'COMANDO') {
+          params.reimbursement = this.command_reimbursement?'TRUE':'FALSE';
+        }
+        let res = await this.$axios.post(`${this.type_import.route_download_file}`, params,
           {'Accept': 'application/vnd.ms-excel' },
           {'responseType': 'blob'}
         );
@@ -616,10 +700,13 @@ export default {
     async rollbackContribution() {
       this.btn_rollback = true
       try {
-        let res = await this.$axios.post(`${this.type_import.route_rollback_contribution}`,{
-            date_payroll: this.dateFormat,
-          }
-        );
+        let params = {
+          date_payroll: this.dateFormat
+        };
+        if (this.type_import.name == 'COMANDO') {
+          params.reimbursement = this.command_reimbursement?'TRUE':'FALSE';
+        }
+        let res = await this.$axios.post(`${this.type_import.route_rollback_contribution}`,params);
         if (res.payload.valid_rollbackk) {
           this.$toast.info(res.message + ". Se ha realizado el borrado de datos");
           this.clearData()
@@ -634,10 +721,13 @@ export default {
     },
     async importProgressBar() {
       try {
-        let res = await this.$axios.post(`${this.type_import.route_import_progressBar}`,{
-            date_payroll: this.dateFormat,
-          }
-        );
+        let params = {
+          date_payroll: this.dateFormat
+        };
+        if (this.type_import.name == 'COMANDO') {
+          params.reimbursement = this.command_reimbursement?'TRUE':'FALSE';
+        }
+        let res = await this.$axios.post(`${this.type_import.route_import_progressBar}`,params);
         this.progress = res.payload.import_progress_bar
         this.data_count = res.payload.data_count
         if(this.progress.query_step_1){
@@ -675,9 +765,13 @@ export default {
       this.month_selected = month_selected
       this.loading_rep_state=true;
       try {
-        let res = await this.$axios.post(`${this.type_import.route_report}`,{
-            date_payroll: this.dateFormat
-          },
+        let params = {
+          date_payroll: this.dateFormat
+        };
+        if (this.type_import.name == 'COMANDO') {
+          params.reimbursement = this.command_reimbursement?'TRUE':'FALSE';
+        }
+        let res = await this.$axios.post(`${this.type_import.route_report}`,params,
           {'Accept': 'application/vnd.ms-excel' },
           {'responseType': 'blob'}
         );

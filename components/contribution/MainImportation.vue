@@ -112,7 +112,7 @@
           </v-card-text>
         </template>
       </v-card>
-      <template v-if="type_import.name == 'COMANDO'">>
+      <template v-if="type_import.name == 'COMANDO'">
         <v-card
           class="headline font-weight-bold ma-2"
           max-width="250px"
@@ -189,7 +189,7 @@
               </v-toolbar-title>
               <v-checkbox
                 v-model="command_reimbursement"
-                :label="`La importación es reintegro? ${command_reimbursement.toString()}`"
+                label="La importación es reintegro?"
                 class="py-0 my-0"
                 color="teal"
               ></v-checkbox>

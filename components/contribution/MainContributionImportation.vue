@@ -160,8 +160,8 @@
                           :color="'Secondary'"
                           fab
                           v-on="on"
-                          :loading="loading_rep_state && i == loading_pos_index"
-                          @click.stop="loading_pos_index = i; reportImportReimbursement(item.period_month)"
+                          :loading="loading_rep_state_re && i == loading_pos_index_re"
+                          @click.stop="loading_pos_index_re = i; reportImportReimbursement(item.period_month)"
                         >
                           <v-icon>mdi-file-document</v-icon>
                         </v-btn>
@@ -242,7 +242,9 @@ export default {
     dialog_confirm_import_contribution: false,
     loading_circular: false,
     loading_pos_index: -1,
+    loading_pos_index_re: -1,
     loading_rep_state: false,
+    loading_rep_state_re: false,
     items_import: [],
     type_import:{},
     command_reimbursement:false
@@ -404,7 +406,7 @@ export default {
     },
     async reportImportReimbursement(month_selected){
       this.month_selected = month_selected
-      this.loading_rep_state=true;
+      this.loading_rep_state_re=true;
       try {
         let res = await this.$axios.post(`/contribution/report_import_reimbursement_command`,{
             date_contribution: this.dateFormat
@@ -415,14 +417,14 @@ export default {
         const url = window.URL.createObjectURL(new Blob([res]))
         const link = document.createElement("a")
         link.href = url;
-        link.setAttribute("download", `${this.type_import.name_download_file}`)
+        link.setAttribute("download", `ReporteDetalleReintegrosComando.xls`)
         document.body.appendChild(link)
         link.click()
       } catch (e) {
         console.log(e);
       } finally {
-        this.loading_rep_state=false;
-        this.loading_pos_index=-1;
+        this.loading_rep_state_re=false;
+        this.loading_pos_index_re=-1;
       }
     },
   },

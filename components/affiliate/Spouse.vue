@@ -174,34 +174,6 @@
               </v-text-field>
             </v-col>
             <v-col cols="12" md="4">
-              <v-select
-                dense
-                :loading="loading"
-                :items="cities"
-                item-text="name"
-                item-value="id"
-                label="Ciudad de Expedición"
-                v-model="spouse.city_identity_card_id"
-                :readonly="!editable_spouse || !secondaryPermission"
-                :outlined="editable_spouse && secondaryPermission"
-                :disabled="editable_spouse && !secondaryPermission"
-                @keyup.enter="validateForm()"
-                :rules="[$rules.obligatoria('Ciudad de Expedición')]"
-              >
-              </v-select>
-            </v-col>
-            <v-col cols="12" md="4">
-              <v-text-field
-                dense
-                v-model="spouse.registration"
-                label="Matrícula"
-                :readonly="!editable_spouse || !secondaryPermission"
-                :outlined="editable_spouse && secondaryPermission"
-                :disabled="editable_spouse && !secondaryPermission"
-              >
-              </v-text-field>
-            </v-col>
-            <v-col cols="12" md="5">
               <v-text-field
                 dense
                 v-model="spouse.due_date"
@@ -214,14 +186,26 @@
                 :disabled="editable_spouse && !secondaryPermission"
               ></v-text-field>
             </v-col>
-            <v-col cols="12" md="3">
+            <v-col cols="12" md="4">
               <v-checkbox
+                dense
                 v-model="spouse.is_duedate_undefined"
                 :readonly="!editable_spouse || !secondaryPermission"
                 :outlined="editable_spouse && secondaryPermission"
                 :disabled="editable_spouse && !secondaryPermission"
                 :label="`Indefinido`"
               ></v-checkbox>
+            </v-col>
+            <v-col cols="12" md="4">
+              <v-text-field
+                dense
+                v-model="spouse.registration"
+                label="Matrícula"
+                :readonly="!editable_spouse || !secondaryPermission"
+                :outlined="editable_spouse && secondaryPermission"
+                :disabled="editable_spouse && !secondaryPermission"
+              >
+              </v-text-field>
             </v-col>
             <v-col cols="12" md="4">
               <v-select
@@ -239,22 +223,7 @@
                 :rules="[$rules.obligatoria('Estado Civil')]"
               ></v-select>
             </v-col>
-            <v-col cols="12" md="6">
-              <v-text-field
-                dense
-                v-model="spouse.birth_date"
-                name="spouse_birth_date"
-                label="Fecha Nacimiento"
-                hint="Día/Mes/Año"
-                type="date"
-                :readonly="!editable_spouse || !secondaryPermission"
-                :outlined="editable_spouse && secondaryPermission"
-                :disabled="editable_spouse && !secondaryPermission"
-                :rules="[$rules.obligatoria('Fecha de Nacimiento')]"
-              ></v-text-field>
-            </v-col>
-
-            <v-col cols="12" md="6">
+            <v-col cols="12" md="4">
               <v-select
                 dense
                 :loading="loading"
@@ -271,6 +240,22 @@
                 :rules="[$rules.obligatoria('Ciudad de Nacimiento')]"
               ></v-select>
             </v-col>
+            <v-col cols="12" md="4">
+              <v-text-field
+                dense
+                v-model="spouse.birth_date"
+                name="spouse_birth_date"
+                label="Fecha Nacimiento"
+                hint="Día/Mes/Año"
+                type="date"
+                :readonly="!editable_spouse || !secondaryPermission"
+                :outlined="editable_spouse && secondaryPermission"
+                :disabled="editable_spouse && !secondaryPermission"
+                :rules="[$rules.obligatoria('Fecha de Nacimiento')]"
+              ></v-text-field>
+            </v-col>
+
+
           </v-row>
         </v-col>
         <v-col cols="12" md="6" class="v-card-profile">

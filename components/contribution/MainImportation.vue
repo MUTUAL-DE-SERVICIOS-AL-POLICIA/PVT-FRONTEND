@@ -111,7 +111,7 @@
                           fab
                           v-on="on"
                           :loading="loading_rep_state && i == loading_pos_index"
-                          @click.stop="loading_pos_index = i; reportPayroll(item.period_month)"
+                          @click.stop="loading_pos_index = i; reportPayroll(item.period_month, false)"
                         >
                           <v-icon>mdi-file-document</v-icon>
                         </v-btn>
@@ -126,6 +126,57 @@
           </v-card-text>
         </template>
       </v-card>
+      <!--REINTEGROS-->
+      <template v-if="type_import.name == 'COMANDO'">
+        <v-card
+          class="headline font-weight-bold ma-2"
+          max-width="250px"
+          v-for="(item, i) in list_months_re"
+          :key="i"
+        >
+          <template v-if="item.state_importation">
+            <v-card-title class="secondary">
+              <v-row justify="center">
+                <h3 class="white--text">Reintegro {{ item.period_month_name }}</h3></v-row
+              >
+            </v-card-title>
+            <v-divider inset></v-divider>
+            <v-card-text class="backgroundCard">
+              <v-row>
+                <v-col cols="12" md="12" class="py-0">
+                  <b>{{ type_import.name }} <v-icon small>mdi-home-analytics</v-icon></b>
+                </v-col>
+                <v-divider inset></v-divider>
+                <v-col cols="12" md="12" class="py-0">
+                  <span class="info--text">N° reg. copiados: </span><strong>{{$filters.thousands(item.data_count.num_total_data_copy)}}</strong><br>
+                  <span class="info--text">N° reg. nuevos: </span><strong>{{$filters.thousands(item.data_count.num_data_new)}}</strong><br>
+                  <span class="info--text">N° reg. regulares: </span><strong>{{$filters.thousands(item.data_count.num_data_regular)}}</strong><br>
+
+                    <div class="text-right pb-1" v-if="permissionSimpleSelected.includes(type_import.permissions_download)">
+                      <v-tooltip top class="my-0">
+                        <template v-slot:activator="{ on }">
+                          <v-btn
+                            small
+                            :color="'primary'"
+                            fab
+                            v-on="on"
+                            :loading="loading_rep_state && j == loading_pos_index"
+                            @click.stop="loading_pos_index = j; reportPayroll(item.period_month,true)"
+                          >
+                            <v-icon>mdi-file-document</v-icon>
+                          </v-btn>
+                        </template>
+                        <div>
+                          <span>Detalle de Importación de registros válidos</span>
+                        </div>
+                      </v-tooltip>
+                    </div>
+                </v-col>
+              </v-row>
+            </v-card-text>
+          </template>
+        </v-card>
+      </template>
     </v-row>
 
     <PayrollImportProcess :dialog="dialog" :type_import="type_import" :year_selected="year_selected" @open-close="openClose()"/>
@@ -148,11 +199,12 @@ export default {
     PayrollImportProcessTranscript
   },
   data: () => ({
-    active: 'COMANDO',
+    active: 'INICIO',
     years: [],
     loading: false,
     year_selected: null,
     list_months: [],
+    list_months_re: [],
     dialog: false,
     dialog_transcript: false,
     btn_import_contributions: false,
@@ -162,14 +214,20 @@ export default {
     items_import: [],
     type_import:{},
     import_type_name: {
+      INICIO: 'index',
       SENASIR: 'senasir',
       COMANDO: 'command',
-      TRANSCRIPCIÓN: 'transcript'
+      TRANSCRIPCIÓN: 'transcript',
     },
     cancelToken: null,
   }),
   created() {
     this.items_import= [
+      {
+        id: 0,
+        name: ' INICIO',
+        permissions_create: 'create-import-payroll-senasir',
+      },
       {
         id: 1,
         name: 'SENASIR',
@@ -275,6 +333,7 @@ export default {
           },
         );
         this.list_months = res.payload.list_months;
+        this.list_months_re = res.payload.list_months_re;
         this.loading_circular = false
       } catch (e) {
         console.log(e);
@@ -291,20 +350,24 @@ export default {
       }
       this.month_selected= null
     },
-    async reportPayroll(month_selected){
+    async reportPayroll(month_selected,var_reimbursement){
       this.month_selected = month_selected
       this.loading_rep_state=true;
       try {
-        let res = await this.$axios.post(`${this.type_import.route_report}`,{
-            date_payroll: this.dateFormat
-          },
+        let params = {
+          date_payroll: this.dateFormat
+        };
+        if (this.type_import.name == 'COMANDO') {
+          params.reimbursement = var_reimbursement?'TRUE':'FALSE';
+        }
+        let res = await this.$axios.post(`${this.type_import.route_report}`,params,
           {'Accept': 'application/vnd.ms-excel' },
           {'responseType': 'blob'}
         );
         const url = window.URL.createObjectURL(new Blob([res]))
         const link = document.createElement("a")
         link.href = url;
-        link.setAttribute("download", `${this.type_import.name_report_file}`)
+        link.setAttribute("download", `${var_reimbursement?this.type_import.name_report_file+'Reintegro':this.type_import.name_report_file}`)
         document.body.appendChild(link)
         link.click()
       } catch (e) {

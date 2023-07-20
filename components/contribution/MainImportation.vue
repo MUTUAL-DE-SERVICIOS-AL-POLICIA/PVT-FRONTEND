@@ -11,7 +11,10 @@
             v-model="active"
             active-class="secondary white--text"
             mandatory
-          >
+          >    
+            <v-btn
+              value="index"
+            > INICIO</v-btn> 
           <span  v-for="item in items_import" :key="item.name">
             <v-btn
               v-if="permissionSimpleSelected.includes(item.permissions_create)"
@@ -22,7 +25,7 @@
           <v-divider class="mx-2" inset vertical></v-divider>
 
           <!-- S E L E C C I O N A R   G E S T I Ó N -->
-          <v-select
+          <v-select v-if="active!='INICIO'"
             :items="years"
             :loading="loading"
             label="Gestión"
@@ -214,7 +217,6 @@ export default {
     items_import: [],
     type_import:{},
     import_type_name: {
-      INICIO: 'index',
       SENASIR: 'senasir',
       COMANDO: 'command',
       TRANSCRIPCIÓN: 'transcript',
@@ -223,11 +225,6 @@ export default {
   }),
   created() {
     this.items_import= [
-      {
-        id: 0,
-        name: ' INICIO',
-        permissions_create: 'create-import-payroll-senasir',
-      },
       {
         id: 1,
         name: 'SENASIR',
@@ -367,7 +364,7 @@ export default {
         const url = window.URL.createObjectURL(new Blob([res]))
         const link = document.createElement("a")
         link.href = url;
-        link.setAttribute("download", `${var_reimbursement?this.type_import.name_report_file+'Reintegro':this.type_import.name_report_file}`)
+        link.setAttribute("download", `${var_reimbursement?'Reintegros'+this.type_import.name_report_file:this.type_import.name_report_file}`)
         document.body.appendChild(link)
         link.click()
       } catch (e) {

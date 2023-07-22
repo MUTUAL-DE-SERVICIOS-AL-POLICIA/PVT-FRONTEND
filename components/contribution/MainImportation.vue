@@ -12,6 +12,11 @@
             active-class="secondary white--text"
             mandatory
           >    
+          >    
+            <v-btn
+              value="index"
+            > INICIO</v-btn> 
+          >
             <v-btn
               value="index"
             > INICIO</v-btn> 
@@ -25,7 +30,7 @@
           <v-divider class="mx-2" inset vertical></v-divider>
 
           <!-- S E L E C C I O N A R   G E S T I Ó N -->
-          <v-select v-if="active!='INICIO'"
+          <v-select
             :items="years"
             :loading="loading"
             label="Gestión"
@@ -104,6 +109,11 @@
                   <span class="info--text">N° afiliados creados. </span><strong>{{$filters.thousands(item.data_count.count_data_creation)}}</strong><br>
                   <span class="info--text">N° total datos planilla: </span><strong>{{$filters.thousands(item.data_count.num_total_data_payroll)}}</strong><br>
                   <span class="info--text">N° total de aportes: </span><strong>{{$filters.thousands(item.data_count.num_total_data_contribution)}}</strong><br>
+                </template>
+                <template v-if="type_import.name == 'DISPONIBILIDAD'">
+                  <span class="info--text"></span>
+                  <span class="info--text">N° afiliados actualizados: </span><strong>{{$filters.thousands(item.data_count.num_of_affiliates_updated)}}</strong><br>
+                  <span class="info--text">N° afiliados no actualizados. </span><strong>{{$filters.thousands(item.data_count.num_of_affiliates_not_updated)}}</strong><br>
                 </template>
                   <div class="text-right pb-1" v-if="permissionSimpleSelected.includes(type_import.permissions_download)">
                     <v-tooltip top class="my-0">
@@ -184,6 +194,7 @@
 
     <PayrollImportProcess :dialog="dialog" :type_import="type_import" :year_selected="year_selected" @open-close="openClose()"/>
     <PayrollImportProcessTranscript :dialog="dialog_transcript" :type_import="type_import" :year_selected="year_selected" @open-close-transcript="openCloseTranscript()"/>
+    <PayrollImportProcessAvailability :dialog="dialog_availability" :type_import="type_import" :year_selected="year_selected"  :list_months_not_import="list_months_not_import" @open-close-availability="openCloseAvailability()"/>
 
   </v-container>
 </template>
@@ -193,13 +204,15 @@ import GlobalBreadCrumb from "@/components/common/GlobalBreadCrumb.vue";
 import GlobalLoading from "@/components/common/GlobalLoading.vue";
 import PayrollImportProcess from "@/components/contribution/PayrollImportProcess.vue";
 import PayrollImportProcessTranscript from "@/components/contribution/PayrollImportProcessTranscript.vue";
+import PayrollImportProcessAvailability from "@/components/contribution/PayrollImportProcessAvailability.vue";
 export default {
   name: "MainImportation",
   components: {
     GlobalBreadCrumb,
     GlobalLoading,
     PayrollImportProcess,
-    PayrollImportProcessTranscript
+    PayrollImportProcessTranscript,
+    PayrollImportProcessAvailability
   },
   data: () => ({
     active: 'INICIO',
@@ -207,9 +220,11 @@ export default {
     loading: false,
     year_selected: null,
     list_months: [],
+    list_months_not_import: [],
     list_months_re: [],
     dialog: false,
     dialog_transcript: false,
+    dialog_availability: false,
     btn_import_contributions: false,
     loading_circular:false,
     loading_pos_index: -1,
@@ -220,6 +235,7 @@ export default {
       SENASIR: 'senasir',
       COMANDO: 'command',
       TRANSCRIPCIÓN: 'transcript',
+      DISPONIBILIDAD: 'availability',
     },
     cancelToken: null,
   }),
@@ -271,6 +287,22 @@ export default {
         route_import_progressBar: '/contribution/import_payroll_transcript_progress_bar',
         route_report: '/contribution/report_import_contribution_transcript',
         name_report_file: 'ReporteImportaciónTranscripciónContribución.xls',
+      },
+      {
+        id: 4,
+        name: 'DISPONIBILIDAD',
+        permissions_create: 'create-import-payroll-senasir',//falta
+        permissions_download: 'download-report-payroll-senasir',//falta
+        route_get_months: '/affiliate/list_months_import_affiliates_availability',
+        route_upload_file: '/affiliate/upload_copy_affiliates_availability', //Step1
+        route_validate_data: '/contribution/validate_availability', //step2
+        download_error_data_archive: 'affiliate/download_error_data_archive',//Step1
+        route_rollback_contribution: '/contribution/rollback_payroll_copy_senasir',//falta
+        route_import_progressBar: '/contribution/import_payroll_senasir_progress_bar',//falta
+        download_data_revision_suggestion: '/affiliate/download_data_revision_suggestion', //paso2
+        //name_download_file: "ReporteMatriculasNoValidas.xls",
+        download_data_revision: '/affiliate/download_data_revision', //paso2
+        //name_report_file: "ReporteDatosSenasir.xls"
       }
     ],
     this.type_import = this.items_import[1]
@@ -330,7 +362,12 @@ export default {
           },
         );
         this.list_months = res.payload.list_months;
-        this.list_months_re = res.payload.list_months_re;
+        if(this.type_import.name == 'DISPONIBILIDAD'){
+          this.list_months_not_import = res.payload.list_months_not_import;
+        }
+        if(this.type_import.name == 'COMANDO'){
+          this.list_months_re = res.payload.list_months_re;
+        }
         this.loading_circular = false
       } catch (e) {
         console.log(e);
@@ -380,6 +417,10 @@ export default {
     },
     openCloseTranscript(newValue) {
       this.dialog_transcript = newValue
+      this.getMonths()
+    },
+    openCloseAvailability(newValue) {
+      this.dialog_availability = newValue
       this.getMonths()
     }
   },

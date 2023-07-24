@@ -140,6 +140,15 @@ export default {
   created() {
     this.reports_items = [
       {
+        id: 0,
+        name: "Reporte de Notificaciones Complemento Económico",
+        tab: 0,
+        criterios: ["start_date", "end_date"],
+        service: "/notification/report_notifications",
+        type: "xls",
+        permissions: "download-report-notification",
+      },
+      {
         id: 1,
         name: "Reporte de Notificaciones",
         tab: 0,
@@ -187,7 +196,7 @@ export default {
                 undefined
             )
             this.type_notifications = response.type_notifications
-            this.type_notifications.unshift({ id: 0, name: "Todos" })
+            this.type_notifications.unshift({ id: 3, name: "Todos" })
         } catch(e) {
             console.log(e)
         }

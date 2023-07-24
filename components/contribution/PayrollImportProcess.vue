@@ -12,7 +12,7 @@
                 <v-btn icon dark @click="close()">
                     <v-icon>mdi-close</v-icon>
                 </v-btn>
-                <v-toolbar-title>IMPORTACIÓN {{type_import.name}}</v-toolbar-title>
+                <v-toolbar-title>IMPORTACIÓN {{item_import.name}}</v-toolbar-title>
             </v-toolbar>
             <v-row justify="center" class="mt-5">
                 <v-col cols="8">
@@ -20,7 +20,7 @@
                         <center><b>GESTIÓN {{year_selected}}</b></center>
                         <div class="text-right"><Information :title="information.title" :parameters="information.parameters"/></div>
                     </v-toolbar-title>
-                    <template v-if="type_import.name == 'COMANDO'">
+                    <template v-if="item_import.name == 'COMANDO'">
                         <v-checkbox
                           v-model="command_reimbursement"
                           label="La importación es reintegro?"
@@ -101,7 +101,7 @@
                                 <v-card class="mb-12" color="grey lighten-1">
                                     <v-card-text>
                                         <v-card color="white" class="pa-2" v-if="progress.query_step_1">
-                                            <v-row v-if="type_import.name == 'SENASIR'">
+                                            <v-row v-if="item_import.name == 'SENASIR'">
                                                 <v-col cols="12" md="6">
                                                     <strong>Nombre del archivo:</strong> {{progress.file_exists ? progress.file_name : import_export.file.name}}<br>
                                                     <strong class="success--text">Total de registros considerados:</strong> {{$filters.thousands(data_count.num_data_considered)}}<br>
@@ -113,7 +113,7 @@
                                                     <strong class="error--text">Total de registros no validados:</strong> {{$filters.thousands(data_count.num_data_not_validated)}}<br>
                                                 </v-col>
                                             </v-row>
-                                            <v-row v-if="type_import.name == 'COMANDO'">
+                                            <v-row v-if="item_import.name == 'COMANDO'">
                                                 <v-col cols="12" md="6">
                                                     <strong>Nombre del archivo:</strong> {{ progress.file_exists ? progress.file_name :  import_export.file.name}}<br>
                                                     <strong>Total de registros copiados:</strong> {{$filters.thousands(data_count.num_total_data_copy)}}<br>
@@ -213,8 +213,8 @@ export default {
         Information,
     },
     data: () => ({
-        list_months_not_import: [],
-        list_months_not_import_re: [],
+        //list_months_not_import: [],
+        //list_months_not_import_re: [],
         import_export: {},
         e1: 1,
         month_selected: null,
@@ -262,9 +262,17 @@ export default {
             required: true,
             default: false
         },
-        type_import: {
+        item_import: {
             type: Object,
             required: true,
+        },
+        list_months_not_import: {
+            type: Array,
+            requiered: true
+        },
+        list_months_not_import_re: {
+            type: Array,
+            requiered: true
         },
         year_selected: null,
     },
@@ -278,49 +286,49 @@ export default {
     },
     watch: {
         dialog: function() {
-            this.getSimpleMonths()
+            //this.getSimpleMonths()
         }
     },
     methods: {
-        async getSimpleMonths() {
-            try {
-                this.loading_select = true
-                let res = await this.$axios.post(`${this.type_import.route_get_months}`,{
-                    period_year: this.year_selected,
-                    with_data_count: false
-                });
-                let months_not_import =[]
-                let months_not_import_re =[]
-                for (let i = 0; i < res.payload.list_months.length; i++) {
-                    if (res.payload.list_months[i].state_importation == false) {
-                        months_not_import.push(res.payload.list_months[i]);
-                    }
-                }
-                if(this.type_import.name == 'COMANDO'){
-                    for (let i = 0; i < res.payload.list_months_re.length; i++) {
-                        if (res.payload.list_months_re[i].state_importation == false) {
-                          months_not_import_re.push(res.payload.list_months_re[i]);
-                        }
-                    }
-                }
-                this.list_months_not_import = months_not_import;
-                this.list_months_not_import_re = months_not_import_re;
-                this.loading_select = false
+        // async getSimpleMonths() {
+        //     try {
+        //         this.loading_select = true
+        //         let res = await this.$axios.post(`${this.item_import.route_get_months}`,{
+        //             period_year: this.year_selected,
+        //             with_data_count: false
+        //         });
+        //         let months_not_import =[]
+        //         let months_not_import_re =[]
+        //         for (let i = 0; i < res.payload.list_months.length; i++) {
+        //             if (res.payload.list_months[i].state_importation == false) {
+        //                 months_not_import.push(res.payload.list_months[i]);
+        //             }
+        //         }
+        //         if(this.item_import.name == 'COMANDO'){
+        //             for (let i = 0; i < res.payload.list_months_re.length; i++) {
+        //                 if (res.payload.list_months_re[i].state_importation == false) {
+        //                   months_not_import_re.push(res.payload.list_months_re[i]);
+        //                 }
+        //             }
+        //         }
+        //         this.list_months_not_import = months_not_import;
+        //         this.list_months_not_import_re = months_not_import_re;
+        //         this.loading_select = false
 
-            } catch (e) {
-                this.loading_select = false
-                console.log(e);
-            }
-        },
+        //     } catch (e) {
+        //         this.loading_select = false
+        //         console.log(e);
+        //     }
+        // },
         async importProgressBar() {
             try {
                 let params = {
                   date_payroll: this.dateFormat
                 };
-                if (this.type_import.name == 'COMANDO') {
+                if (this.item_import.name == 'COMANDO') {
                   params.reimbursement = this.command_reimbursement?'TRUE':'FALSE';
                 }
-                let res = await this.$axios.post(`${this.type_import.route_import_progressBar}`,params);
+                let res = await this.$axios.post(`${this.item_import.route_import_progressBar}`,params);
 
                 this.progress = res.payload.import_progress_bar
                 this.data_count = res.payload.data_count
@@ -340,21 +348,21 @@ export default {
             let formData = new FormData();
             formData.append("file", this.import_export.file);
             formData.append("date_payroll", this.dateFormat);
-            if(this.type_import.name == 'COMANDO'){
+            if(this.item_import.name == 'COMANDO'){
                 formData.append("reimbursement", this.command_reimbursment?'TRUE':'FALSE')
             }
             try {
-                let res = await this.$axios.post(`${this.type_import.route_upload_file}`,
+                let res = await this.$axios.post(`${this.item_import.route_upload_file}`,
                 formData
                 );
                 if (res.payload.successfully) {
-                    if(this.type_import.name == 'SENASIR'){
+                    if(this.item_import.name == 'SENASIR'){
                         this.data_count.num_total_data_copy = res.payload.data_count.num_total_data_copy
                         this.data_count.num_data_considered = res.payload.data_count.num_data_considered
                         this.data_count.num_data_not_considered = res.payload.data_count.num_data_not_considered
                         this.data_count.num_data_not_validated = res.payload.data_count.num_data_not_validated
                         this.data_count.num_data_validated = res.payload.data_count.num_data_validated
-                    } else if(this.type_import.name == 'COMANDO'){
+                    } else if(this.item_import.name == 'COMANDO'){
                         this.data_count.num_total_data_copy = res.payload.data_count.num_total_data_copy
                         this.data_count.num_data_validated = res.payload.data_count.num_data_validated
                         this.data_count.num_data_new = res.payload.data_count.num_data_new
@@ -378,11 +386,11 @@ export default {
                 let params = {
                   date_payroll: this.dateFormat
                 }
-                if (this.type_import.name == 'COMANDO') {
+                if (this.item_import.name == 'COMANDO') {
                   params.reimbursement = this.command_reimbursement?'TRUE':'FALSE';
                 }
 
-                let res = await this.$axios.post(`${this.type_import.route_rollback_contribution}`,params);
+                let res = await this.$axios.post(`${this.item_import.route_rollback_contribution}`,params);
                 if (res.payload.valid_rollbackk) {
                     this.$toast.info(res.message + ". Se ha realizado el borrado de datos");
                     this.clearData()
@@ -402,25 +410,25 @@ export default {
                   date_payroll: this.dateFormat
                 };
 
-                if (this.type_import.name == 'COMANDO') {
+                if (this.item_import.name == 'COMANDO') {
                   params.reimbursement = this.command_reimbursement?'TRUE':'FALSE';
                 }
-                let res = await this.$axios.post(`${this.type_import.route_validate_data}`, params);
+                let res = await this.$axios.post(`${this.item_import.route_validate_data}`, params);
 
                 if (res.payload.successfully) {
                     this.data_count.num_data_not_validated = res.payload.data_count.num_data_not_validated
                     this.data_count.num_data_validated = res.payload.data_count.num_data_validated
 
-                    if(this.type_import.name == 'SENASIR'){
+                    if(this.item_import.name == 'SENASIR'){
                         if(res.message == 'Excel'){
-                        this.$toast.info(this.type_import.message_validate_data)
+                        this.$toast.info(this.item_import.message_validate_data)
                         this.downloadFile()
                         }
                     }
-                    if(this.type_import.name == 'COMANDO'){
+                    if(this.item_import.name == 'COMANDO'){
                         this.data_count.num_data_new = res.payload.data_count.num_data_new
                         if(res.payload.data_count.num_data_new > 0){
-                        this.$toast.info(this.type_import.message_validate_data)
+                        this.$toast.info(this.item_import.message_validate_data)
                         this.downloadFile()
                         }
                     }
@@ -447,17 +455,17 @@ export default {
                 let params = {
                   date_payroll: this.dateFormat
                 };
-                if (this.type_import.name == 'COMANDO') {
+                if (this.item_import.name == 'COMANDO') {
                   params.reimbursement = this.command_reimbursement?'TRUE':'FALSE';
                 }
-                let res = await this.$axios.post(`${this.type_import.route_report}`,params,
+                let res = await this.$axios.post(`${this.item_import.route_report}`,params,
                     {'Accept': 'application/vnd.ms-excel' },
                     {'responseType': 'blob'}
                 );
                 const url = window.URL.createObjectURL(new Blob([res]));
                 const link = document.createElement("a");
                 link.href = url;
-                link.setAttribute("download", `${this.type_import.name_download_file}`);
+                link.setAttribute("download", `${this.item_import.name_download_file}`);
                 document.body.appendChild(link);
                 link.click();
             } catch (e) {

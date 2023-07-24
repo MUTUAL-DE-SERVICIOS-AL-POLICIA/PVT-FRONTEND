@@ -25,7 +25,8 @@ export default {
         //name_download_file: "observados_para_revision.xls",//step2
         rollback_import_affiliates_availability: '/affiliate/rollback_import_affiliates_availability',
         route_import_progressBar: '/affiliate/import_affiliates_availability_progress_bar',
-        //name_report_file: "ReporteDatosSenasir.xls"
+        route_report:'/affiliate/report_import_affiliates_availability',
+        name_report_file: "ReporteDatosDisponibilidad.xls"
       }
   })
 };

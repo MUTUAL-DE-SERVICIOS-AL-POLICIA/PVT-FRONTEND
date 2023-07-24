@@ -402,9 +402,13 @@ export default {
       this.month_selected = month_selected
       this.loading_rep_state=true;
       try {
-        let params = {
-          date_payroll: this.dateFormat
-        };
+        let params ={}
+        if(this.item_import.name != 'DISPONIBILIDAD'){
+          params.date_payroll= this.dateFormat
+        }
+        if(this.item_import.name == 'DISPONIBILIDAD'){
+          params.date_import= this.dateFormat
+        }
         if (this.item_import.name == 'COMANDO') {
           params.reimbursement = var_reimbursement?'TRUE':'FALSE';
         }
@@ -415,7 +419,7 @@ export default {
         const url = window.URL.createObjectURL(new Blob([res]))
         const link = document.createElement("a")
         link.href = url;
-        link.setAttribute("download", `${var_reimbursement?'Reintegros'+this.item_import.name_report_file:this.item_import.name_report_file}`)
+        link.setAttribute("download", this.item_import.name_report_file)
         document.body.appendChild(link)
         link.click()
       } catch (e) {

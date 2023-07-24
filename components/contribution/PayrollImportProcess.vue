@@ -499,7 +499,7 @@ export default {
             this.clearData()
         },
         clearData() {
-            this.el = 1
+            this.e1 = 1
             this.import_export = {}
             this.progress.file_exists = false
             this.progress.file_name = null

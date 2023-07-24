@@ -98,7 +98,9 @@
                                                      <strong>Total de registros copiados:</strong> {{$filters.thousands(data_count.num_total_data_copy)}}<br>
                                                 </v-col>
                                                 <v-col cols="12" md="6">
-                                                     <strong>Total de registros validados:</strong> {{$filters.thousands(data_count.num_data_validated)}}<br>
+                                                     <strong>Total de registros actualizados:</strong> {{$filters.thousands(data_count.num_of_affiliates_updated)}}<br>  
+                                                     <strong>Total de registros no actualizados:</strong> {{$filters.thousands(data_count.num_of_affiliates_not_updated
+                                                     )}}<br>          
                                                 </v-col>
                                             </v-row>
                                         </v-card>
@@ -202,13 +204,9 @@ export default {
             query_step_2: false
         },
         data_count: {
-            num_data_considered: 0,
-            num_data_not_considered: 0,
-            num_data_not_validated: 0,
-            num_data_validated: 0,
             num_total_data_copy: 0,
-            num_data_new: 0,
-            num_data_regular: 0
+            num_of_affiliates_not_updated: 0,
+            num_of_affiliates_updated: 0
         },
         btn_update_file: false,
         btn_validate_data: false,
@@ -225,7 +223,7 @@ export default {
                 },
                 {
                     title: "NOMBRE ARCHIVO",
-                    body: "tipo-mes-año.csv Ejemplo: senasir-04-2021.csv"
+                    body: "tipo-mes-año.csv Ejemplo: disponibilidad-04-2021.csv"
                 }
             ]
         }
@@ -301,15 +299,16 @@ export default {
             formData.append("file", this.import_export.file);
             formData.append("date_import", this.dateFormat);
             try {
-                let res = await this.$axios.post(`${this.item_import.route_upload_file}`,
-                formData
-                );
+                let res = await this.$axios.post(`${this.item_import.route_upload_file}`, formData);
                 if (res.payload.successfully) {
                     this.data_count.num_total_data_copy = res.payload.data_count.count
                     this.$toast.success("Se ha realizado el copiado de " + this.data_count.num_total_data_copy + ' registros');
                     this.progress.query_step_1 = true
                 } else {
-                this.$toast.error(res.payload.error);
+                    this.$toast.error(res.payload.error);
+                    if(res.payload.route_file_name != ''){
+                        this.downloadFile(res.payload.route, res.payload.route_file_name)
+                    }
                 }
                 this.btn_update_file = false;
             } catch (e) {
@@ -326,14 +325,7 @@ export default {
                 });
                 if (res.payload.valid_rollback) {
                     this.$toast.info(res.message + ". Se ha realizado el borrado de datos");
-                                this.el = 1
-            this.import_export = {}
-            this.progress.file_exists = false
-            this.progress.file_name = null
-            this.progress.percentage = 0
-            this.progress.query_step_1 = false
-            this.progress.query_step_2 = false
-            console.log(this.e1)
+                    this.clearData()
                     this.dialog_confirm=false
                 } else {
                     this.$toast.error(res.message);
@@ -348,26 +340,28 @@ export default {
             try {
                 let res = await this.$axios.post(`${this.item_import.route_validate_data}`,{
                     date_import: this.dateFormat,
-                }
-                );
-                if (res.payload.successfully) {
-                    this.data_count.num_data_not_validated = res.payload.data_count.num_data_not_validated
-                    this.data_count.num_data_validated = res.payload.data_count.num_data_validated
+                });
 
-                        if(res.route_file_name != ''){
-                        this.$toast.info(this.item_import.message_validate_data)
-                        this.downloadFile()
-                        }
+                if (res.payload.successfully) {
+                    this.data_count.num_of_affiliates_updated = res.payload.data_count.num_of_affiliates_updated
+                    this.data_count.num_of_affiliates_not_updated = res.payload.data_count.num_of_affiliates_not_updated
+
+                    if(res.route_file_name != ''){
+                        this.$toast.info("Se tiene affiliados que no fueron considerados en disponibilidad. Favor revise el archivo Excel")
+                        this.downloadFile(res.payload.route, res.payload.route_file_name)
+                    }
 
                     this.progress.percentage = 100
                     this.dialog_confirm_import = false
                     this.close() 
-                    this.$toast.success("Se ha realizado la validación de "+ res.payload.data_count.num_data_validated+" registros")
+                    this.$toast.success("Se ha realizado la validación de "+ res.payload.data_count.num_of_affiliates_updated+" registros")
 
                 } else {
                     this.e1 = 1
                     this.progress.query_step_1 = false
                     this.progress.percentage = 0
+                    this.dialog_confirm_import = false
+                    this.downloadFile(res.payload.route, res.payload.route_file_name)
                     this.$toast.error(res.message)
                 }
                 this.btn_validate_data = false;
@@ -376,9 +370,9 @@ export default {
                 this.btn_validate_data = false;
             }
         },
-        async downloadFile() {
+        async downloadFile(route, name_file) {
             try {
-                let res = await this.$axios.post(`${this.item_import.download_data_revision_suggestion}`,{
+                let res = await this.$axios.post(route,{
                     date_import: this.dateFormat,
                 },
                 {'Accept': 'application/vnd.ms-excel' },
@@ -387,7 +381,7 @@ export default {
                 const url = window.URL.createObjectURL(new Blob([res]));
                 const link = document.createElement("a");
                 link.href = url;
-                link.setAttribute("download", `${this.item_import.name_download_file}`);
+                link.setAttribute("download", name_file);
                 document.body.appendChild(link);
                 link.click();
             } catch (e) {
@@ -422,7 +416,7 @@ export default {
         },
         clearData() {
             console.log('entro clear')
-            this.el = 1
+            this.e1 = 1
             this.import_export = {}
             this.progress.file_exists = false
             this.progress.file_name = null

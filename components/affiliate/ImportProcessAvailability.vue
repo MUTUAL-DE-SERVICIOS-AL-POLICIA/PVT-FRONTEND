@@ -378,7 +378,7 @@ export default {
         },
         async downloadFile() {
             try {
-                let res = await this.$axios.post(`${this.item_import.route_download_file}`,{
+                let res = await this.$axios.post(`${this.item_import.download_data_revision_suggestion}`,{
                     date_import: this.dateFormat,
                 },
                 {'Accept': 'application/vnd.ms-excel' },

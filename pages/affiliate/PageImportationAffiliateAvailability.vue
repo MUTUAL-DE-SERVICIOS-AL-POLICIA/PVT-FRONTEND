@@ -23,9 +23,10 @@ export default {
         rollback_import_affiliates_availability: '/affiliate/rollback_import_affiliates_availability',//falta
         route_import_progressBar: '/affiliate/import_affiliates_availability_progress_bar',
         download_data_revision_suggestion: '/affiliate/download_data_revision_suggestion', //paso2
-        //name_download_file: "ReporteMatriculasNoValidas.xls",
+        name_download_file: "observados_para_revision.xls",
         download_data_revision: '/affiliate/download_data_revision', //paso2
         //name_report_file: "ReporteDatosSenasir.xls"
+        message_validate_data: 'No se encontraron algunas afiliados, por favor revise el archivo Excel'
       }
   })
 };

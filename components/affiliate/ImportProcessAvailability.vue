@@ -347,7 +347,7 @@ export default {
                     this.data_count.num_of_affiliates_not_updated = res.payload.data_count.num_of_affiliates_not_updated
 
                     if(res.route_file_name != ''){
-                        this.$toast.info("Se tiene affiliados que no fueron considerados en disponibilidad. Favor revise el archivo Excel")
+                        this.$toast.info("Se tiene afiliados que no fueron considerados en disponibilidad. Favor revise el archivo Excel")
                         this.downloadFile(res.payload.route, res.payload.route_file_name)
                     }
 
@@ -423,6 +423,7 @@ export default {
             this.progress.percentage = 0
             this.progress.query_step_1 = false
             this.progress.query_step_2 = false
+            this.month_selected= null
         },
     }
 }

@@ -325,12 +325,12 @@ export default {
     permissionSimpleSelected () {
       return this.$store.getters.permissionSimpleSelected
     },
-    dateFormat() {
-        if(this.month_selected < 10)
-            return this.year_selected + "-" + "0" + this.month_selected + "-" + "01"
-        else
-            return this.year_selected + "-" + this.month_selected + "-" + "01"
-    },
+    // dateFormat() {
+    //     if(this.month_selected < 10)
+    //         return this.year_selected + "-" + "0" + this.month_selected + "-" + "01"
+    //     else
+    //         return this.year_selected + "-" + this.month_selected + "-" + "01"
+    // },
   },
 
   watch: {
@@ -401,13 +401,18 @@ export default {
     async reportPayroll(month_selected,var_reimbursement){
       this.month_selected = month_selected
       this.loading_rep_state=true;
+      let dateFormat = null 
+              if(this.month_selected < 10)
+            dateFormat =this.year_selected + "-" + "0" + this.month_selected + "-" + "01"
+        else
+            dateFormat=this.year_selected + "-" + this.month_selected + "-" + "01"
       try {
         let params ={}
         if(this.item_import.name != 'DISPONIBILIDAD'){
-          params.date_payroll= this.dateFormat
+          params.date_payroll= dateFormat
         }
         if(this.item_import.name == 'DISPONIBILIDAD'){
-          params.date_import= this.dateFormat
+          params.date_import= dateFormat
         }
         if (this.item_import.name == 'COMANDO') {
           params.reimbursement = var_reimbursement?'TRUE':'FALSE';

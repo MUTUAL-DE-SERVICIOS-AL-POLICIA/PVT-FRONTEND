@@ -375,6 +375,7 @@ export default {
           },
         );
         this.list_months = res.payload.list_months;
+        this.list_months_re = res.payload.list_months_re;
         this.list_months_not_import = res.payload.list_months_not_import;
         if(this.item_import.name == 'COMANDO'){
           this.list_months_not_import_re = res.payload.list_months_not_import_re;

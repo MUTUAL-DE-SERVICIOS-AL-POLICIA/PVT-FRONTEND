@@ -1,13 +1,13 @@
 <template>
-    <MainContributionImportation />
+    <MainImportation />
 </template>
 
 <script>
-import MainContributionImportation from "@/components/contribution/MainContributionImportation.vue";
+import MainImportation from "@/components/contribution/MainImportation.vue";
 export default {
   name: "PageContributionImportation",
   components: {
-    MainContributionImportation,
+    MainImportation,
   },
 };
 </script>

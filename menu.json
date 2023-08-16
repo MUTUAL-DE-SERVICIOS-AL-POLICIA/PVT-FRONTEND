@@ -7,7 +7,6 @@
   {
     "title": "Importación de Planillas",
     "icon": "mdi-bank-transfer",
-    "permission": "read-import-payroll",
     "group": [
       {
         "href": "/contribution/PageImportationCommand",
@@ -29,7 +28,7 @@
         "href": "/affiliate/PageImportationAffiliateAvailability",
         "title": "Disponibilidad",
         "icon": "mdi-shield-lock-outline",
-        "permission": "read-import-payroll"
+        "permission": "create-import-affiliates-availability"
       }
     ]
   },

@@ -65,7 +65,7 @@
                       <v-btn 
                         class="ma-2 accent white--text btn-period" 
                         v-on="on"
-                        @click="confirmImportContribution(item.period_month, true,false)"
+                        @click="confirmImportContribution(item.period_month, true, false)"
                         :disabled="item.state_importation"
                       >
                         <v-icon dark left small>mdi-arrow-down</v-icon>Imp. Aportes
@@ -247,6 +247,10 @@ export default {
     loading_rep_state_re: false,
     items_import: [],
     type_import:{},
+    import_type_name: {
+      SENASIR: 'senasir',
+      COMANDO: 'command',
+    },
     command_reimbursement:false
   }),
   created() {
@@ -304,6 +308,7 @@ export default {
            this.type_import = this.items_import[i]
          }
        }
+       this.getYears()
        this.getMonths()
      }
    },
@@ -318,7 +323,8 @@ export default {
     async getYears() {
       try {
         this.loading = true;
-        let res = await this.$axios.get(`/contribution/list_years`)
+        let import_type_name = this.import_type_name[this.type_import.name]
+        let res = await this.$axios.get(`/contribution/list_years/${import_type_name}`)
         this.years = res.payload.list_years;
         this.year_selected = this.years[0];
         this.loading = false;
@@ -376,8 +382,8 @@ export default {
     },
     confirmImportContribution(month_selected, dialog, reimbursement){
       this.month_selected = month_selected
-      this.dialog_confirm_import_contribution= dialog
-      this.command_reimbursement= reimbursement
+      this.dialog_confirm_import_contribution = dialog
+      this.command_reimbursement = reimbursement
       console.log( month_selected)
     },
 

@@ -1,8 +1,35 @@
 <template>
   <div>
+    <div >
+      <v-select
+        dense
+        v-model="selectedHeaders"
+        :items="headers"
+        label="Seleccionar columnas"
+        multiple
+        outlined
+        return-object
+        class="select-fields"
+        color= 'secondary'
+      >
+        <!-- <template v-slot:selection="{ item, index }">
+          <v-chip x-small v-if="index < showHeaders.length">
+            <span>{{ item.text }}</span>
+          </v-chip>
+          <span v-if="index === showHeaders.length -1" class="grey--text caption"
+            >(+{{ headersMap.length - showHeaders.length }} adicionales)</span
+          >
+        </template> -->
+        <template v-slot:selection="{ index }">
+          <span v-if="index === showHeaders.length -1" class="secondary--text caption"
+            >{{ headersMap.length != showHeaders.length ? '(+ ' + (headersMap.length - showHeaders.length) + ' por adiconar)':'Nada por adicionar' }}</span
+          >
+        </template>
+      </v-select>
+    </div>
   <v-data-table
     dense
-    :headers="headers"
+    :headers="showHeaders"
     :items="contribution_list"
     :options.sync="options"
     :loading="loading_table"
@@ -36,7 +63,7 @@
     </template>
     <template slot="body.prepend">
       <tr>
-        <td>
+        <td v-if="showInputText.includes('con_re')">
           <v-select
             dense
             :items="items"
@@ -48,7 +75,7 @@
             close-on-click
           ></v-select>
         </td>
-        <td>
+        <td v-if="showInputText.includes('year')">
           <v-text-field
             placeholder="Año"
             spellcheck="false"
@@ -57,7 +84,7 @@
             @keyup="searchTimeOut()"
           ></v-text-field>
         </td>
-        <td>
+        <td v-if="showInputText.includes('month')">
           <v-text-field
             placeholder="Mes"
             spellcheck="false"
@@ -66,14 +93,21 @@
             @keyup="searchTimeOut()"
           ></v-text-field>
         </td>
-        <td><v-text-field disabled class="filter-text"></v-text-field></td>
-        <td><v-text-field disabled class="filter-text"></v-text-field></td>
-        <td><v-text-field disabled class="filter-text"></v-text-field></td>
-        <td><v-text-field disabled class="filter-text"></v-text-field></td>
-        <td><v-text-field disabled class="filter-text"></v-text-field></td>
-        <td><v-text-field disabled class="filter-text"></v-text-field></td>
-        <td><v-text-field disabled class="filter-text"></v-text-field></td>
-        <td>
+        <td v-if="showInputText.includes('degree_shortened')"><v-text-field disabled class="filter-text"></v-text-field></td>
+        <td v-if="showInputText.includes('unit_code')"><v-text-field disabled class="filter-text"></v-text-field></td>
+        <td v-if="showInputText.includes('base_wage')"><v-text-field disabled class="filter-text"></v-text-field></td>
+        <td v-if="showInputText.includes('seniority_bonus')"><v-text-field disabled class="filter-text"></v-text-field></td>
+        <td v-if="showInputText.includes('stydy_bonus')"><v-text-field disabled class="filter-text"></v-text-field></td>
+        <td v-if="showInputText.includes('position_bonus')"><v-text-field disabled class="filter-text"></v-text-field></td>
+        <td v-if="showInputText.includes('border_bonus')"><v-text-field disabled class="filter-text"></v-text-field></td>
+        <td v-if="showInputText.includes('east_bonus')"><v-text-field disabled class="filter-text"></v-text-field></td>
+        <td v-if="showInputText.includes('public_security_bonus')"><v-text-field disabled class="filter-text"></v-text-field></td>
+        <td v-if="showInputText.includes('gain')"><v-text-field disabled class="filter-text"></v-text-field></td>
+        <td v-if="showInputText.includes('quotable')"><v-text-field disabled class="filter-text"></v-text-field></td>
+        <td v-if="showInputText.includes('retirement_fund')"><v-text-field disabled class="filter-text"></v-text-field></td>
+        <td v-if="showInputText.includes('mortuary_quota')"><v-text-field disabled class="filter-text"></v-text-field></td>
+        <td v-if="showInputText.includes('total')"><v-text-field disabled class="filter-text"></v-text-field></td>
+        <td v-if="showInputText.includes('breakdown_name')">
           <v-text-field
             placeholder="Desglose"
             spellcheck="false"
@@ -82,6 +116,8 @@
             @keyup="searchTimeOut()"
           ></v-text-field>
         </td>
+        <td v-if="showInputText.includes('type')"><v-text-field disabled class="filter-text"></v-text-field></td>
+        <td v-if="showInputText.includes('actions')"><v-text-field disabled class="filter-text"></v-text-field></td>
       </tr>
     </template>
     <template v-slot:[`item.actions`]="{ item }">
@@ -158,7 +194,7 @@ export default {
     loading_table: false,
     active: true,
     contribution_list: [],
-    headers: [
+    headersMap: [
       {
         text: "Tipo",
         value: "con_re",
@@ -166,6 +202,7 @@ export default {
         class: ["table", "white--text"],
         width: "5%",
         sortable: false,
+        active: true
       },{
         text: "Año",
         value: "year",
@@ -173,6 +210,7 @@ export default {
         class: ["table", "white--text"],
         width: "10%",
         sortable: true,
+        active: true
       },{
         text: "Mes",
         value: "month",
@@ -180,65 +218,141 @@ export default {
         class: ["table", "white--text"],
         width: "10%",
         sortable: false,
+        active: true
+      },
+      {
+        text: "Grado",
+        value: "degree_shortened",
+        class: ["table", "white--text"],
+        width: "10%",
+        sortable: false,
+        active: false
+      },
+      {
+        text: "Unidad",
+        value: "unit_code",
+        class: ["table", "white--text"],
+        width: "10%",
+        sortable: false,
+        active: false
       },{
         text: "Sueldo",
         value: "base_wage",
         class: ["table", "white--text"],
         width: "10%",
         sortable: false,
+        active: true
       },{
         text: "Antigüedad",
         value: "seniority_bonus",
         class: ["table", "white--text"],
         width: "10%",
         sortable: false,
+        active: true
+      },
+      {
+        text: "Estudio",
+        value: "study_bonus",
+        class: ["table", "white--text"],
+        width: "10%",
+        sortable: false,
+        active: false
+      },
+      {
+        text: "Cargo",
+        value: "position_bonus",
+        class: ["table", "white--text"],
+        width: "10%",
+        sortable: false,
+        active: false
+      },
+      {
+        text: "Frontera",
+        value: "border_bonus",
+        class: ["table", "white--text"],
+        width: "10%",
+        sortable: false,
+        active: false
+      },
+      {
+        text: "Oriente",
+        value: "east_bonus",
+        class: ["table", "white--text"],
+        width: "10%",
+        sortable: false,
+        active: false
+      },
+      {
+        text: "Seguridad",
+        value: "public_security_bonus",
+        class: ["table", "white--text"],
+        width: "10%",
+        sortable: false,
+        active: false
       },{
         text: "Ganado",
         value: "gain",
         class: ["table", "white--text"],
         width: "10%",
         sortable: false,
+        active: true
       },{
         text: "Cotizable",
         value: "quotable",
         class: ["table", "white--text"],
         width: "10%",
         sortable: false,
+        active: true
       },{
         text: "F.R.",
         value: "retirement_fund",
         class: ["table", "white--text"],
         width: "10%",
         sortable: false,
+        active: true
       },{
         text: "C.M.",
         value: "mortuary_quota",
         class: ["table", "white--text"],
         width: "10%",
         sortable: false,
+        active: true
       },{
         text: "Aporte",
         value: "total",
         class: ["table", "white--text"],
         width: "10%",
         sortable: false,
+        active: true
       },{
         text: "Desg.",
         value: "breakdown_name",
         class: ["table", "white--text"],
         width: "20%",
         sortable: false,
+        active: true
+      },{
+        text: "Tipo.",
+        value: "type",
+        class: ["table", "white--text"],
+        width: "20%",
+        sortable: false,
+        active: false
       },{
         text: "Acciones",
         value: "actions",
         class: ["table", "white--text"],
         width: "20%",
         sortable: false,
+        active: true
       },
     ],
     dialog: false,
     delete_id: null,
-    refresh_table:0
+    refresh_table:0,
+    selectedHeaders: [],
+    headers: [],
+    inputText:[]
   }),
 
   watch: {
@@ -269,6 +383,22 @@ export default {
     permissionSimpleSelected () {
       return this.$store.getters.permissionSimpleSelected
     },
+    //Obtener encaebzados ordenados
+    showHeaders() {
+      return this.headers.filter((s) => this.selectedHeaders.includes(s));
+    },
+    showInputText() {
+      this.inputText =Object.values(this.selectedHeaders)
+      return this.inputText.map(item => item.value);
+    },
+  },
+  created(){
+    this.headers = Object.values(this.headersMap);
+    for (let i = 0; i < this.headers.length; i++) {
+      if (this.headers[i].active) {
+        this.selectedHeaders.push(this.headers[i]);
+      }
+    }
   },
 
   mounted() {
@@ -343,5 +473,14 @@ export default {
   margin: 0 0 40px 0;
   padding: 0;
   width: 100%;
+}
+.select-fields {
+  max-width: 200px;
+  margin-bottom: -30px;
+  position: absolute;
+  right: 10px;
+  margin-top: -45px;
+  padding-right: 20px;
+
 }
 </style>

@@ -15,24 +15,17 @@
         <v-list-item>
           <v-list-item-content>
             <v-list-item-subtitle
-              >CONSIDERACIONES PARA IMPORTACIÓN</v-list-item-subtitle
+              > <b>CONSIDERACIONES PARA {{title}}</b></v-list-item-subtitle
             >
           </v-list-item-content>
         </v-list-item>
       </v-list>
       <v-divider></v-divider>
       <div class="py-1 pl-2 ma-1">
-        <small
-          ><v-icon>mdi-check</v-icon> FORMATO ARCHIVO: <br />
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tipo CSV delimitado
-          por "dos puntos" (:)
+        <small v-for="(parameter, index) in parameters" :key="index">
+          <v-icon>mdi-check</v-icon> <b>{{parameter.title}}:</b><br />
+          <div class="information-body-style">{{parameter.body}}<br/></div>
         </small>
-        <br />
-        <small
-          ><v-icon>mdi-check</v-icon> NOMBRE ARCHIVO: <br />&nbsp;
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tipo-mes-año.csv Ejm.
-          senasir-04-2021.csv</small
-        >
       </div>
       <v-card-actions>
         <v-spacer></v-spacer>
@@ -47,9 +40,26 @@ export default {
   name:"Information",
     data: ()=>({
         dialog_menu: false
-    })
+    }),
+    props: {
+      title: {
+        type: String,
+        required: true,
+        default: '',
+      },
+      parameters: {
+        type: Array,
+        required: true,
+        default: () => [],
+      }
+    }
+
 };
 </script>
 
 <style>
+  .information-body-style {
+    max-width:95%;
+    padding-left: 25px;
+  }
 </style>

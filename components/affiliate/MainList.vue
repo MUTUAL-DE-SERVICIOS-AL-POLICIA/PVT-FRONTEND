@@ -66,14 +66,14 @@ export default {
     ListAffiliates
   },
   data: () => ({
-    tab: 1,
+    tab:1,
   }),
   methods: {
     clearAll() {
       this.$nuxt.$emit('clear_all', this.tab) // aca podemos enviarle que componente emitio
     },
     tabClicked: function(e) {
-      this.tab = e.path[0].id
+      this.tab = parseInt(e.currentTarget.id);
     }
   },
 };

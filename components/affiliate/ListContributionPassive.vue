@@ -154,7 +154,7 @@ export default {
       { text: "Diciembre",value: "",class: ["table", "white--text", "text-right","text-uppercase"], width: "7%", sortable: false,},
     ],
     headersDetail: [
-      { text: "Cotizable", value: "rent_pension", class: ["table", "white--text", "text-left"], width: "10%", sortable: true,},
+      { text: "Cotizable", value: "quotable", class: ["table", "white--text", "text-left"], width: "10%", sortable: true,},
       { text: "F.S. Vejez", value: "aps_total_fs", class: ["table", "white--text", "text-left"], width: "10%", sortable: true,},
       { text: "F.C. Cotización", value: "aps_total_cc", class: ["table", "white--text", "text-left"], width: "10%", sortable: true,},
       { text: "F.S. Acumulado", value: "aps_total_fsa", class: ["table", "white--text", "text-left"], width: "10%", sortable: true,},

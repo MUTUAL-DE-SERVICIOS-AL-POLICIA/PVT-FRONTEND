@@ -5,10 +5,32 @@
     "icon": "mdi-home"
   },
   {
-    "href": "/contribution/PageImportation",
     "title": "Importación de Planillas",
     "icon": "mdi-bank-transfer",
-    "permission": "read-import-payroll"
+    "group": [
+      {
+        "href": "/contribution/PageImportationCommand",
+        "title": "Comando",
+        "icon": "mdi-account-outline",
+        "permission": "read-import-payroll"
+      }, {
+        "href": "/contribution/PageImportationSenasir",
+        "title": "Senasir",
+        "icon": "mdi-shield-lock-outline",
+        "permission": "read-import-payroll"
+      },
+      {
+        "href": "/contribution/PageImportationTranscript",
+        "title": "Transcripciones",
+        "icon": "mdi-account-outline",
+        "permission": "read-import-payroll"
+      }, {
+        "href": "/affiliate/PageImportationAffiliateAvailability",
+        "title": "Disponibilidad",
+        "icon": "mdi-shield-lock-outline",
+        "permission": "create-import-affiliates-availability"
+      }
+    ]
   },
   {
     "href": "/contribution/PageContributionImportation",

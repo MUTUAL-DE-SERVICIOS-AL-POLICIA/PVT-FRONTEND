@@ -130,35 +130,6 @@
                 </v-text-field>
               </v-col>
               <v-col cols="12" md="4">
-                <v-select
-                  dense
-                  :items="cities"
-                  item-text="name"
-                  item-value="id"
-                  label="Ciudad de Expedición"
-                  v-model="affiliate.city_identity_card_id"
-                  :readonly="!sync_up.editable || !permission.secondary"
-                  :outlined="sync_up.editable && permission.secondary"
-                  :disabled="sync_up.editable && !permission.secondary"
-                  @keyup.enter="validateForm()"
-                  :rules="[$rules.obligatoria('Ciudad de Expedición')]"
-                  >
-                </v-select>
-              </v-col>
-              <v-col cols="12" md="4">
-                <v-text-field
-                  dense
-                  v-model="affiliate.registration"
-                  label="Matrícula"
-                  :readonly="!sync_up.editable || !permission.secondary"
-                  :outlined="sync_up.editable && permission.secondary"
-                  :disabled="sync_up.editable && !permission.secondary"
-                  @keyup.enter="validateForm()"
-                  :rules="[$rules.longitudMinima(5),$rules.longitudMaxima(15)]"
-                >
-                </v-text-field>
-              </v-col>
-              <v-col cols="12" md="5" >
                 <v-text-field
                   dense
                   v-model="affiliate.due_date"
@@ -172,7 +143,7 @@
                 >
                 </v-text-field>
               </v-col>
-              <v-col cols="12" md="3">
+              <v-col cols="12" md="4">
                 <v-checkbox
                   dense
                   v-model="affiliate.is_duedate_undefined"
@@ -182,6 +153,19 @@
                   :disabled="sync_up.editable && !permission.secondary"
                 >
                 </v-checkbox>
+              </v-col>
+              <v-col cols="12" md="4" >
+                <v-text-field
+                  dense
+                  v-model="affiliate.registration"
+                  label="Matrícula"
+                  :readonly="!sync_up.editable || !permission.secondary"
+                  :outlined="sync_up.editable && permission.secondary"
+                  :disabled="sync_up.editable && !permission.secondary"
+                  @keyup.enter="validateForm()"
+                  :rules="[$rules.longitudMinima(5),$rules.longitudMaxima(15)]"
+                >
+                </v-text-field>
               </v-col>
               <v-col cols="12" md="4">
                 <v-select
@@ -200,20 +184,7 @@
                 >
                 </v-select>
               </v-col>
-              <v-col cols="12" md="6">
-                <v-text-field
-                  dense
-                  v-model="affiliate.birth_date"
-                  label="Fecha Nacimiento"
-                  hint="Día/Mes/Año"
-                  type="date"
-                  :readonly="!sync_up.editable || !permission.secondary"
-                  :outlined="sync_up.editable && permission.secondary"
-                  :disabled="sync_up.editable && !permission.secondary"
-                >
-                </v-text-field>
-              </v-col>
-              <v-col cols="12" md="6">
+              <v-col cols="12" md="4">
                 <v-select
                   dense
                   :loading="loading"
@@ -229,6 +200,19 @@
                   :rules="[$rules.obligatoria('Ciudad de Nacimiento')]"
                 >
                 </v-select>
+              </v-col>
+              <v-col cols="12" md="4">
+                <v-text-field
+                  dense
+                  v-model="affiliate.birth_date"
+                  label="Fecha Nacimiento"
+                  hint="Día/Mes/Año"
+                  type="date"
+                  :readonly="!sync_up.editable || !permission.secondary"
+                  :outlined="sync_up.editable && permission.secondary"
+                  :disabled="sync_up.editable && !permission.secondary"
+                >
+                </v-text-field>
               </v-col>
             </v-row>
           </v-container>
@@ -602,7 +586,7 @@ export default {
         this.visible = false;
       }
     },
-    validateFormProfile() { 
+    validateFormProfile() {
         if (!this.sync_up.editable) {
           this.sync_up.editable = true;
         } else {

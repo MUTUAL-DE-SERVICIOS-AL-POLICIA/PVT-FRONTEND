@@ -12,7 +12,7 @@
                     <v-btn icon dark @click="close()">
                         <v-icon>mdi-close</v-icon>
                     </v-btn>
-                    <v-toolbar-title>IMPORTACIÓN {{type_import.name}}</v-toolbar-title>
+                    <v-toolbar-title>IMPORTACIÓN {{item_import.name}}</v-toolbar-title>
                 </v-toolbar>
                 <v-row justify="center" class="mt-5">
                     <v-col cols="8">
@@ -283,7 +283,7 @@ export default {
         GlobalLoading
     },
     data: () => ({
-        list_months_not_import: [],
+        //list_months_not_import: [],
         import_export: {},
         e1: 1, // current_step
         month_selected: null,
@@ -353,10 +353,14 @@ export default {
             required: true,
             default: false
         },
-        type_import: {
+        item_import: {
             type: Object,
             required: true,
             default: {}
+        },
+        list_months_not_import: {
+            type: Array,
+            required: true
         },
         year_selected: null,
     },
@@ -370,7 +374,7 @@ export default {
     },
     watch: {
         dialog: function() {
-            this.getSimpleMonths()
+            //this.getSimpleMonths()
         },
         show: function() {
             if(this.e1 == 2) {
@@ -393,7 +397,7 @@ export default {
             formData.append("date_payroll", this.dateFormat)
             try {
                 if(this.month_selected != null) {
-                    let res = await this.$axios.post(`${this.type_import.route_upload_file}`,
+                    let res = await this.$axios.post(`${this.item_import.route_upload_file}`,
                         formData
                     )
                     if(res.payload.successfully) {
@@ -417,27 +421,27 @@ export default {
                 this.$toast.error("Hubo un error")
             }
         },
-        async getSimpleMonths() { // Obtener meses no importados
-            try {
-                let res = await this.$axios.post(`${this.type_import.route_get_months}`,{
-                    period_year: this.year_selected,
-                    with_data_count: false
-                });
-                let months_not_import = []
-                for (let i = 0; i < res.payload.list_months.length; i++) {
-                    if (res.payload.list_months[i].state_importation == false) {
-                        months_not_import.push(res.payload.list_months[i])
-                    }
-                }
-                this.list_months_not_import = months_not_import
-            } catch(e) {
-                console.log(e)
-                this.$toast.error("Hubo un error")
-            }
-        },
+        // async getSimpleMonths() { // Obtener meses no importados
+        //     try {
+        //         let res = await this.$axios.post(`${this.item_import.route_get_months}`,{
+        //             period_year: this.year_selected,
+        //             with_data_count: false
+        //         });
+        //         let months_not_import = []
+        //         for (let i = 0; i < res.payload.list_months.length; i++) {
+        //             if (res.payload.list_months[i].state_importation == false) {
+        //                 months_not_import.push(res.payload.list_months[i])
+        //             }
+        //         }
+        //         this.list_months_not_import = months_not_import
+        //     } catch(e) {
+        //         console.log(e)
+        //         this.$toast.error("Hubo un error")
+        //     }
+        // },
         async importProgressBar() {
             try {
-                let res = await this.$axios.post(`${this.type_import.route_import_progressBar}`,{
+                let res = await this.$axios.post(`${this.item_import.route_import_progressBar}`,{
                     date_payroll: this.dateFormat
                 });
                 this.progress = res.payload.import_progress_bar
@@ -472,7 +476,7 @@ export default {
         async rollbackContribution() {
             this.btn_rollback = true
             try {
-                let res = await this.$axios.post(`${this.type_import.route_rollback_contribution}`,{
+                let res = await this.$axios.post(`${this.item_import.route_rollback_contribution}`,{
                     date_payroll: this.dateFormat,
                 });
                 if (res.payload.valid_rollback) {
@@ -529,7 +533,7 @@ export default {
             this.show = false
             this.loading_circular = true
             try {
-                let res  = await this.$axios.post(`${this.type_import.route_validate_data}`, {
+                let res  = await this.$axios.post(`${this.item_import.route_validate_data}`, {
                     date_payroll: this.dateFormat
                 })
                 if(res.payload.successfully) {
@@ -553,7 +557,7 @@ export default {
             try {
                 this.loading_circular = true
                 this.show = false
-                let res = await this.$axios.post(`${this.type_import.route_import_payroll}`, {
+                let res = await this.$axios.post(`${this.item_import.route_import_payroll}`, {
                     date_payroll: this.dateFormat
                 })
                 if(res.payload.successfully) {
@@ -621,7 +625,7 @@ export default {
             try {
                 this.loading_circular = true
                 this.show = false
-                let res = await this.$axios.post(`${this.type_import.route_import_contribution}`, {
+                let res = await this.$axios.post(`${this.item_import.route_import_contribution}`, {
                     date_payroll: this.dateFormat
                 })
                 if(res.payload.successfully) {

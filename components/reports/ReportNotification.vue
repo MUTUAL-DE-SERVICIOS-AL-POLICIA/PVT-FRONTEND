@@ -269,7 +269,7 @@ export default {
                   const url = window.URL.createObjectURL(new Blob([response])) 
                   const link = document.createElement("a")
                   link.href = url
-                  link.setAttribute("download", this.report_selected.name_download + ".xlsx")
+                  link.setAttribute("download", this.report_selected.name_download + ".xls")
                   document.body.appendChild(link)
                   link.click()
                   this.loading = false

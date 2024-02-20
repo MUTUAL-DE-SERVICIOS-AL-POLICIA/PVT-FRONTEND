@@ -180,7 +180,7 @@ export default {
         method:"post",
         service: "/report/report_affiliates_spouses",
         type: "xls",
-        permissions: "sin-permiso",
+        permissions: "download-report-notification",
         name_download:"Reporte_Afiliados_Conyuges"
       },
       {
@@ -191,7 +191,7 @@ export default {
         method:"post",
         service: "/report/report_retirement_funds",
         type: "xls",
-        permissions: "sin-permiso",
+        permissions: "download-report-notification",
         name_download:"ReporteClasificadoresFR"
       },
       {
@@ -202,8 +202,19 @@ export default {
         method:"post",
         service: "/report/report_payments_beneficiaries",
         type: "xls",
-        permissions: "sin-permiso",
+        permissions: "download-report-notification",
         name_download:"ReportePagosDerechohabientesFR"
+      },
+      {
+        id: 6,
+        name: "Reporte de calificacion de servicios",
+        tab: 2,
+        criterios: ["start_date", "end_date"],
+        method:"post",
+        service: "/admin/get_qualification_report",
+        type: "xls",
+        permissions: "download-report-notification",
+        name_download:"Reporte_calificacion_de_servicios"
       }
     ]
   },
@@ -266,7 +277,7 @@ export default {
               )
               .then((response) => {
                 if(response.status = 200) {
-                  const url = window.URL.createObjectURL(new Blob([response])) 
+                  const url = window.URL.createObjectURL(new Blob([response]))
                   const link = document.createElement("a")
                   link.href = url
                   link.setAttribute("download", this.report_selected.name_download + ".xls")

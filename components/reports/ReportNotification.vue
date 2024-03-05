@@ -144,27 +144,77 @@ export default {
         name: "Reporte de Notificaciones Complemento Económico",
         tab: 0,
         criterios: ["start_date", "end_date"],
+        method:"post",
         service: "/notification/report_notifications",
         type: "xls",
         permissions: "download-report-notification",
+        name_download:"ReporteCE"
       },
       {
         id: 1,
         name: "Reporte de Notificaciones",
         tab: 0,
         criterios: ["start_date", "end_date", "type_report"],
+        method:"post",
         service: "/notification/report",
         type: "xls",
         permissions: "download-report-notification",
+        name_download:"ReporteNotificaciones"
       },
       {
         id: 2,
         name: "Reporte de certificación",
         tab: 1,
         criterios: ["start_date", "end_date"],
+        method:"post",
         service: "/contribution/get_report_certificate",
         type: "xls",
         permissions: "download-certifications",
+        name_download:"ReporteCertificaciones",
+      },
+      {
+        id: 3,
+        name: "Reporte de información sobre Afiliados y Cónyuges",
+        tab: 2,
+        criterios: [],
+        method:"post",
+        service: "/report/report_affiliates_spouses",
+        type: "xls",
+        permissions: "download-report-notification",
+        name_download:"Reporte_Afiliados_Conyuges"
+      },
+      {
+        id: 4,
+        name: "Reporte de Clasificadores de Fondo de Retiro",
+        tab: 2,
+        criterios: ["start_date", "end_date"],
+        method:"post",
+        service: "/report/report_retirement_funds",
+        type: "xls",
+        permissions: "download-report-notification",
+        name_download:"ReporteClasificadoresFR"
+      },
+      {
+        id: 5,
+        name: "Reporte de Pagos y Derechohabientes de Fondo de Retiro",
+        tab: 2,
+        criterios: ["start_date", "end_date"],
+        method:"post",
+        service: "/report/report_payments_beneficiaries",
+        type: "xls",
+        permissions: "download-report-notification",
+        name_download:"ReportePagosDerechohabientesFR"
+      },
+      {
+        id: 6,
+        name: "Reporte de calificacion de servicios",
+        tab: 2,
+        criterios: ["start_date", "end_date"],
+        method:"post",
+        service: "/admin/get_qualification_report",
+        type: "xls",
+        permissions: "download-report-notification",
+        name_download:"Reporte_calificacion_de_servicios"
       }
     ]
   },
@@ -215,7 +265,7 @@ export default {
             }
             if(checker) {
               this.loading = true
-              await this.$axios.post(
+              await this.$axios[this.report_selected.method](
                   this.report_selected.service,
                   {
                       type: this.report_inputs.type_report,
@@ -227,10 +277,10 @@ export default {
               )
               .then((response) => {
                 if(response.status = 200) {
-                  const url = window.URL.createObjectURL(new Blob([response])) 
+                  const url = window.URL.createObjectURL(new Blob([response]))
                   const link = document.createElement("a")
                   link.href = url
-                  link.setAttribute("download", "notifications" + ".xlsx")
+                  link.setAttribute("download", this.report_selected.name_download + ".xls")
                   document.body.appendChild(link)
                   link.click()
                   this.loading = false
@@ -285,6 +335,7 @@ export default {
       let reports_items = []
       let reports_items_notification = []
       let reports_items_certification = []
+      let reports_items_others = []
       if(this.permissionSimpleSelected.includes("download-certifications")) {
         reports_items_certification = this.reports_items.filter((item) => item.permissions == 'download-certifications')
       }
@@ -292,7 +343,11 @@ export default {
       if(this.permissionSimpleSelected.includes("download-report-notification")) {
         reports_items_notification = this.reports_items.filter((item) => item.permissions == 'download-report-notification')
       }
-      reports_items = reports_items_certification.concat(reports_items_notification)
+      if(this.reports_items.filter((item) => item.permissions == 'sin-permiso')) {
+        reports_items_others = this.reports_items.filter((item) => item.permissions == 'sin-permiso')
+        console.log(reports_items_others)
+      }
+      reports_items = reports_items_others.concat(reports_items_certification.concat(reports_items_notification))
       reports_items = reports_items.filter((item) => item.tab == this.tab)
       return reports_items
     }

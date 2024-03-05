@@ -180,7 +180,7 @@ export default {
         method:"post",
         service: "/report/report_affiliates_spouses",
         type: "xls",
-        permissions: "download-report-notification",
+        permissions: "a",
         name_download:"Reporte_Afiliados_Conyuges"
       },
       {
@@ -191,7 +191,7 @@ export default {
         method:"post",
         service: "/report/report_retirement_funds",
         type: "xls",
-        permissions: "download-report-notification",
+        permissions: "a",
         name_download:"ReporteClasificadoresFR"
       },
       {
@@ -202,7 +202,7 @@ export default {
         method:"post",
         service: "/report/report_payments_beneficiaries",
         type: "xls",
-        permissions: "download-report-notification",
+        permissions: "a",
         name_download:"ReportePagosDerechohabientesFR"
       },
       {
@@ -213,7 +213,7 @@ export default {
         method:"post",
         service: "/admin/get_qualification_report",
         type: "xls",
-        permissions: "download-report-notification",
+        permissions: "sin-permiso",
         name_download:"Reporte_calificacion_de_servicios"
       }
     ]

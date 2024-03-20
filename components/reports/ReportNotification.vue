@@ -213,7 +213,7 @@ export default {
         method:"post",
         service: "/admin/get_qualification_report",
         type: "xls",
-        permissions: "sin-permiso",
+        permissions: "service-calification",
         name_download:"Reporte_calificacion_de_servicios"
       }
     ]

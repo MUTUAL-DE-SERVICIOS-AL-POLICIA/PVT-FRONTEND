@@ -185,13 +185,13 @@ export default {
       },
       {
         id: 4,
-        name: "Reporte de Clasificadores de Fondo de Retiro",
+        name: "Reporte de Clasificadores Cuentas invividuales FR",
         tab: 2,
         criterios: ["start_date", "end_date"],
         method:"post",
         service: "/report/report_retirement_funds",
         type: "xls",
-        permissions: "a",
+        permissions: "sin-permiso",
         name_download:"ReporteClasificadoresFR"
       },
       {
@@ -202,7 +202,7 @@ export default {
         method:"post",
         service: "/report/report_payments_beneficiaries",
         type: "xls",
-        permissions: "a",
+        permissions: "sin-permiso",
         name_download:"ReportePagosDerechohabientesFR"
       },
       {

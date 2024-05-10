@@ -180,7 +180,7 @@ export default {
         method:"post",
         service: "/report/report_affiliates_spouses",
         type: "xls",
-        permissions: "a",
+        permissions: "sin-permiso",
         name_download:"Reporte_Afiliados_Conyuges"
       },
       {
@@ -346,6 +346,9 @@ export default {
       if(this.reports_items.filter((item) => item.permissions == 'sin-permiso')) {
         reports_items_others = this.reports_items.filter((item) => item.permissions == 'sin-permiso')
         console.log(reports_items_others)
+      }
+      if(this.reports_items.filter((item) => item.permissions == 'service-calification')) {
+        reports_items_others = this.reports_items.concat(this.reports_items.filter((item) => item.permissions == 'service-calification'))
       }
       reports_items = reports_items_others.concat(reports_items_certification.concat(reports_items_notification))
       reports_items = reports_items.filter((item) => item.tab == this.tab)

@@ -67,6 +67,9 @@
           <v-tab class="backgroundTab" :href="`#tab-5`" :disabled="sync_up.editable && tab != 'tab-5'">
             APORTES
           </v-tab>
+          <v-tab class="backgroundTab" :href="`#tab-6`" :disabled="sync_up.editable && tab != 'tab-6'">
+            DEVOLUCIONES
+          </v-tab>
           <v-tab-item :value="'tab-1'">
             <v-card flat tile>
               <v-card-text class="pt-0">
@@ -120,6 +123,15 @@
               </v-card-text>
             </v-card>
           </v-tab-item>
+          <v-tab-item :value="'tab-6'">
+            <v-card flat tile>
+              <v-card-text class="pt-0">
+                <Devolution
+                  :affiliate.sync="affiliate_id"
+                />
+              </v-card-text>
+            </v-card>
+          </v-tab-item>
         </v-tabs>
         <v-dialog v-model="dialog_send_credential" width="500">
           <v-card>
@@ -159,6 +171,7 @@ import Dashboard from "@/components/affiliate/Dashboard";
 import Profile from "@/components/affiliate/Profile";
 import Spouse from "@/components/affiliate/Spouse.vue";
 import ListContribution from "@/components/affiliate/ListContribution.vue";
+import Devolution from "@/components/devolution/Devolution.vue";
 export default {
   components: {
     AdditionalInformation,
@@ -166,6 +179,7 @@ export default {
     Profile,
     Spouse,
     ListContribution,
+    Devolution
   },
   props: {
     affiliate_id: {

@@ -33,6 +33,7 @@
                      v-on="on"
                      elevation="2"
                      @click="openRegisterAmount()"
+                     :disabled="isRegisterDisabled"
                   >
                      <v-icon>mdi-plus</v-icon> Registrar monto
                   </v-btn>
@@ -93,7 +94,7 @@
                               dense
                               label="Monto de la deuda"
                               :rules="[
-                                 $rules.obligatoria('Monto'),
+                                 $rules.obligatoriaExcluyendoCero(),
                                  $rules.soloNumeros('Debe ser un número')
                               ]"
                            >
@@ -145,6 +146,7 @@
                <v-btn
                   color="success"
                   @click="postRegisterDues()"
+                  :disabled="dues.length === 0"
                >
                 REGISTRAR
                </v-btn>
@@ -165,7 +167,7 @@
                               dense
                               label="Monto del pago"
                               :rules="[
-                                 $rules.obligatoria('Monto'),
+                                 $rules.obligatoriaExcluyendoCero(),
                                  $rules.soloNumeros('Monto')
                               ]"
                               v-model="amountPayment"
@@ -315,6 +317,15 @@ export default {
             ...item,
             index
          }))
+      },
+      lastItem() {
+         if(this.movements.length > 0) {
+            return this.movements[this.movements.length - 1]
+         }
+         return null
+      },
+      isRegisterDisabled() {
+         return this.lastItem && this.lastItem.balance === '0.00'
       }
    },
    mounted() {
@@ -329,7 +340,7 @@ export default {
          ) {
             this.getMovements()
          }
-      }
+      },
    },
    methods: {
       async postRegisterDues() {
@@ -372,7 +383,6 @@ export default {
                `/economic_complement/eco_com_procedure_list`
             )
             this.semesters = response.payload.eco_com_procedures
-            console.log(this.semesters)
          } catch(e) {
             console.log(e)
          }
@@ -431,8 +441,6 @@ export default {
          if(this.$refs.forRegisterDue) {
             if(this.$refs.forRegisterDue.validate()) {
                this.addDebtToRecord()
-            } else {
-               console.log("no valido")
             }
          }
       },
@@ -440,14 +448,10 @@ export default {
          if(this.$refs.forRegisterPayment) {
             if(this.$refs.forRegisterPayment.validate()) {
                this.saveRegisterMovement()
-            } else {
-               console.log("no valido")
             }
          }
       },
       addDebtToRecord() {
-         console.log(this.amountDue)
-         console.log(this.semesterDue)
          const newDue = {
             amount: this.amountDue,
             eco_com_procedure_id: this.semesterDue

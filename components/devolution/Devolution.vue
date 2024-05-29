@@ -102,7 +102,7 @@
                         </v-col>
                         <v-col cols="12" md="4">
                            <v-select
-                              v-model="semesterDue"
+                              v-model="selectedSemester"
                               dense
                               :items="semesters"
                               item-text="name"
@@ -284,7 +284,7 @@ export default {
          },
          {
             text: "SEMESTRE",
-            value: 'eco_com_procedure_id',
+            value: 'name',
             class: ["table", "white--text"]
          }
       ],
@@ -292,7 +292,6 @@ export default {
       movements: [],
       semesters: [],
       amountDue: null,
-      semesterDue: null,
       amountPayment: null,
       voucherPayment: null,
       options: {
@@ -302,6 +301,9 @@ export default {
       dialog_register_amount: false,
       dialog_register_due: false,
       dialog_delete_movement: false,
+      selectedSemester: null,
+      selectedSemesterId: null,
+      selectedSemesterName: null,
    }),
    computed: {
       duesWithNro() {
@@ -341,6 +343,18 @@ export default {
             this.getMovements()
          }
       },
+      selectedSemester: {
+         handler(newVal) {
+            const selected = this.semesters.find(semester => semester.id === newVal)
+            if(selected) {
+               this.selectedSemesterId = selected.id
+               this.selectedSemesterName = selected.name
+            } else {
+               this.selectedSemesterId = null
+               this.selectedSemesterName = null
+            }
+         }
+      }
    },
    methods: {
       async postRegisterDues() {
@@ -454,14 +468,17 @@ export default {
       addDebtToRecord() {
          const newDue = {
             amount: this.amountDue,
-            eco_com_procedure_id: this.semesterDue
+            eco_com_procedure_id: this.selectedSemesterId,
+            name: this.selectedSemesterName
          }
          this.dues.push(newDue)
          this.resetDue()
       },
       resetDue() {
          this.amountDue = null
-         this.semesterDue = null
+         this.selectedSemester = null
+         this.selectedSemesterId = null
+         this.selectedSemesterName = null
       },
       resetPayment() {
          this.dialog_register_amount = false

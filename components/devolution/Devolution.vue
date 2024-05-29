@@ -33,6 +33,7 @@
                      v-on="on"
                      elevation="2"
                      @click="openRegisterAmount()"
+                     :disabled="isRegisterDisabled"
                   >
                      <v-icon>mdi-plus</v-icon> Registrar monto
                   </v-btn>
@@ -54,7 +55,7 @@
                   prevIcon: 'mdi-minus',
                   nextIcon: 'mdi-plus',
                   'items-per-page-text': 'Filas por página',
-                  itemsPerPageOptions: [12, 30, 50, 100]
+                  itemsPerPageOptions: [10, 20, 30, 100]
                }"
                :loading="loading_table"
                no-data-text="No hay datos disponibles"
@@ -66,7 +67,7 @@
                            icon
                            small
                            v-on="on"
-                           @click="deletedMovement(item.id)"
+                           @click="openDeleteMovement()"
                            color="error"
                         >
                            <v-icon>mdi-delete</v-icon>
@@ -93,8 +94,8 @@
                               dense
                               label="Monto de la deuda"
                               :rules="[
-                                 $rules.obligatoria('Monto'),
-                                 $rules.soloNumeros('Monto')
+                                 $rules.obligatoriaExcluyendoCero(),
+                                 $rules.soloNumeros('Debe ser un número')
                               ]"
                            >
                            </v-text-field>
@@ -145,6 +146,7 @@
                <v-btn
                   color="success"
                   @click="postRegisterDues()"
+                  :disabled="dues.length === 0"
                >
                 REGISTRAR
                </v-btn>
@@ -165,8 +167,10 @@
                               dense
                               label="Monto del pago"
                               :rules="[
-                                 $rules.obligatoria('Monto')
+                                 $rules.obligatoriaExcluyendoCero(),
+                                 $rules.soloNumeros('Monto')
                               ]"
+                              v-model="amountPayment"
                            >
                            </v-text-field>
                         </v-col>
@@ -177,6 +181,7 @@
                               :rules="[
                                  $rules.obligatoria('Nro de comprobante')
                               ]"
+                              v-model="voucherPayment"
                            >
                            </v-text-field>
                         </v-col>
@@ -205,7 +210,7 @@
             </v-card-title>
             <v-card-actions>
                <v-spacer></v-spacer>
-               <v-btn color="error">Eliminar</v-btn>
+               <v-btn color="error" @click="deletedMovement()">Eliminar</v-btn>
                <v-btn color="success" @click="dialog_delete_movement = false">Cancelar</v-btn>
             </v-card-actions>
          </v-card>
@@ -288,9 +293,11 @@ export default {
       semesters: [],
       amountDue: null,
       semesterDue: null,
+      amountPayment: null,
+      voucherPayment: null,
       options: {
          page: 1,
-         itemsPerPage: 12,
+         itemsPerPage: 10,
       },
       dialog_register_amount: false,
       dialog_register_due: false,
@@ -310,6 +317,15 @@ export default {
             ...item,
             index
          }))
+      },
+      lastItem() {
+         if(this.movements.length > 0) {
+            return this.movements[this.movements.length - 1]
+         }
+         return null
+      },
+      isRegisterDisabled() {
+         return this.lastItem && this.lastItem.balance === '0.00'
       }
    },
    mounted() {
@@ -322,9 +338,9 @@ export default {
             newVal.page != oldVal.page ||
             newVal.itemsPerPage != oldVal.itemsPerPage
          ) {
-
+            this.getMovements()
          }
-      }
+      },
    },
    methods: {
       async postRegisterDues() {
@@ -367,26 +383,42 @@ export default {
                `/economic_complement/eco_com_procedure_list`
             )
             this.semesters = response.payload.eco_com_procedures
-            console.log(this.semesters)
          } catch(e) {
             console.log(e)
          }
       },
-      async deletedMovement(movement_id) {
-         console.log(movement_id)
-         this.dialog_delete_movement = true
-         // aqui mostrar un mensaje o un dialog para preguntar si quiere eliminar
-         // try {
-         //    let response = await this.$axios.delete(
-         //       "/"
-         //    )
-         //    // aqui mostrar eliminado
-         // } catch(e) {
-         //    console.log(e)
-         // }
+      async deletedMovement() {
+         try {
+             let response = await this.$axios.delete(
+                `/economic_complement/delete_movement/${this.affiliate}`
+             )
+             this.getMovements()
+             this.reset()
+             this.$toast.success("Se eliminó correctamente.")
+         } catch(e) {
+            this.$toast.error("Ocurrió una eliminación durante la eliminación.")
+             console.log(e)
+         }
       },
       async saveRegisterMovement() {
-         alert("voy a registrar un movimiento")
+         try {
+            let response = await this.$axios.post(
+               "/economic_complement/register_direct_payment",
+               {
+                  affiliate_id: this.affiliate,
+                  amount: this.amountPayment,
+                  voucher: this.voucherPayment
+               }
+            )
+            this.resetPayment()
+            this.getMovements()
+            this.$toast.success("Se registró correctamente el pago.")
+         } catch(e) {
+            this.$toast.error(
+               "Ocurrió un error durante el registro."
+            )
+         } finally {
+         }
       },
       openRegisterDue() {
          this.dialog_register_due = true
@@ -394,17 +426,21 @@ export default {
       openRegisterAmount() {
          this.dialog_register_amount = true
       },
+      openDeleteMovement() {
+         this.dialog_delete_movement = true
+      },
       reset() {
          this.dialog_register_amount = false
          this.dialog_register_due = false
+         this.dialog_delete_movement = false
          this.dues = []
+         this.resetPayment()
+         this.resetDue()
       },
       validateFormDue() {
          if(this.$refs.forRegisterDue) {
             if(this.$refs.forRegisterDue.validate()) {
                this.addDebtToRecord()
-            } else {
-               console.log("no valido")
             }
          }
       },
@@ -412,14 +448,10 @@ export default {
          if(this.$refs.forRegisterPayment) {
             if(this.$refs.forRegisterPayment.validate()) {
                this.saveRegisterMovement()
-            } else {
-               console.log("no valido")
             }
          }
       },
       addDebtToRecord() {
-         console.log(this.amountDue)
-         console.log(this.semesterDue)
          const newDue = {
             amount: this.amountDue,
             eco_com_procedure_id: this.semesterDue
@@ -430,6 +462,11 @@ export default {
       resetDue() {
          this.amountDue = null
          this.semesterDue = null
+      },
+      resetPayment() {
+         this.dialog_register_amount = false
+         this.amountPayment = null
+         this.voucherPayment = null
       }
    }
 }

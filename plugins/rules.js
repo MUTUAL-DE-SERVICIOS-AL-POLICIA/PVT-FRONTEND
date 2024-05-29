@@ -11,6 +11,12 @@ export default (context, inject) => {
     obligatoriaIncluyendoCero(msg) {
       return v => (!!v || v === 0) || (msg || 'Campo requerido')
     },
+    obligatoriaExcluyendoCero(msg) {
+      return v => {
+        const validNumber = /^[1-9]\d*$/;
+        return validNumber.test(v) || (msg || 'El campo no puede ser cero o contener ceros a la izquierda');
+      }
+    },
     obligatoriaSiCondicion(condicion, msg) {
       return v => (!!v || !condicion) || (msg || 'Campo requerido')
     },

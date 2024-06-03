@@ -180,18 +180,18 @@ export default {
         method:"post",
         service: "/report/report_affiliates_spouses",
         type: "xls",
-        permissions: "a",
+        permissions: "sin-permiso",
         name_download:"Reporte_Afiliados_Conyuges"
       },
       {
         id: 4,
-        name: "Reporte de Clasificadores de Fondo de Retiro",
+        name: "Reporte de Clasificadores Cuentas invividuales FR",
         tab: 2,
         criterios: ["start_date", "end_date"],
         method:"post",
         service: "/report/report_retirement_funds",
         type: "xls",
-        permissions: "a",
+        permissions: "sin-permiso",
         name_download:"ReporteClasificadoresFR"
       },
       {
@@ -202,7 +202,7 @@ export default {
         method:"post",
         service: "/report/report_payments_beneficiaries",
         type: "xls",
-        permissions: "a",
+        permissions: "sin-permiso",
         name_download:"ReportePagosDerechohabientesFR"
       },
       {
@@ -213,7 +213,7 @@ export default {
         method:"post",
         service: "/admin/get_qualification_report",
         type: "xls",
-        permissions: "sin-permiso",
+        permissions: "service-calification",
         name_download:"Reporte_calificacion_de_servicios"
       },
       {
@@ -372,6 +372,9 @@ export default {
       if(this.reports_items.filter((item) => item.permissions == 'sin-permiso')) {
         reports_items_others = this.reports_items.filter((item) => item.permissions == 'sin-permiso')
         console.log(reports_items_others)
+      }
+      if(this.reports_items.filter((item) => item.permissions == 'service-calification')) {
+        reports_items_others = this.reports_items.concat(this.reports_items.filter((item) => item.permissions == 'service-calification'))
       }
       reports_items = reports_items_others.concat(reports_items_certification.concat(reports_items_notification))
       reports_items = reports_items.filter((item) => item.tab == this.tab)

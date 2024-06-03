@@ -39,6 +39,11 @@
     "permission": "read-import-contribution"
   },
   {
+    "title": "Préstamos en mora",
+    "icon": "mdi-cash",
+    "href": "/affiliate/PageImportationLoans"
+  },
+  {
     "title": "Acceso",
     "icon": "mdi-key",
     "permission": "show-user",

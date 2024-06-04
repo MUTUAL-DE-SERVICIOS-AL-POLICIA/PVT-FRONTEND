@@ -3,9 +3,9 @@
 </template>
 
 <script>
-import ImportLoans from "@/components/affiliate/ImportLoans.vue";
+import ImportLoans from "@/components/affiliate/ImportLoans";
 export default {
-  name: "MainImportLoans",
+  name: "PageImportLoans",
   components: {
     ImportLoans,
   },

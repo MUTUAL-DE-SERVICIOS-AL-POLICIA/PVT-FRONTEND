@@ -7,6 +7,7 @@
   {
     "title": "Importación de Planillas",
     "icon": "mdi-bank-transfer",
+    "permission": "read-import-payroll",
     "group": [
       {
         "href": "/contribution/PageImportationCommand",
@@ -39,9 +40,10 @@
     "permission": "read-import-contribution"
   },
   {
-    "title": "Préstamos en mora",
+    "title": "Importación Mora",
     "icon": "mdi-cash",
-    "href": "/affiliate/PageImportationLoans"
+    "href": "/affiliate/PageImportationLoans",
+    "permission": "create-import-mora"
   },
   {
     "title": "Acceso",

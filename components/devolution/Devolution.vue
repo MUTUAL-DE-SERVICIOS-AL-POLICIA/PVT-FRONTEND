@@ -4,9 +4,9 @@
          <v-col>
             <v-toolbar-title>DEVOLUCIONES</v-toolbar-title>
          </v-col>
-         <!-- BOTÓN DE REGISTRO DE LA DEUDA -->
          <v-col cols="6" class="text-right">
             <v-spacer></v-spacer>
+            <!-- BOTÓN DE REGISTRO DE LA DEUDA -->
             <v-tooltip top>
                <template v-slot:activator="{ on }">
                   <v-btn
@@ -25,6 +25,7 @@
                   <span>Registrar una deuda</span>
                </div>
             </v-tooltip>
+            <!-- BOTÓN DE REGISTRO DE PAGO -->
             <v-tooltip top>
                <template v-slot:activator="{ on }">
                   <v-btn
@@ -64,7 +65,7 @@
                no-data-text="No hay datos disponibles"
             >
                <template v-slot:item="props">
-                  <tr :class="props.isExpanded ? 'secondary white--text pointer-row': ''" >
+                  <tr :class="props.isExpanded ? 'secondary white--text pointer-row': 'pointer-row'" >
                      <td @click.stop="expand(props)">{{ props.item.correlative }}</td>
                      <td @click.stop="expand(props)">{{ props.item.description }}</td>
                      <td @click.stop="expand(props)">{{ props.item.amount }}</td>
@@ -106,7 +107,7 @@
                   <tr v-if="item.description == 'DEUDA'">
                      <td :colspan="6" class="px-0">
                         <v-data-table
-                           :items="dues_list"
+                           :items="detail"
                            :hide-default-footer="true"
                            :loading="loading_sub_table"
                         >
@@ -127,10 +128,56 @@
                         </v-data-table>
                      </td>
                   </tr>
+                  <tr v-else-if="item.description == 'PAGO MEDIANTE TRÁMITE'">
+                     <td :colspan="6" class="px-0">
+                        <v-data-table
+                           :items="detail"
+                           :hide-default-footer="true"
+                           :loading="loading_sub_table"
+                        >
+                           <template v-slot:body="{ items }">
+                              <tbody>
+                                 <tr>
+                                    <td v-for="(header, index) in headers_payment_through_process" :key="index" class="font-weight-bold tertiary">
+                                       {{ header.text }}
+                                    </td>
+                                 </tr>
+                                 <tr v-for="(it,index) in items" :key="index" style="background-color: #EBEFF1">
+                                    <td>{{ it.procedure }}</td>
+                                 </tr>
+                              </tbody>
+                           </template>
+                        </v-data-table>
+                     </td>
+                  </tr>
+                  <tr v-else>
+                     <td :colspan="6" class="px-0">
+                        <v-data-table
+                           :items="detail"
+                           :hide-default-footer="true"
+                           :loading="loading_sub_table"
+                        >
+                           <template v-slot:body="{ items }">
+                              <tbody>
+                                 <tr>
+                                    <td v-for="(header, index) in headers_direct_payments" :key="index" class="font-weight-bold tertiary">
+                                       {{  header.text }}
+                                    </td>
+                                 </tr>
+                                 <tr v-for="(it, index) in items" :key="index" style="background-color: #EBEFF1">
+                                    <td>{{ it.voucher }}</td>
+                                    <td>{{ it.payment_date }}</td>
+                                 </tr>
+                              </tbody>
+                           </template>
+                        </v-data-table>
+                     </td>
+                  </tr>
                </template>
             </v-data-table>
          </v-col>
       </v-row>
+      <!-- REGISTRO DE DEUDA -->
       <v-dialog v-model="dialog_register_due" width="600">
          <v-card>
             <v-card-text>
@@ -205,6 +252,7 @@
             </v-card-actions>
          </v-card>
       </v-dialog>
+      <!-- REGISTRO DE PAGO -->
       <v-dialog v-model="dialog_register_amount" width="600">
          <v-card>
             <v-card-text>
@@ -412,18 +460,37 @@ export default {
          {
             text: 'NRO',
             value: 'nro',
-            class: ["table", "white--text"]
+            class: ["font-weight-bold tertiary"]
          },
          {
             text: "MONTO",
             value: 'amount',
-            class: ["table", "white--text"]
+            class: ["font-weight-bold tertiary"]
          },
          {
             text: "SEMESTRE",
             value: 'name',
+            class: ["font-weight-bold tertiary"]
+         },
+      ],
+      headers_direct_payments: [
+         {
+            text: "COMPROBANTE",
+            value: "voucher",
             class: ["table", "white--text"]
          },
+         {
+            text: "FECHA DE PAGO",
+            value: "payment_date",
+            class: ["table", "white--text"]
+         }
+      ],
+      headers_payment_through_process: [
+         {
+            text: "SEMESTRE",
+            value: "procedure",
+            class: ["table", "white--text"]
+         }
       ],
       percentages: [
          {
@@ -468,7 +535,7 @@ export default {
          },
       ],
       dues: [],
-      dues_list: [],
+      detail: [],
       movements: [],
       semesters: [],
       amount_due: null,
@@ -658,9 +725,8 @@ export default {
             )
             const error = response.error
             if(!error) {
-               this.dues_list = response.payload.list_dues
+               this.detail = response.payload.detail
             }
-            console.log(this.dues_list)
          } catch(e) {
             console.log(e)
          } finally {
@@ -699,7 +765,6 @@ export default {
       },
       openPaymentCommitmentRecord(movement_id) {
          this.movement_id = movement_id
-         console.log(this.movement_id)
          this.dialog_payment_commitment_record = true
       },
       reset() {
@@ -755,7 +820,7 @@ export default {
                this.postRegisterCommited()
             }
          }
-      }
+      },
    }
 }
 

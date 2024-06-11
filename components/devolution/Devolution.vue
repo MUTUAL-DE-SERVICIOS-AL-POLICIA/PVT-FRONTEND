@@ -721,7 +721,7 @@ export default {
          try {
             this.loading_sub_table = true
             let response = await this.$axios.get(
-               `/economic_complement/show_dues/${movement_id}`
+               `/economic_complement/show_details/${movement_id}`
             )
             const error = response.error
             if(!error) {

@@ -86,19 +86,33 @@
                            </template>
                            <span>Eliminar registro</span>
                         </v-tooltip>
-                        <v-tooltip bottom v-if="props.item.description == 'DEUDA'">
+                        <v-tooltip bottom v-if="props.item.description == 'DEUDA' && !props.item.has_payment_commitment">
                            <template v-slot:activator="{ on }">
                               <v-btn
                                  icon
                                  small
                                  v-on="on"
-                                 @click="openPaymentCommitmentRecord(props.item.id)"
+                                 @click="openPaymentCommitmentRecord(props.item.id, 'crear')"
                                  color="success"
                               >
                                  <v-icon>mdi-file-plus</v-icon>
                               </v-btn>
                            </template>
                            <span>Crear compromiso de pago</span>
+                        </v-tooltip>
+                        <v-tooltip bottom v-else-if="props.item.description == 'DEUDA' && props.item.has_payment_commitment">
+                           <template v-slot:activator="{ on }">
+                              <v-btn
+                                 icon
+                                 small
+                                 v-on="on"
+                                 @click="openPaymentCommitmentRecord(props.item.id, 'editar')"
+                                 color="info"
+                              >
+                                 <v-icon>mdi-pencil-box</v-icon>
+                              </v-btn>
+                           </template>
+                           <span>Editar compromiso de pago</span>
                         </v-tooltip>
                      </td>
                   </tr>
@@ -353,7 +367,7 @@
                   <v-form ref="forRegisterCommited">
                      <v-row>
                         <v-col cols="12">
-                           <v-toolbar-title>CREAR COMPROMISO DE PAGO</v-toolbar-title>
+                           <v-toolbar-title>{{ word }} COMPROMISO DE PAGO</v-toolbar-title>
                         </v-col>
                         <v-col cols="12" md="4">
                            <v-select
@@ -557,7 +571,8 @@ export default {
       selected_semester_id: null,
       selected_semester_name: null,
       selected_percentage: null,
-      expanded: []
+      expanded: [],
+      word: 'CREAR'
    }),
    computed: {
       duesWithNro() {
@@ -752,6 +767,7 @@ export default {
             if(!error) this.$toast.success(message)
             else this.$toast.error(message)
             this.reset()
+            this.getMovements()
          } catch(e) {
             this.$toast.error(
                "Ocurrió un error durante el registro."
@@ -768,7 +784,10 @@ export default {
       openDeleteMovement() {
          this.dialog_delete_movement = true
       },
-      openPaymentCommitmentRecord(movement_id) {
+      openPaymentCommitmentRecord(movement_id, type) {
+         if(type == 'editar') {
+            this.word = 'EDITAR'
+         } else this.word = 'CREAR'
          this.movement_id = movement_id
          this.dialog_payment_commitment_record = true
       },
@@ -778,6 +797,7 @@ export default {
          this.dialog_delete_movement = false
          this.dialog_payment_commitment_record = false
          this.dues = []
+         this.percentages = []
          this.resetPayment()
          this.resetDue()
       },

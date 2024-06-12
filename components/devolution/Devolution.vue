@@ -581,7 +581,9 @@ export default {
          return null
       },
       isRegisterDisabled() {
-         return this.lastItem && this.lastItem.balance === '0.00'
+         return this.movements.length == 0 ||
+                !this.movements.some(e => e.description == 'DEUDA') ||
+               (this.lastItem && this.lastItem.balance === '0.00')
       },
       permissionSimpleSelected() {
          return this.$store.getters.permissionSimpleSelected
@@ -662,11 +664,14 @@ export default {
       async getSemesters() {
          try {
             let response = await this.$axios.get(
-               `/economic_complement/eco_com_procedure_list`
+               `/economic_complement/economic_complement_list/${this.affiliate}`
             )
             const error = response.error
+            const message = response.message
             if(!error) {
                this.semesters = response.payload.eco_com_procedures
+            } else {
+               this.$toast.warning(message)
             }
          } catch(e) {
             console.log(e)

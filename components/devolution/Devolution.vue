@@ -797,7 +797,6 @@ export default {
          this.dialog_delete_movement = false
          this.dialog_payment_commitment_record = false
          this.dues = []
-         this.percentages = []
          this.resetPayment()
          this.resetDue()
       },

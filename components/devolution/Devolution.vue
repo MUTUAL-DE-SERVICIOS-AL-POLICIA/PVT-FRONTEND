@@ -208,7 +208,7 @@
                               label="Monto de la deuda"
                               :rules="[
                                  $rules.obligatoriaExcluyendoCero(),
-                                 $rules.soloNumeros('Debe ser un número')
+                                 $rules.soloNumerosFloat('Debe ser un número')
                               ]"
                            >
                            </v-text-field>
@@ -282,7 +282,7 @@
                               label="Monto del pago"
                               :rules="[
                                  $rules.obligatoriaExcluyendoCero(),
-                                 $rules.soloNumeros('Monto')
+                                 $rules.soloNumerosFloat('Monto')
                            ]"
                               v-model="amount_payment"
                            >

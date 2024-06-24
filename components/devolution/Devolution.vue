@@ -679,7 +679,7 @@ export default {
       async getSemesters() {
          try {
             let response = await this.$axios.get(
-               `/economic_complement/economic_complement_list/${this.affiliate}`
+               `/economic_complement/eco_com_procedure_list/`
             )
             const error = response.error
             const message = response.message

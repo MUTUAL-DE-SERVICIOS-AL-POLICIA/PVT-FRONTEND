@@ -24,7 +24,7 @@
         "href": "/contribution/PageImportationTranscript",
         "title": "Transcripciones",
         "icon": "mdi-account-outline",
-        "permission": "read-import-payroll-transcipt"
+        "permission": "read-import-payroll-transcript"
       }, {
         "href": "/affiliate/PageImportationAffiliateAvailability",
         "title": "Disponibilidad",

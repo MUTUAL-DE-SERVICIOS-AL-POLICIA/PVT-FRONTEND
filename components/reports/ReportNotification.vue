@@ -215,6 +215,17 @@ export default {
         type: "xls",
         permissions: "service-calification",
         name_download:"Reporte_calificacion_de_servicios"
+      },
+      {
+        id: 7,
+        name: "Reporte de pagos en demasía",
+        tab: 2,
+        criterios: [],
+        method: "get",
+        service: "/economic_complement/report_eco_com_movement",
+        type: "xls",
+        permissions: "sin-permiso",
+        name_download: "Reporte_pagos_demasía"
       }
     ]
   },
@@ -265,31 +276,46 @@ export default {
             }
             if(checker) {
               this.loading = true
-              await this.$axios[this.report_selected.method](
+              let request = null
+              if(this.report_selected.method == "post")
+              {
+                request = this.$axios[this.report_selected.method](
+                    this.report_selected.service,
+                    {
+                        type: this.report_inputs.type_report,
+                        start_date: this.report_inputs.start_date,
+                        end_date: this.report_inputs.end_date,
+                    },
+                    {'Accept': 'application/vnd.ms-excel'},
+                    {'responseType': 'blob'}
+                )
+              } else {
+                request = this.$axios[this.report_selected.method](
                   this.report_selected.service,
-                  {
-                      type: this.report_inputs.type_report,
-                      start_date: this.report_inputs.start_date,
-                      end_date: this.report_inputs.end_date,
-                  },
-                  {'Accept': 'application/vnd.ms-excel'},
-                  {'responseType': 'blob'}
-              )
-              .then((response) => {
-                if(response.status = 200) {
-                  const url = window.URL.createObjectURL(new Blob([response]))
-                  const link = document.createElement("a")
-                  link.href = url
-                  link.setAttribute("download", this.report_selected.name_download + ".xls")
-                  document.body.appendChild(link)
-                  link.click()
-                  this.loading = false
-                }
-              })
-              .catch((e) => {
-                this.loading = false;
-                this.$toast.error("Hubo un error")
-              })
+                  { 'Accpet': 'application/vnd.ms-excel'},
+                  { 'responseType': 'blob'}
+                )
+              }
+              if(request) {
+                request.then((response) => {
+                  if(response.status = 200) {
+                    const url = window.URL.createObjectURL(new Blob([response]))
+                    const link = document.createElement("a")
+                    link.href = url
+                    link.setAttribute("download", this.report_selected.name_download + ".xls")
+                    document.body.appendChild(link)
+                    link.click()
+                    this.loading = false
+                  }
+                })
+                .catch((e) => {
+                  this.loading = false;
+                  this.$toast.error("Hubo un error")
+                })
+              } else {
+                this.loading = false
+                console.log("algun error en el método de la petición")
+              }
             } else {
               this.loading = false
               this.$toast.error("Falta seleccionar criterios")

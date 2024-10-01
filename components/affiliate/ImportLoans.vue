@@ -74,7 +74,7 @@ export default {
         ...this.information.parameters,
         {
           title: "NOMBRE ARCHIVO",
-          body: `tipo.csv Ejemplo ${this.actions[this.tab].nameFile}`
+          body: `tipo.csv Ejemplo ${this.actions[this.tab].name_file}`
         }
       ];
     },

@@ -96,3 +96,63 @@ Para ejecutar el proyecto, utilizamos el administrador de paquetes yarn.
 - Hacer correr el proyecto:
 
     `yarn dev`
+
+## Desplegar el proyecto con Docker
+
+- Construcción de la imagen, ejecutar dentro del directorio del proyecto
+
+```sh
+docker build --no-cache -t muserpol/frontend:2.0 .
+```
+
+- Crear el contenedor para instalar las dependencias
+
+```sh
+docker run -it -p 3001:5000 --name pvt-frontend -v /path/to/your/code/PVT-FRONTEND:/usr/src/nuxt-app muserpol/frontend:2.0 /bin/sh
+```
+- Una vez ingresado al contenedor ejecutar la instalacion de las dependencias
+
+```sh
+npm install
+```
+
+```sh
+npm run build
+```
+
+- Salir del contenedor
+
+```sh
+exit
+```
+
+- Eliminar el contenedor
+
+```sh
+docker rm -f pvt-frontend
+```
+
+- Levantar el contenedor listo para produccion
+
+```sh
+docker run -d -p 3001:5000 --name pvt-frontend -v /path/to/your/code/PVT-FRONTEND:/usr/src/nuxt-app muserpol/frontend:2.0
+```
+
+# Actualización de cambios
+
+- Descargar cambios desde fuera del contenedor
+- ingresar al contenedor y compilar
+
+```sh
+docker exec -it id_contenedor /bin/sh
+```
+
+```sh
+npm run build
+```
+
+- Reiniciar el contenedor
+
+```sh
+docker restart id_contenedor
+```

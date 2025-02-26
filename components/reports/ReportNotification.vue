@@ -152,7 +152,7 @@ export default {
         name: "Reporte de información sobre Afiliados y Cónyuges",
         tab: 2,
         criterios: [],
-        method:"post",
+        method:"get",
         service: "/report/report_affiliates_spouses",
         type: "xls",
         permissions: "sin-permiso",
@@ -160,7 +160,7 @@ export default {
       },
       {
         id: 4,
-        name: "Reporte de Clasificadores Cuentas invividuales FR",
+        name: "Reporte de Clasificadores Cuentas Individuales FR",
         tab: 2,
         criterios: ["start_date", "end_date"],
         method:"post",

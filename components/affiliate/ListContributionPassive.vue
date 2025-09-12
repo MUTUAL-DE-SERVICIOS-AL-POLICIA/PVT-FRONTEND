@@ -71,6 +71,7 @@
         item-key="year"
         :itemsPerPage="contributions.length"
         hide-default-footer
+        dense
       >
         <template v-slot:item="props">
           <tr :class="props.isExpanded ? 'secondary white--text': ''">
@@ -86,7 +87,9 @@
                 :items="item.contributions"
                 :hide-default-footer="true"
                 :itemsPerPage="12"
-                class="tertiary">
+                class="tertiary"
+                dense 
+              >
                 <template v-slot:body="{ items }">
                   <tbody>
                     <tr v-for="header in headersDetail" :key="header.id">

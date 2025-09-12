@@ -1,47 +1,24 @@
 <template>
   <v-container fluid>
     <v-form>
-      <v-row >
-        <v-col cols="12"  class="text-left mt-0">
+      <v-row>
+        <v-col cols="12" class="text-left mt-0">
           <v-toolbar-title>APORTES</v-toolbar-title>
         </v-col>
-        <v-col cols="4">
-          <span
-            ><strong class="text-uppercase">Fecha ingreso a la Institución Policial: </strong
-            >{{
-              affiliate.date_entry != null && affiliate.date_entry.trim() != ""
-                ? $filters.date(affiliate.date_entry)
-                : "Sin Registro"
-            }}</span
-          ><br />
-        </v-col>
-        <v-col cols="4">
-          <span
-            ><strong class="text-uppercase">Fecha desvinculación: </strong
-            >{{
-              affiliate.date_derelict != null &&
-              affiliate.date_derelict.trim() != ""
-                ? $filters.date(affiliate.date_derelict)
-                : "Sin Registro"
-            }}</span
-          ><br />
-        </v-col>
-        <v-col cols="4" >
-          <span
-            ><strong class="text-uppercase">Último período según Listas de Revista: </strong
-            >{{
-              affiliate.date_last_contribution != null &&
-              affiliate.date_last_contribution.trim() != ""
-                ? $filters.date(affiliate.date_last_contribution)
-                : "Sin Registro"
-            }}</span
-          ><br />
+
+        <v-col cols="12" class="ma-0 pa-0">
+          <v-card-text>
+            <div v-for="(date, label) in formattedDates" :key="label">
+              <strong class="text-uppercase">{{ label }}: </strong>
+              {{ date }}
+            </div>
+          </v-card-text>
         </v-col>
       </v-row>
       <template v-if="!state.active">
-        <v-tabs left background-color="backgroundTab" class= "pt-2" v-model="tab">
-        <v-tab :href="`#tab-1`">APORTES ACTIVO</v-tab>
-        <v-tab :href="`#tab-2`">APORTES PASIVO</v-tab>
+        <v-tabs left background-color="backgroundTab" class= "pt-2" v-model="tab" grow>
+        <v-tab :href="`#tab-1`"><v-icon left>mdi-account-check</v-icon> Aportes Activo</v-tab>
+        <v-tab :href="`#tab-2`"><v-icon left>mdi-account-off</v-icon> Aportes Pasivo</v-tab>
           <v-tab-item :value="'tab-1'">
             <ListContributionActive :affiliate.sync="affiliate" :show_detail="show_detail" :state.sync="state"/>
           </v-tab-item>
@@ -154,8 +131,21 @@ export default {
       {name_tab:"PASIVO", value:"1"}
     ],
   }),
-  mounted() {
+  computed: {
+    formattedDates() {
+      const fields = {
+        "Fecha de ingreso a la Institución Policial": this.affiliate.date_entry,
+        "Fecha de desvinculación": this.affiliate.date_derelict,
+        "Último período según Listas de Revista": this.affiliate.date_last_contribution,
+      };
 
+      const result = {};
+      for (const label in fields) {
+        const value = fields[label];
+        result[label] = value && value.trim() !== "" ? this.$filters.date(value) : "Sin Registro";
+      }
+      return result;
+    }
   },
   methods: {
 

@@ -1,5 +1,43 @@
 <template>
-<div>
+  <div>
+    <!-- Eliminación en rango--->
+    <v-card elevation="1" flat outlined class="ma-2 pa-2">
+      <div class="d-flex align-center">
+        <strong>Seleccione el rango de aportes a eliminar: </strong>
+        <v-text-field
+          dense
+          outlined
+          hide-details
+          style="max-width: 200px;"
+          v-model="date_start"
+          label="Fecha inicio"
+          type="date"
+          clearable
+          @input="date_start = adjustedDate(date_start)"
+        ></v-text-field>
+        <v-text-field
+          dense
+          outlined
+          hide-details
+          style="max-width: 200px;"
+          v-model="date_end"
+          label="Fecha fin"
+          type="date"
+          class="ml-2"
+          clearable
+          @input="date_end = adjustedDate(date_end)"
+        ></v-text-field>
+        <v-btn 
+          icon 
+          color="red" 
+          outlined 
+          class="ml-2"
+          @click.stop="dialog=true; type_delete='massive'"
+        >
+          <v-icon>mdi-delete</v-icon>
+        </v-btn>
+      </div>
+  </v-card>
   <v-data-table
     dense
     :headers="headers"
@@ -87,7 +125,7 @@
             icon
             small
             v-on="on"
-            @click="dialogDelete(item.id)"
+            @click="dialogDelete(item.id); type_delete='individual'"
             color="error"
             :disabled="!(item.can_deleted && permissionSimpleSelected.includes('delete-contribution-passive'))">
             <v-icon v-if="permissionSimpleSelected.includes('delete-contribution-passive')">
@@ -99,16 +137,17 @@
       </v-tooltip>
     </template>
   </v-data-table>
-  <v-dialog v-model="dialog" max-width="500px">
+  <v-dialog v-model="dialog" max-width="600px">
     <v-card>
-      <v-card-title class="text-h5">Esta seguro de eliminar el registro?</v-card-title
-      >
+      <v-card-title class="text-h5">
+         {{ type_delete == 'individual' ? 'Esta seguro de eliminar el registro?' : 'Esta seguro de eliminar los registros del rango?'}}
+      </v-card-title>
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn color="error" text @click="dialog=false">Cerrar</v-btn>
-        <v-btn color="success" text @click="deleteItem()"
-          >Confirmar</v-btn
-        >
+        <v-btn color="success" text @click="type_delete == 'individual' ? deleteItem() : deleteMassive()">
+          Confirmar
+        </v-btn>
         <v-spacer></v-spacer>
       </v-card-actions>
     </v-card>
@@ -245,7 +284,10 @@ export default {
     ],
     dialog: false,
     delete_id: null,
-    refresh_table:0
+    refresh_table: 0,
+    date_start: null,
+    date_end: null,
+    type_delete: 'individual'
   }),
 
   watch: {
@@ -316,7 +358,15 @@ export default {
     dialogDelete(item){
       this.dialog= true
       this.delete_id=item
-      console.log(this.delete_id)
+    },
+    searchTimeOut() {
+      if (this.timer) {
+        clearTimeout(this.timer);
+        this.timer = null;
+      }
+      this.timer = setTimeout(() => {
+        this.getSearchPassiveAffiliateContribution()
+      }, 800);
     },
     async deleteItem(){
       try {
@@ -333,15 +383,36 @@ export default {
         console.log(e)
       }
     },
-    searchTimeOut() {
-      if (this.timer) {
-        clearTimeout(this.timer);
-        this.timer = null;
+    async deleteMassive(){
+      try {
+        let res = await this.$axios.delete('/contribution/contributions_passive/massive', {  
+            affiliate_id: Number(this.$route.params.id),
+            date_start: this.date_start,
+            date_end: this.date_end,          
+            }, {
+            headers: { 'X-HTTP-Method-Override': 'DELETE' }
+          })
+          this.dialog = false
+          this.refresh_table ++
+         if(!res.error)
+            this.$toast.success(res.message) 
+         else
+            this.$toast.error(res.message)
+          this.clear_inputs()
+      } catch (e) {
+        console.log(e)
+        this.dialog= false
       }
-      this.timer = setTimeout(() => {
-        this.getSearchPassiveAffiliateContribution()
-      }, 800);
     },
+    adjustedDate(date) {
+      if (!date) return null;
+      const [year, month] = date.split('-');
+      return `${year}-${month}-01`;
+    },
+    clear_inputs(){
+      this.date_start = null
+      this.date_end = null
+    }
   },
 };
 </script>

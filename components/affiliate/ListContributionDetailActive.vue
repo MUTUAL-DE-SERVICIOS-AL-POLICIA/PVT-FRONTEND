@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- Eliminación en rango--->
-    <v-card elevation="1" flat outlined class="ma-2 pa-2">
+    <v-card elevation="1" flat outlined class="ma-2 pa-2" v-if="permissionSimpleSelected.includes('delete-massive-contribution')">
       <div class="d-flex align-center">
         <strong>Seleccione el rango de aportes a eliminar: </strong>
         <v-text-field

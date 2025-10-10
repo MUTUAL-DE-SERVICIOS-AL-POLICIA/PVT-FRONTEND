@@ -38,58 +38,26 @@
                     label="Seleccione un reporte"
                     outlined dense>
                   </v-select>
-
-                  <template v-if="report_selected && visible == true">
-                    <template v-if="report_selected.criterios.includes('start_date') ||
-                                    report_selected.criterios.includes('end_date') ||
-                                    report_selected.criterios.includes('type_report')">
-                      <v-toolbar-title>
-                        <b>Criterios de búsqueda</b>
-                      </v-toolbar-title>
-                      <v-progress-linear class="mb-5"></v-progress-linear>
-                    </template>
-
-                    <template v-if="report_selected.criterios.includes('type_report')">
-                      <v-select
-                        v-model="report_inputs.type_report"
-                        :items="type_notifications"
-                        item-text="name"
-                        item-value="id"
-                        label="Seleccione el tipo de reporte"
-                        outlined dense>
-                      </v-select>
-                    </template>
-
-                    <template v-if="report_selected.criterios.includes('start_date')">
-                      <v-text-field
-                        dense
-                        v-model="report_inputs.start_date"
-                        label="Desde fecha"
-                        hint="Día/Mes/Año"
-                        type="date"
-                        outlined
-                      >
-                      </v-text-field>
-                    </template>
-
-                    <template v-if="report_selected.criterios.includes('end_date')">
-                      <v-text-field
-                        dense
-                        v-model="report_inputs.end_date"
-                        label="Hasta fecha"
-                        hint="Día/Mes/Año"
-                        type="date"
-                        :min="report_inputs.start_date"
-                        outlined
-                      >
-                      </v-text-field>
-                    </template>
-
-                    <!-- Botón de descarga -->
-                    <v-btn color="primary" @click="downloadReport()"  :loading="loading">Descargar reporte </v-btn>
-                    <!-- Fin de botón de descarga -->
+                  <template v-if="report_selected && report_selected.name == 'Reporte de Notificaciones'">
+                    <CriterionForm v-if="report_selected && report_inputs"
+                      :report_inputs="report_inputs"
+                      :report_selected="report_selected"
+                      :types="type_notifications"
+                    />
                   </template>
-
+                  <template v-else-if="report_selected && report_selected.name == 'Reporte de Pagos y Derechohabientes'">
+                    <CriterionForm v-if="report_selected && report_inputs"
+                      :report_inputs="report_inputs"
+                      :report_selected="report_selected"
+                      :types="type_of_benefits"
+                    />
+                  </template>
+                  <template v-else >
+                    <CriterionForm v-if="report_selected && report_inputs"
+                      :report_inputs="report_inputs"
+                      :report_selected="report_selected"
+                    />
+                  </template>
                 </v-card>
               </v-col>
             </v-row>
@@ -104,19 +72,26 @@
 
 <script>
 import GlobalBreadCrumb from "@/components/common/GlobalBreadCrumb.vue";
-import CellBalance from "@/components/notification/CellBalance"
+import CellBalance from "@/components/notification/CellBalance";
+import CriterionForm from './Criterion.vue';
 
 export default {
   name: "ReportNotification",
   components: {
     GlobalBreadCrumb,
-    CellBalance
+    CellBalance,
+    CriterionForm
   },
   data: () => ({
     menu: false,
     menu2: false,
     current_date: null,
     type_notifications: null,
+    type_of_benefits: [
+      'Fondo de Retiro Policial',
+      'Cuota Mortuoria',
+      'Auxilio Mortuorio'
+    ],
     loading: false,
     actions: [
       {nameTab: "Reportes de Notificaciones", value: "notificaciones"},
@@ -144,27 +119,99 @@ export default {
         name: "Reporte de Notificaciones Complemento Económico",
         tab: 0,
         criterios: ["start_date", "end_date"],
+        method:"post",
         service: "/notification/report_notifications",
         type: "xls",
         permissions: "download-report-notification",
+        name_download:"ReporteCE"
       },
       {
         id: 1,
         name: "Reporte de Notificaciones",
         tab: 0,
         criterios: ["start_date", "end_date", "type_report"],
+        method:"post",
         service: "/notification/report",
         type: "xls",
         permissions: "download-report-notification",
+        name_download:"ReporteNotificaciones"
       },
       {
         id: 2,
         name: "Reporte de certificación",
         tab: 1,
         criterios: ["start_date", "end_date"],
+        method:"post",
         service: "/contribution/get_report_certificate",
         type: "xls",
         permissions: "download-certifications",
+        name_download:"ReporteCertificaciones",
+      },
+      {
+        id: 3,
+        name: "Reporte de información sobre Afiliados y Cónyuges",
+        tab: 2,
+        criterios: [],
+        method:"get",
+        service: "/report/report_affiliates_spouses",
+        type: "xls",
+        permissions: "sin-permiso",
+        name_download:"Reporte_Afiliados_Conyuges"
+      },
+      {
+        id: 4,
+        name: "Reporte de Clasificadores Cuentas Individuales FR",
+        tab: 2,
+        criterios: ["start_date", "end_date"],
+        method:"post",
+        service: "/report/report_retirement_funds",
+        type: "xls",
+        permissions: "sin-permiso",
+        name_download:"ReporteClasificadoresFR"
+      },
+      {
+        id: 5,
+        name: "Reporte de Pagos y Derechohabientes",
+        tab: 2,
+        criterios: ["start_date", "end_date", "type_report"],
+        method:"post",
+        service: "/report/report_payments_beneficiaries",
+        type: "xls",
+        permissions: "sin-permiso",
+        name_download:"ReportePagosDerechohabientesFR"
+      },
+      {
+        id: 6,
+        name: "Reporte de calificacion de servicios",
+        tab: 2,
+        criterios: ["start_date", "end_date"],
+        method:"post",
+        service: "/admin/get_qualification_report",
+        type: "xls",
+        permissions: "service-calification",
+        name_download:"Reporte_calificacion_de_servicios"
+      },
+      {
+        id: 7,
+        name: "Reporte de pagos en demasía",
+        tab: 2,
+        criterios: [],
+        method: "get",
+        service: "/economic_complement/report_eco_com_movement",
+        type: "xls",
+        permissions: "sin-permiso",
+        name_download: "Reporte_pagos_demasía"
+      },
+      {
+        id: 8,
+        name: "Reporte de posibles casos duplicados",
+        tab: 2,
+        criterios: [],
+        method: "get",
+        service: "/report/report_affiliates_similar",
+        type: "xls",
+        permissions: "sin-permiso",
+        name_download: "Reporte_posibles_duplicados"
       }
     ]
   },
@@ -201,59 +248,6 @@ export default {
             console.log(e)
         }
     },
-    async downloadReport() {
-      try {
-        if(this.report_selected) { // se seleccionó un reporte?
-          let checker = true;
-          if(this.report_selected.type == 'xls') { // es de tipo xls
-            for(const val of this.report_selected.criterios) {
-              let response = this.report_inputs[val]
-              if(response == null) {
-                checker = false
-                break ;
-              }
-            }
-            if(checker) {
-              this.loading = true
-              await this.$axios.post(
-                  this.report_selected.service,
-                  {
-                      type: this.report_inputs.type_report,
-                      start_date: this.report_inputs.start_date,
-                      end_date: this.report_inputs.end_date,
-                  },
-                  {'Accept': 'application/vnd.ms-excel'},
-                  {'responseType': 'blob'}
-              )
-              .then((response) => {
-                if(response.status = 200) {
-                  const url = window.URL.createObjectURL(new Blob([response])) 
-                  const link = document.createElement("a")
-                  link.href = url
-                  link.setAttribute("download", "notifications" + ".xlsx")
-                  document.body.appendChild(link)
-                  link.click()
-                  this.loading = false
-                }
-              })
-              .catch((e) => {
-                this.loading = false;
-                this.$toast.error("Hubo un error")
-              })
-            } else {
-              this.loading = false
-              this.$toast.error("Falta seleccionar criterios")
-            }
-          }
-        } else {
-          this.loading = false
-          this.$toast.error("Seleccione un reporte")
-        }
-      } catch(e) {
-          console.log(e)
-          this.loading = false
-      }
-    },
     formater() {
       let current_date = new Date();
       let month = current_date.getMonth() + 1;
@@ -285,6 +279,7 @@ export default {
       let reports_items = []
       let reports_items_notification = []
       let reports_items_certification = []
+      let reports_items_others = []
       if(this.permissionSimpleSelected.includes("download-certifications")) {
         reports_items_certification = this.reports_items.filter((item) => item.permissions == 'download-certifications')
       }
@@ -292,7 +287,14 @@ export default {
       if(this.permissionSimpleSelected.includes("download-report-notification")) {
         reports_items_notification = this.reports_items.filter((item) => item.permissions == 'download-report-notification')
       }
-      reports_items = reports_items_certification.concat(reports_items_notification)
+      if(this.reports_items.filter((item) => item.permissions == 'sin-permiso')) {
+        reports_items_others = this.reports_items.filter((item) => item.permissions == 'sin-permiso')
+        console.log(reports_items_others)
+      }
+      if(this.reports_items.filter((item) => item.permissions == 'service-calification')) {
+        reports_items_others = this.reports_items.concat(this.reports_items.filter((item) => item.permissions == 'service-calification'))
+      }
+      reports_items = reports_items_others.concat(reports_items_certification.concat(reports_items_notification))
       reports_items = reports_items.filter((item) => item.tab == this.tab)
       return reports_items
     }

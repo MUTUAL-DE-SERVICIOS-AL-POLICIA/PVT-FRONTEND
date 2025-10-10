@@ -34,7 +34,7 @@
           ></v-select>
 
           <!-- B O T Ó N   A G R E G A R   G E S T I Ó N -->
-          <v-tooltip top>
+          <v-tooltip top v-if="permissionSimpleSelected.includes(item_import.permissions_create)">
             <template v-slot:activator="{ on }">
               <v-btn
                 fab

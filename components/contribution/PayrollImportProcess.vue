@@ -349,7 +349,7 @@ export default {
             formData.append("file", this.import_export.file);
             formData.append("date_payroll", this.dateFormat);
             if(this.item_import.name == 'COMANDO'){
-                formData.append("reimbursement", this.command_reimbursment?'TRUE':'FALSE')
+                formData.append("reimbursement", this.command_reimbursement?'TRUE':'FALSE')
             }
             try {
                 let res = await this.$axios.post(`${this.item_import.route_upload_file}`,

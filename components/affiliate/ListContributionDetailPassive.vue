@@ -4,29 +4,67 @@
     <v-card elevation="1" flat outlined class="ma-2 pa-2" v-if="permissionSimpleSelected.includes('delete-massive-contribution-passive')">
       <div class="d-flex align-center">
         <strong>Seleccione el rango de aportes a eliminar: </strong>
-        <v-text-field
-          dense
-          outlined
-          hide-details
-          style="max-width: 200px;"
-          v-model="date_start"
-          label="Fecha inicio"
-          type="date"
-          clearable
-          @input="date_start = adjustedDate(date_start)"
-        ></v-text-field>
-        <v-text-field
-          dense
-          outlined
-          hide-details
-          style="max-width: 200px;"
-          v-model="date_end"
-          label="Fecha fin"
-          type="date"
-          class="ml-2"
-          clearable
-          @input="date_end = adjustedDate(date_end)"
-        ></v-text-field>
+        <!-- Fecha inicio -->
+        <v-menu
+          v-model="menuStart"
+          :close-on-content-click="false"
+          transition="scale-transition"
+          offset-y
+          min-width="auto"
+        >
+          <template v-slot:activator="{ on, attrs }">
+            <v-text-field
+              v-model="displayStart"
+              label="Fecha inicio"
+              v-bind="attrs"
+              v-on="on"
+              dense
+              outlined
+              hide-details
+              style="max-width: 200px;"
+              clearable
+              @click:clear="clearStart"
+            ></v-text-field>
+          </template>
+
+          <v-date-picker
+            v-model="pickerStart"
+            type="month"
+            @input="selectStart"
+          ></v-date-picker>
+        </v-menu>
+
+        <!-- Fecha fin -->
+        <v-menu
+          v-model="menuEnd"
+          :close-on-content-click="false"
+          transition="scale-transition"
+          offset-y
+          min-width="auto"
+        >
+          <template v-slot:activator="{ on, attrs }">
+            <v-text-field
+              v-model="displayEnd"
+              label="Fecha fin"
+              v-bind="attrs"
+              v-on="on"
+              dense
+              outlined
+              hide-details
+              class="ml-2"
+              style="max-width: 200px;"
+              clearable
+              @click:clear="clearEnd"
+            ></v-text-field>
+          </template>
+
+          <v-date-picker
+            v-model="pickerEnd"
+            type="month"
+            @input="selectEnd"
+          ></v-date-picker>
+        </v-menu>
+
         <v-btn 
           icon 
           color="red" 
@@ -287,7 +325,13 @@ export default {
     refresh_table: 0,
     date_start: null,
     date_end: null,
-    type_delete: 'individual'
+    type_delete: 'individual',
+    // Menús
+    menuStart: false,
+    menuEnd: false,
+    // Datepickers
+    pickerStart: null,
+    pickerEnd: null,
   }),
 
   watch: {
@@ -404,15 +448,24 @@ export default {
         this.dialog= false
       }
     },
-    adjustedDate(date) {
-      if (!date) return null;
-      const [year, month] = date.split('-');
-      return `${year}-${month}-01`;
+    selectStart(value) {
+      this.menuStart = false;
+      const [year, month] = value.split('-');
+      this.date_start = `${year}-${month}-01`;
     },
-    clear_inputs(){
-      this.date_start = null
-      this.date_end = null
-    }
+    selectEnd(value) {
+      this.menuEnd = false;
+      const [year, month] = value.split('-');
+      this.date_end = `${year}-${month}-01`;
+    },
+    clearStart() {
+      this.date_start = null;
+      this.pickerStart = null;
+    },
+    clearEnd() {
+      this.date_end = null;
+      this.pickerEnd = null;
+    },
   },
 };
 </script>

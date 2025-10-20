@@ -201,6 +201,17 @@ export default {
         type: "xls",
         permissions: "sin-permiso",
         name_download: "Reporte_pagos_demasía"
+      },
+      {
+        id: 8,
+        name: "Reporte de posibles casos duplicados",
+        tab: 2,
+        criterios: [],
+        method: "get",
+        service: "/report/report_affiliates_similar",
+        type: "xls",
+        permissions: "sin-permiso",
+        name_download: "Reporte_posibles_duplicados"
       }
     ]
   },

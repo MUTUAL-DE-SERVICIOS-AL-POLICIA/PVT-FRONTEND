@@ -2,6 +2,7 @@
     <v-text-field
       v-model="displayValue"
       :label="label"
+      placeholder="MM/AAAA"
       dense
       outlined
       hide-details

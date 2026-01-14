@@ -45,7 +45,7 @@
         v-for="(item, i) in list_months"
         :key="i"
       >
-        <template v-if="item.state_validated_payroll">
+        <template>
           <v-card-title :class="item.state_importation ? 'accent' : 'normal'">
             <v-row justify="center">
               <h3 class="white--text">{{ item.period_month_name }}</h3>
@@ -60,7 +60,7 @@
                 ><strong>{{$filters.thousands(item.data_count.num_data_validated) }}</strong
                 >
 
-                <v-tooltip top>
+                <v-tooltip top v-if="item.state_validated_payroll">
                     <template v-slot:activator="{ on }">
                       <v-btn 
                         class="ma-2 accent white--text btn-period" 

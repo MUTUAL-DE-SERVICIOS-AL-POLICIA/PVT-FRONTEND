@@ -6,21 +6,6 @@
           <GlobalBreadCrumb />
           <div class="flex-grow-1"></div>
 
-          <!-- B O T Ó N   S W I T C H -->
-          <!-- <v-btn-toggle
-            v-model="active"
-            active-class="secondary white--text"
-            mandatory
-          >    
-          <span  v-for="item in items_import" :key="item.name">
-            <v-btn
-              v-if="permissionSimpleSelected.includes(item.permissions_create)"
-              :value="item.name"
-            > {{item.name}}</v-btn>
-          </span>
-          </v-btn-toggle> -->
-          <v-divider class="mx-2" inset vertical></v-divider>
-
           <!-- S E L E C C I O N A R   G E S T I Ó N -->
           <v-select
             :items="years"
@@ -325,27 +310,9 @@ export default {
     permissionSimpleSelected () {
       return this.$store.getters.permissionSimpleSelected
     },
-    // dateFormat() {
-    //     if(this.month_selected < 10)
-    //         return this.year_selected + "-" + "0" + this.month_selected + "-" + "01"
-    //     else
-    //         return this.year_selected + "-" + this.month_selected + "-" + "01"
-    // },
   },
 
   watch: {
-    // item_import(newVal, oldVal) {
-    //   if (newVal != oldVal) {
-    //     for(let i=0; i < this.items_import.length; i++){
-    //       if(this.item_import == this.items_import[i].name){
-    //         this.type_import = this.items_import[i]
-    //       }
-    //     }
-    //     console.log(this.type_import )
-    //     //this.getYears()
-    //     //this.getMonths()
-    //   }
-    // },
     year_selected(newVal, oldVal) {
       if (newVal != oldVal) {
         this.getMonths();
@@ -402,18 +369,13 @@ export default {
     async reportPayroll(month_selected,var_reimbursement){
       this.month_selected = month_selected
       this.loading_rep_state=true;
-      let dateFormat = null 
-              if(this.month_selected < 10)
-            dateFormat =this.year_selected + "-" + "0" + this.month_selected + "-" + "01"
-        else
-            dateFormat=this.year_selected + "-" + this.month_selected + "-" + "01"
       try {
         let params ={}
         if(this.item_import.name != 'DISPONIBILIDAD'){
-          params.date_payroll= dateFormat
+          params.date_payroll= this.dateFormat(this.year_selected, this.month_selected)
         }
         if(this.item_import.name == 'DISPONIBILIDAD'){
-          params.date_import= dateFormat
+          params.date_import= this.dateFormat(this.year_selected, this.month_selected)
         }
         if (this.item_import.name == 'COMANDO') {
           params.reimbursement = var_reimbursement?'TRUE':'FALSE';
@@ -446,7 +408,13 @@ export default {
     openCloseAvailability(newValue) {
       this.dialog_availability = newValue
       this.getMonths()
-    }
+    },
+    dateFormat(year_selected, month_selected) {
+      if(month_selected < 10)
+          return year_selected + "-" + "0" + month_selected + "-" + "01"
+      else
+          return year_selected + "-" + month_selected + "-" + "01"
+    },
   },
 };
 </script>

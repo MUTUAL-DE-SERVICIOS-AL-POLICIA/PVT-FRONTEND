@@ -59,8 +59,11 @@
       >       
         <template>
           <v-card-title class="accent">
-            <v-row justify="center">
+            <v-row justify="center" v-if="item_import.name != 'REGIONAL'">
               <h3 class="white--text">{{ item.period_month_name }}</h3></v-row
+            >
+            <v-row justify="center" v-else>
+              <h3 class="white--text">{{ item.period_month_name }} {{item.period_day}} </h3></v-row
             >
           </v-card-title>
           <v-divider inset></v-divider>
@@ -71,18 +74,21 @@
               </v-col>
               <v-divider inset></v-divider>
               <v-col cols="12" md="12" class="py-0">
-                <span class="info--text">N° reg. copiados: </span><strong>{{$filters.thousands(item.data_count.num_total_data_copy)}}</strong><br>
+
                 <template v-if="item_import.name == 'SENASIR'">
+                  <span class="info--text">N° reg. copiados: </span><strong>{{$filters.thousands(item.data_count.num_total_data_copy)}}</strong><br>
                   <span class="info--text">N° reg. considerados: </span><strong>{{$filters.thousands(item.data_count.num_data_considered)}}</strong><br>
                   <span class="error--text">N° reg. no considerados: </span><strong>{{$filters.thousands(item.data_count.num_data_not_considered)}}</strong><br>
                   <span class="info--text">N° reg. validados: </span><strong>{{$filters.thousands(item.data_count.num_data_validated)}}</strong><br>
                 </template>
                 <template v-if="item_import.name == 'COMANDO'">
+                  <span class="info--text">N° reg. copiados: </span><strong>{{$filters.thousands(item.data_count.num_total_data_copy)}}</strong><br>
                   <span class="info--text">N° reg. nuevos: </span><strong>{{$filters.thousands(item.data_count.num_data_new)}}</strong><br>
                   <span class="info--text">N° reg. regulares: </span><strong>{{$filters.thousands(item.data_count.num_data_regular)}}</strong><br>
                 </template>
                 <template v-if="item_import.name == 'TRANSCRIPCIÓN'">
                   <span class="info--text"></span>
+                  <span class="info--text">N° reg. copiados: </span><strong>{{$filters.thousands(item.data_count.num_total_data_copy)}}</strong><br>
                   <span class="info--text">N° reg. enlazados: </span><strong>{{$filters.thousands(item.data_count.count_data_automatic_link)}}</strong><br>
                   <span class="info--text">N° afiliados creados. </span><strong>{{$filters.thousands(item.data_count.count_data_creation)}}</strong><br>
                   <span class="info--text">N° total datos planilla: </span><strong>{{$filters.thousands(item.data_count.num_total_data_payroll)}}</strong><br>
@@ -90,8 +96,13 @@
                 </template>
                 <template v-if="item_import.name == 'DISPONIBILIDAD'">
                   <span class="info--text"></span>
+                  <span class="info--text">N° reg. copiados: </span><strong>{{$filters.thousands(item.data_count.num_total_data_copy)}}</strong><br>
                   <span class="info--text">N° afiliados actualizados: </span><strong>{{$filters.thousands(item.data_count.num_of_affiliates_updated)}}</strong><br>
                   <span class="info--text">N° afiliados no actualizados. </span><strong>{{$filters.thousands(item.data_count.num_of_affiliates_not_updated)}}</strong><br>
+                </template>
+                <template v-if="item_import.name == 'REGIONAL'">
+                  <span class="info--text"></span>
+                  <span class="info--text">N° reg. importados: </span><strong>{{$filters.thousands(item.data_count.num_total_data_contribution)}}</strong><br>
                 </template>
                   <div class="text-right pb-1" v-if="permissionSimpleSelected.includes(item_import.permissions_download)">
                     <v-tooltip top class="my-0">
@@ -102,7 +113,7 @@
                           fab
                           v-on="on"
                           :loading="loading_rep_state && i == loading_pos_index"
-                          @click.stop="loading_pos_index = i; reportPayroll(item.period_month, false)"
+                          @click.stop="loading_pos_index = i; reportPayroll(item.period_month,item.period_day,false)"
                         >
                           <v-icon>mdi-file-document</v-icon>
                         </v-btn>
@@ -152,7 +163,7 @@
                             fab
                             v-on="on"
                             :loading="loading_rep_state && j == loading_pos_index"
-                            @click.stop="loading_pos_index = j; reportPayroll(item.period_month,true)"
+                            @click.stop="loading_pos_index = j; reportPayroll(item.period_month,item.period_day ? item.period_day : '01',true)"
                           >
                             <v-icon>mdi-file-document</v-icon>
                           </v-btn>
@@ -191,6 +202,12 @@
       :list_months_not_import.sync="list_months_not_import" 
       @open-close-availability="openCloseAvailability()"
     />
+    <PayrrollImportProcessRegional
+      :dialog="dialog_regional" 
+      :item_import="item_import" 
+      :year_selected="year_selected"  
+      @open-close-regional="openCloseRegional()"
+    />
 
   </v-container>
 </template>
@@ -201,6 +218,7 @@ import GlobalLoading from "@/components/common/GlobalLoading.vue";
 import PayrollImportProcess from "@/components/contribution/PayrollImportProcess.vue";
 import PayrollImportProcessTranscript from "@/components/contribution/PayrollImportProcessTranscript.vue";
 import ImportProcessAvailability from "@/components/affiliate/ImportProcessAvailability.vue";
+import PayrrollImportProcessRegional from "@/components/contribution/PayrollImportProcessRegional.vue"
 export default {
   name: "MainImportation",
   components: {
@@ -208,7 +226,8 @@ export default {
     GlobalLoading,
     PayrollImportProcess,
     PayrollImportProcessTranscript,
-    ImportProcessAvailability
+    ImportProcessAvailability,
+    PayrrollImportProcessRegional
   },
   props: {
     item_import:{
@@ -225,9 +244,11 @@ export default {
     list_months_not_import: [],
     list_months_not_import_re: [],
     list_months_re: [],
+    list_dates: [],
     dialog: false,
     dialog_transcript: false,
     dialog_availability: false,
+    dialog_regional: false,
     btn_import_contributions: false,
     loading_circular:false,
     loading_pos_index: -1,
@@ -341,11 +362,15 @@ export default {
             with_data_count: true
           },
         );
-        this.list_months = res.payload.list_months;
-        this.list_months_re = res.payload.list_months_re;
-        this.list_months_not_import = res.payload.list_months_not_import;
-        if(this.item_import.name == 'COMANDO'){
-          this.list_months_not_import_re = res.payload.list_months_not_import_re;
+        if(this.item_import.name == 'REGIONAL'){
+          this.list_months = res.payload.list_dates;
+        }else{
+          this.list_months = res.payload.list_months;
+          this.list_months_not_import = res.payload.list_months_not_import;
+          if(this.item_import.name == 'COMANDO'){
+            this.list_months_re = res.payload.list_months_re;
+            this.list_months_not_import_re = res.payload.list_months_not_import_re;
+          }
         }
         this.loading_circular = false
       } catch (e) {
@@ -357,28 +382,34 @@ export default {
       this.dialog = false;
       this.dialog_transcript = false;
       this.dialog_availability = false;
+      this.dialog_regional = false;
       if(this.item_import.name == 'COMANDO' || this.item_import.name == 'SENASIR') 
         this.dialog = true;
       else if(this.item_import.name == 'TRANSCRIPCIÓN') 
         this.dialog_transcript = true;
       else if(this.item_import.name == 'DISPONIBILIDAD')  
         this.dialog_availability = true;
+      else if(this.item_import.name == 'REGIONAL')
+        this.dialog_regional = true;
       else
       this.month_selected= null
     },
-    async reportPayroll(month_selected,var_reimbursement){
+    async reportPayroll(month_selected,day_selected,var_reimbursement){
       this.month_selected = month_selected
       this.loading_rep_state=true;
       try {
         let params ={}
-        if(this.item_import.name != 'DISPONIBILIDAD'){
-          params.date_payroll= this.dateFormat(this.year_selected, this.month_selected)
+        if(this.item_import.name != 'DISPONIBILIDAD' && this.item_import.name != 'REGIONAL'){
+          params.date_payroll= this.dateFormat(this.year_selected, day_selected, this.month_selected)
         }
-        if(this.item_import.name == 'DISPONIBILIDAD'){
-          params.date_import= this.dateFormat(this.year_selected, this.month_selected)
+        if(this.item_import.name == 'DISPONIBILIDAD' && this.item_import.name != 'REGIONAL'){
+          params.date_import= this.dateFormat(this.year_selected, day_selected, this.month_selected)
         }
         if (this.item_import.name == 'COMANDO') {
           params.reimbursement = var_reimbursement?'TRUE':'FALSE';
+        }
+        if(this.item_import.name == 'REGIONAL'){
+          params.date_import= this.dateFormat(this.year_selected, day_selected, this.month_selected)
         }
         let res = await this.$axios.post(`${this.item_import.route_report}`,params,
           {'Accept': 'application/vnd.ms-excel' },
@@ -409,12 +440,15 @@ export default {
       this.dialog_availability = newValue
       this.getMonths()
     },
-    dateFormat(year_selected, month_selected) {
-      if(month_selected < 10)
-          return year_selected + "-" + "0" + month_selected + "-" + "01"
-      else
-          return year_selected + "-" + month_selected + "-" + "01"
+    openCloseRegional(newValue) {
+      this.dialog_regional = newValue
+      this.getMonths()
     },
+    dateFormat(year_selected, day_selected, month_selected) {
+      const month = String(month_selected).padStart(2, '0')
+      const day = String(day_selected).padStart(2, '0')
+      return `${year_selected}-${month}-${day}`
+    }
   },
 };
 </script>

@@ -5,7 +5,7 @@
 <script>
 import MainImportation from "@/components/contribution/MainImportation.vue";
 export default {
-  name: "PageImportation",
+  name: "PageMainImportation",
   components: {
     MainImportation,
   },

@@ -48,7 +48,7 @@
       <GlobalLoading />
     </div>
 
-    <!-- C O N T E N I D O   D E   L O S   T A B S -->
+    <!-- C O N T E N I D O   D E   L O S   C A R D S -->
 
     <v-row justify="center" class="py-0 mt-2" v-if="!loading_circular">
        <v-card

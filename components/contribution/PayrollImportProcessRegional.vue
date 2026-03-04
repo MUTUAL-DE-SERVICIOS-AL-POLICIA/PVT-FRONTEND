@@ -39,7 +39,7 @@
                                 <v-divider></v-divider>
                                 <v-card-text>
                                     <v-row
-                                        v-for="process in incomplete_processes"
+                                        v-for="(process, index) in incomplete_processes"
                                         :key="process.date_import"
                                         align="center"
                                         justify="space-between"
@@ -59,7 +59,7 @@
                                         icon
                                         small
                                         color="error"
-                                        @click="action(process.date_import)"
+                                        @click="dialog_delete_process = true; date_process_selected = process.date_import"
                                         >
                                             <v-icon>mdi-delete</v-icon>
                                         </v-btn>
@@ -159,10 +159,11 @@
                                                     <v-row>
                                                         <v-col cols="12" md="6">
                                                             <strong>Total de registros copiados: </strong>{{$filters.thousands(data_count.num_total_data_copy)}}<br>
-                                                            <strong class="sucess--text">Total de registros relacionados: </strong>{{$filters.thousands(data_count.count_data_automatic_link)}}<br>
+                                                            <strong class="sucess--text">Total de registros con error: </strong>{{$filters.thousands(data_count.count_data_error)}}<br>
+                                                            <strong class="sucess--text">Total de registros no identificados: </strong>{{$filters.thousands(data_count.count_data_unidentified)}}<br>
                                                         </v-col>
                                                         <v-col cols="12" md="6">
-                                                            <strong class="success--text">Total de registros para revisión: </strong>{{$filters.thousands(data_count.count_data_revision)}}
+                                                            <strong class="success--text">Total de registros validados: </strong>{{$filters.thousands(data_count.count_data_automatic_link)}}
                                                         </v-col>
                                                     </v-row>
                                                 </v-card>
@@ -186,10 +187,9 @@
                                                     <v-row>
                                                         <v-col cols="12" md="6">
                                                             <strong>Total de registros copiados: </strong>{{$filters.thousands(data_count.num_total_data_copy)}}<br>
-                                                            <strong class="sucess--text">Total de registros relacionados: </strong>{{$filters.thousands(data_count.count_data_automatic_link)}}<br>
                                                         </v-col>
                                                         <v-col cols="12" md="6">
-                                                            <strong>Número total de registros en la planilla: </strong>{{$filters.thousands(data_count.num_total_data_payroll)}}<br>
+                                                            <strong class="success--text">Total de registros validados para procesar: </strong>{{$filters.thousands(data_count.count_data_automatic_link)}}
                                                         </v-col>
                                                     </v-row>
                                                 </v-card>
@@ -294,7 +294,7 @@
                 </v-card-actions>
             </v-card>
         </v-dialog>
-                <!-- D I Á L O G O   P A R A   R E H A C E R -->
+                <!-- D I Á L O G O   P A R A   E L I M I N A R -->
         <v-dialog
             v-model="dialog_delete_process"
             max-width="600"
@@ -302,9 +302,9 @@
         >
             <v-card>
                 <v-card-title>
-                    <center>¿Está seguro que quiere rehacer el proceso?</center>
+                    <center>¿Está seguro que quiere eliminar el proceso?</center>
                     <br>
-                    <br> <small class='caption'>Al rehacer se borraran todos los datos ingresados</small>
+                    <br> <small class='caption'>Al eliminar el proceso se borraran todos los registros importados del periodo.</small>
                 </v-card-title>
                 <v-card-actions>
                     <v-spacer></v-spacer>
@@ -318,7 +318,7 @@
                     <v-btn
                         color="success"
                         text
-                        @click="deleteProcess(this.date_import)"
+                        @click="deleteProcess(process_selected)"
                     >
                     Aceptar
                     </v-btn>
@@ -396,7 +396,7 @@ export default {
         current_date: new Date().toLocaleDateString('es-BO'),
         exist_processes_imcomplete: false,
         incomplete_processes: [],
-        delete_process_date: null,
+        date_process_selected: null
     }),
     props: {
         dialog: {
@@ -679,20 +679,23 @@ export default {
                 this.$toast.error("Hubo un error")
             }
         },
-        async deleteProcess(delete_process_date) {
+        async deleteProcess(process_selected) {
             try {
-                let res = await this.$axios.post(`/contribution/delete_process`, {
-                    date_delete: delete_process_date
+                let res = await this.$axios.post(`/contribution/delete_incomplete_processes`, {
+                    date_import: this.date_process_selected
                 })
-                if(res.payload.successfully) {
+                if(res.successfully) {
                     
                     this.$toast.success(res.message)
                 } else {
                     this.$toast.error(res.message)
                 }
+                this.dialog_delete_process = false
+                this.incompleteProcesses()
             } catch(e) {
                 console.log(e)
                 this.$toast.error("Hubo un error")
+                this.dialog_delete_process = false
             }
         }
     },

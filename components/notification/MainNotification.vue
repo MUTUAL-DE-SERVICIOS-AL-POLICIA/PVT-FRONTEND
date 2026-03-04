@@ -6,45 +6,28 @@
       </v-toolbar>
     </v-card-title>
     <v-card-text>
-
       <v-tabs left background-color="backgroundTab">
-        <v-tab  :href="`#tab-1`" > Notificación CE </v-tab>
-        <v-tab  :href="`#tab-2`" > Notificación App</v-tab>
-        <v-tab  :href="`#tab-3`" > SMS's </v-tab>
-
-        <v-tab-item  :value="'tab-1'">
+        <v-tab v-for="tab in visibleTabs" :key="tab.id" :href="`#${tab.id}`">
+          {{ tab.label }}
+        </v-tab>
+        <v-tab-item v-for="tab in visibleTabs" :key="tab.id" :value="tab.id">
           <v-card flat tile>
             <v-card-text>
-              <NotificationApp />
-            </v-card-text>
-          </v-card>
-        </v-tab-item>
-        <v-tab-item :value="'tab-2'">
-          <v-card flat tile>
-            <v-card-text>
-              <NotificationMassive />
-            </v-card-text>
-          </v-card>
-        </v-tab-item>
-        <v-tab-item :value="'tab-3'">
-          <v-card flat tile>
-            <v-card-text>
-              <NotificationSMS />
+              <component :is="tab.component" v-if="tab.component" />
+              <p v-else>Error al cargar el componente.</p>
             </v-card-text>
           </v-card>
         </v-tab-item>
       </v-tabs>
-
     </v-card-text>
-
   </v-container>
 </template>
 
 <script>
-import GlobalBreadCrumb from "@/components/common/GlobalBreadCrumb"
-import NotificationApp from "@/components/notification/NotificationApp"
-import NotificationMassive from "@/components/notification/NotificationMassive"
-import NotificationSMS from "@/components/notification/NotificationSMS"
+import GlobalBreadCrumb from "@/components/common/GlobalBreadCrumb";
+import NotificationApp from "@/components/notification/NotificationApp";
+import NotificationMassive from "@/components/notification/NotificationMassive";
+import NotificationSMS from "@/components/notification/NotificationSMS";
 
 export default {
   name: "MainNotification",
@@ -54,9 +37,55 @@ export default {
     NotificationMassive,
     NotificationSMS,
   },
-  props: {},
+  data() {
+    return {
+      tabs: [
+        {
+          id: "tab-1",
+          label: "Notificación CE",
+          component: "NotificationApp",
+          permission: "send-notification-ce",
+        },
+        {
+          id: "tab-2",
+          label: "Notificación App",
+          component: "NotificationMassive",
+          permission: "send-notification-app",
+        },
+        {
+          id: "tab-3",
+          label: "SMS's",
+          component: "NotificationSMS",
+          permission: "send-notification-sms",
+        },
+      ],
+    };
+  },
+  computed: {
+    visibleTabs() {
+      return this.tabs.filter(
+        (tab) =>
+          !tab.permission || this.permissionSimpleSelected.includes(tab.permission)
+      );
+    },
+    permissionSimpleSelected() {
+      return this.$store.getters.permissionSimpleSelected;
+    },
+  },
 };
 </script>
-<style scoped>
 
+<style scoped>
+.v-tabs {
+  border-bottom: 1px solid #ddd;
+}
+
+.v-tab {
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.v-card {
+  background-color: #f5f5f5;
+}
 </style>

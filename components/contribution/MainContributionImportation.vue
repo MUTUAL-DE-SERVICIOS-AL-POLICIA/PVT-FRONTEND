@@ -43,7 +43,7 @@
         :class="item.state_importation ? 'headline font-weight-bold ma-2 backgroundCard' : 'headline font-weight-bold ma-2'"
         max-width="250px"
         v-for="(item, i) in list_months"
-        :key="i"
+        :key="'month-' + item.period_month"
       >
         <template v-if="item.state_validated_payroll">
           <v-card-title :class="item.state_importation ? 'accent' : 'normal'">
@@ -116,7 +116,7 @@
         :class="item.state_importation ? 'headline font-weight-bold ma-2 backgroundCard' : 'headline font-weight-bold ma-2'"
         max-width="250px"
         v-for="(item, i) in list_months_re"
-        :key="i"
+        :key="'re-' + item.period_month"
       >
         <template v-if="item.state_validated_payroll">
           <v-card-title :class="item.state_importation ? 'accent' : 'normal'">

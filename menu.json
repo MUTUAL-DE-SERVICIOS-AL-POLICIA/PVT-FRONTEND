@@ -7,23 +7,24 @@
   {
     "title": "Importación de Planillas",
     "icon": "mdi-bank-transfer",
+    "permission": "read-import-payroll",
     "group": [
       {
         "href": "/contribution/PageImportationCommand",
         "title": "Comando",
         "icon": "mdi-account-outline",
-        "permission": "read-import-payroll"
+        "permission": "read-import-payroll-comando"
       }, {
         "href": "/contribution/PageImportationSenasir",
         "title": "Senasir",
         "icon": "mdi-shield-lock-outline",
-        "permission": "read-import-payroll"
+        "permission": "read-import-payroll-senasir"
       },
       {
         "href": "/contribution/PageImportationTranscript",
         "title": "Transcripciones",
         "icon": "mdi-account-outline",
-        "permission": "read-import-payroll"
+        "permission": "read-import-payroll-transcript"
       }, {
         "href": "/affiliate/PageImportationAffiliateAvailability",
         "title": "Disponibilidad",
@@ -37,6 +38,12 @@
     "title": "Importación de Aportes",
     "icon": "mdi-cash",
     "permission": "read-import-contribution"
+  },
+  {
+    "title": "Importación Mora",
+    "icon": "mdi-cash",
+    "href": "/affiliate/PageImportationLoans",
+    "permission": "create-import-mora"
   },
   {
     "title": "Acceso",

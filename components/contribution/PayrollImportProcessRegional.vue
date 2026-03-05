@@ -69,8 +69,21 @@
                         </v-col>
                     </v-row>
                 </template>
-
-                <template v-if="!exist_processes_imcomplete">
+                <template v-if="progress.percentage == 100">
+                    <v-row justify="center" class="mt-5">
+                        <v-col cols="8">
+                            <v-alert
+                                prominent
+                                type="warning"
+                                border="left"
+                                class="mb-4"
+                            >
+                                El proceso de hoy ya fue completado. No se puede realizar una nueva importación.
+                            </v-alert>
+                        </v-col>
+                    </v-row>
+                </template>
+                <template v-if="!exist_processes_imcomplete && progress.percentage !== 100">
                     <v-row justify="center" class="mt-5">
                         <v-col cols="8">
                             <v-toolbar-title class="pb-5">
@@ -159,11 +172,11 @@
                                                     <v-row>
                                                         <v-col cols="12" md="6">
                                                             <strong>Total de registros copiados: </strong>{{$filters.thousands(data_count.num_total_data_copy)}}<br>
-                                                            <strong class="sucess--text">Total de registros con error: </strong>{{$filters.thousands(data_count.count_data_error)}}<br>
-                                                            <strong class="sucess--text">Total de registros no identificados: </strong>{{$filters.thousands(data_count.count_data_unidentified)}}<br>
+                                                            <strong class="sucess--text">Total de registros con error: </strong>{{$filters.thousands(data_count.count_data_error || 0)}}<br>
+                                                            <strong class="sucess--text">Total de registros no identificados: </strong>{{$filters.thousands(data_count.count_data_unidentified || 0)}}<br>
                                                         </v-col>
                                                         <v-col cols="12" md="6">
-                                                            <strong class="success--text">Total de registros validados: </strong>{{$filters.thousands(data_count.count_data_automatic_link)}}
+                                                            <strong class="success--text">Total de registros validados: </strong>{{$filters.thousands(data_count.count_data_automatic_link || 0)}}<br>
                                                         </v-col>
                                                     </v-row>
                                                 </v-card>
@@ -189,7 +202,7 @@
                                                             <strong>Total de registros copiados: </strong>{{$filters.thousands(data_count.num_total_data_copy)}}<br>
                                                         </v-col>
                                                         <v-col cols="12" md="6">
-                                                            <strong class="success--text">Total de registros validados para procesar: </strong>{{$filters.thousands(data_count.count_data_automatic_link)}}
+                                                            <strong class="success--text">Total de registros validados para procesar: </strong>{{$filters.thousands(data_count.count_data_automatic_link || 0)}}
                                                         </v-col>
                                                     </v-row>
                                                 </v-card>
@@ -376,7 +389,7 @@ export default {
                 },
                 {
                     title: "NOMBRE ARCHIVO",
-                    body: "tipo-mes-año.csv Ejm. retgional-2026-02-26.csv"
+                    body: "tipo-mes-año.csv Ejm. regional-2026-02-26.csv"
                 },
                 {
                     title: "MONTOS",
@@ -393,7 +406,6 @@ export default {
         dialog_delete_process: false,
 
         block_select: false,
-        current_date: new Date().toLocaleDateString('es-BO'),
         exist_processes_imcomplete: false,
         incomplete_processes: [],
         date_process_selected: null
@@ -410,6 +422,11 @@ export default {
             default: {}
         },
         year_selected: null,
+        current_date: {
+            type: Date,
+            required: false,
+            default: new Date().toLocaleDateString('es-BO'),
+        }
     },
 
     mounted() {
@@ -417,13 +434,11 @@ export default {
     },
     computed: {
         dateFormat() {
-            const [day, month, year] = this.current_date.split('/')
-            const date = new Date(year, month - 1, day)
-            return date.toISOString().split('T')[0]
+            return this.current_date
         }
     },
     watch: {
-        dialog: function() {
+        dialog: function() { 
             this.importProgressBar()
         },
         show: function() {
@@ -466,36 +481,32 @@ export default {
         },
         async importProgressBar() {
             try {
-                let res = await this.$axios.post(`${this.item_import.route_import_progressBar}`,{
-                    date_import: this.dateFormat
-                });
-                this.progress = res.payload.import_progress_bar
-                this.data_count = res.payload.data_count
+                const res = await this.$axios.post(
+                    this.item_import.route_import_progressBar,
+                    { date_import: this.dateFormat }
+                );
 
-                const steps = Object.entries(this.progress).reduce((accumulator, [key, value]) => {
-                    if(key.includes('query_step')) accumulator.push(key)
-                    return accumulator
-                },[])
+                this.progress = res.payload.import_progress_bar;
+                this.data_count = res.payload.data_count;
 
-                const values = Object.entries(this.progress).reduce((accumulator, [key, value]) => {
-                    if(steps.includes(key)) accumulator.push(value)
-                    return accumulator;
-                },[])
+                // Obtener solo los pasos del progreso
+                const stepValues = Object.entries(this.progress)
+                    .filter(([key]) => key.includes('query_step'))
+                    .map(([, value]) => value);
 
-                this.e1 = values.indexOf(true) + 1
+                // Encontrar el último paso completado
+                const lastCompletedStep = stepValues.lastIndexOf(true);
 
-                if(this.e1 === 0) { // si es el primer paso
-                    this.e1 = 1
-                }
-                this.btn_next = false
+                // Definir paso actual
+                this.e1 = lastCompletedStep === -1 ? 1 : lastCompletedStep + 2;
 
-                if(this.e1 > 1) {
-                    this.block_select = true
-                }
+                // Estados de interfaz
+                this.btn_next = false;
+                this.block_select = this.e1 > 1;
 
-            } catch(e) {
-                console.log(e)
-                this.$toast.error("Hubo un error")
+            } catch (e) {
+                console.log(e);
+                this.$toast.error("Hubo un error");
             }
         },
         async rollbackContribution() {

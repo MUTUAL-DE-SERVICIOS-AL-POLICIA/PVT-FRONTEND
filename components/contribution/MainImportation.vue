@@ -203,6 +203,7 @@
       @open-close-availability="openCloseAvailability()"
     />
     <PayrrollImportProcessRegional
+      :current_date="current_date"
       :dialog="dialog_regional" 
       :item_import="item_import" 
       :year_selected="year_selected"  
@@ -236,7 +237,6 @@ export default {
     }
   },
   data: () => ({
-   // active: 'SENASIR',
     years: [],
     loading: false,
     year_selected: null,
@@ -254,76 +254,10 @@ export default {
     loading_pos_index: -1,
     loading_rep_state: false,
     items_import: [],
-    //type_import:{},
     cancelToken: null,
+    current_date: null,
   }),
   created() {
-    // this.items_import= [
-    //   {
-    //     id: 1,
-    //     name: 'SENASIR',
-    //     permissions_create: 'create-import-payroll-senasir',
-    //     permissions_download: 'download-report-payroll-senasir',
-    //     route_get_months: '/contribution/list_months_validate_senasir',
-    //     route_upload_file: '/contribution/upload_copy_payroll_senasir', //Step1
-    //     route_validate_data: '/contribution/validation_payroll_senasir', //step2
-    //     message_validate_data: 'No se encontraron algunas matrículas, por favor revise el archivo Excel',
-    //     route_rollback_contribution: '/contribution/rollback_payroll_copy_senasir',
-    //     route_import_progressBar: '/contribution/import_payroll_senasir_progress_bar',
-    //     route_download_file: '/contribution/download_fail_not_found_payroll_senasir',
-    //     name_download_file: "ReporteMatriculasNoValidas.xls",
-    //     route_report: '/contribution/report_payroll_senasir',
-    //     name_report_file: "ReporteDatosSenasir.xls"
-    //   },
-    //   {
-    //     id: 2,
-    //     name: 'COMANDO',
-    //     permissions_create: 'create-import-payroll-command',
-    //     permissions_download: 'download-report-payroll-command',
-    //     route_get_months: '/contribution/list_months_validate_command',
-    //     route_upload_file: '/contribution/upload_copy_payroll_command', //Step1
-    //     route_validate_data: '/contribution/validation_payroll_command', //step2
-    //     message_validate_data: 'El archivo excel contiene informacion de los afiliados creados',
-    //     route_rollback_contribution: '/contribution/rollback_payroll_copy_command',
-    //     route_import_progressBar: '/contribution/import_payroll_command_progress_bar',
-    //     route_download_file: '/contribution/download_new_affiliates_payroll_command',
-    //     name_download_file: "ReporteNuevosAfiliados.xls",
-    //     route_report: '/contribution/report_payroll_command',
-    //     name_report_file: "ReporteDatosComando.xls"
-    //   },
-    //   {
-    //     id: 3,
-    //     name: 'TRANSCRIPCIÓN',
-    //     permissions_create: 'create-import-payroll-transcript',
-    //     permissions_download: 'download-report-payroll-transcript',
-    //     route_get_months: '/contribution/list_months_import_contribution_transcript',
-    //     route_upload_file: '/contribution/upload_copy_payroll_transcript', // Step 1
-    //     route_validate_data: '/contribution/validation_affiliate_transcript', // Step 2
-    //     route_import_payroll: '/contribution/import_payroll_transcript', // Step 3
-    //     route_import_contribution: '/contribution/import_contribution_transcript', // Step 4
-    //     route_rollback_contribution: '/contribution/rollback_payroll_copy_transcripts',
-    //     route_import_progressBar: '/contribution/import_payroll_transcript_progress_bar',
-    //     route_report: '/contribution/report_import_contribution_transcript',
-    //     name_report_file: 'ReporteImportaciónTranscripciónContribución.xls',
-    //   },
-    //   {
-    //     id: 4,
-    //     name: 'DISPONIBILIDAD',
-    //     permissions_create: 'create-import-payroll-senasir',//falta
-    //     permissions_download: 'download-report-payroll-senasir',//falta
-    //     route_get_months: '/affiliate/list_months_import_affiliates_availability',
-    //     route_upload_file: '/affiliate/upload_copy_affiliates_availability', //Step1
-    //     route_validate_data: '/contribution/validate_availability', //step2
-    //     download_error_data_archive: 'affiliate/download_error_data_archive',//Step1
-    //     route_rollback_contribution: '/contribution/rollback_payroll_copy_senasir',//falta
-    //     route_import_progressBar: '/contribution/import_payroll_senasir_progress_bar',//falta
-    //     download_data_revision_suggestion: '/affiliate/download_data_revision_suggestion', //paso2
-    //     //name_download_file: "ReporteMatriculasNoValidas.xls",
-    //     download_data_revision: '/affiliate/download_data_revision', //paso2
-    //     //name_report_file: "ReporteDatosSenasir.xls"
-    //   }
-    // ],
-    // //this.type_import = this.items_import[1]
      this.getYears();
   },
   computed: {
@@ -364,6 +298,7 @@ export default {
         );
         if(this.item_import.name == 'REGIONAL'){
           this.list_months = res.payload.list_dates;
+          this.current_date = res.payload.current_date;
         }else{
           this.list_months = res.payload.list_months;
           this.list_months_not_import = res.payload.list_months_not_import;

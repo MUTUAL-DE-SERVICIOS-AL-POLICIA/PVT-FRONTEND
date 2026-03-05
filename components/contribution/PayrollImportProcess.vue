@@ -251,7 +251,7 @@ export default {
                 },
                 {
                     title: "NOMBRE ARCHIVO",
-                    body: "tipo-mes-año.csv Ejemplo: senasir-04-2021.csv"
+                    body: "tipo-mes-año.csv Ejemplo: comando-04-2021.csv"
                 }
             ]
         }

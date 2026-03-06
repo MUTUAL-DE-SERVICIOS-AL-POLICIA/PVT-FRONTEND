@@ -74,7 +74,7 @@
                         <v-col cols="8">
                             <v-alert
                                 prominent
-                                type="warning"
+                                type="info"
                                 border="left"
                                 class="mb-4"
                             >
@@ -95,9 +95,9 @@
 
                             <v-text-field                        
                                 v-model="current_date"
-                                label="Fecha de planilla"
+                                label="Fecha de importación actual"
                                 outlined
-                                
+                                readonly
                             />                        
                             <v-stepper v-model="e1" editable>
                                 <!-- C A B E C E R Á S   P A S O S -->
@@ -481,32 +481,36 @@ export default {
         },
         async importProgressBar() {
             try {
-                const res = await this.$axios.post(
-                    this.item_import.route_import_progressBar,
-                    { date_import: this.dateFormat }
-                );
+                let res = await this.$axios.post(`${this.item_import.route_import_progressBar}`,{
+                    date_import: this.dateFormat
+                });
+                this.progress = res.payload.import_progress_bar
+                this.data_count = res.payload.data_count
 
-                this.progress = res.payload.import_progress_bar;
-                this.data_count = res.payload.data_count;
+                const steps = Object.entries(this.progress).reduce((accumulator, [key, value]) => {
+                    if(key.includes('query_step')) accumulator.push(key)
+                    return accumulator
+                },[])
 
-                // Obtener solo los pasos del progreso
-                const stepValues = Object.entries(this.progress)
-                    .filter(([key]) => key.includes('query_step'))
-                    .map(([, value]) => value);
+                const values = Object.entries(this.progress).reduce((accumulator, [key, value]) => {
+                    if(steps.includes(key)) accumulator.push(value)
+                    return accumulator;
+                },[])
 
-                // Encontrar el último paso completado
-                const lastCompletedStep = stepValues.lastIndexOf(true);
+                this.e1 = values.indexOf(true) + 1
 
-                // Definir paso actual
-                this.e1 = lastCompletedStep === -1 ? 1 : lastCompletedStep + 2;
+                if(this.e1 === 0) { // si es el primer paso
+                    this.e1 = 1
+                }
+                this.btn_next = false
 
-                // Estados de interfaz
-                this.btn_next = false;
-                this.block_select = this.e1 > 1;
+                if(this.e1 > 1) {
+                    this.block_select = true
+                }
 
-            } catch (e) {
-                console.log(e);
-                this.$toast.error("Hubo un error");
+            } catch(e) {
+                console.log(e)
+                this.$toast.error("Hubo un error")
             }
         },
         async rollbackContribution() {

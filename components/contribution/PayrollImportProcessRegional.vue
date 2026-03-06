@@ -69,8 +69,21 @@
                         </v-col>
                     </v-row>
                 </template>
-
-                <template v-if="!exist_processes_imcomplete">
+                <template v-if="progress.percentage == 100">
+                    <v-row justify="center" class="mt-5">
+                        <v-col cols="8">
+                            <v-alert
+                                prominent
+                                type="info"
+                                border="left"
+                                class="mb-4"
+                            >
+                                El proceso de hoy ya fue completado. No se puede realizar una nueva importación.
+                            </v-alert>
+                        </v-col>
+                    </v-row>
+                </template>
+                <template v-if="!exist_processes_imcomplete && progress.percentage !== 100">
                     <v-row justify="center" class="mt-5">
                         <v-col cols="8">
                             <v-toolbar-title class="pb-5">
@@ -82,9 +95,9 @@
 
                             <v-text-field                        
                                 v-model="current_date"
-                                label="Fecha de planilla"
+                                label="Fecha de importación actual"
                                 outlined
-                                
+                                readonly
                             />                        
                             <v-stepper v-model="e1" editable>
                                 <!-- C A B E C E R Á S   P A S O S -->
@@ -159,11 +172,11 @@
                                                     <v-row>
                                                         <v-col cols="12" md="6">
                                                             <strong>Total de registros copiados: </strong>{{$filters.thousands(data_count.num_total_data_copy)}}<br>
-                                                            <strong class="sucess--text">Total de registros con error: </strong>{{$filters.thousands(data_count.count_data_error)}}<br>
-                                                            <strong class="sucess--text">Total de registros no identificados: </strong>{{$filters.thousands(data_count.count_data_unidentified)}}<br>
+                                                            <strong class="sucess--text">Total de registros con error: </strong>{{$filters.thousands(data_count.count_data_error || 0)}}<br>
+                                                            <strong class="sucess--text">Total de registros no identificados: </strong>{{$filters.thousands(data_count.count_data_unidentified || 0)}}<br>
                                                         </v-col>
                                                         <v-col cols="12" md="6">
-                                                            <strong class="success--text">Total de registros validados: </strong>{{$filters.thousands(data_count.count_data_automatic_link)}}
+                                                            <strong class="success--text">Total de registros validados: </strong>{{$filters.thousands(data_count.count_data_automatic_link || 0)}}<br>
                                                         </v-col>
                                                     </v-row>
                                                 </v-card>
@@ -189,7 +202,7 @@
                                                             <strong>Total de registros copiados: </strong>{{$filters.thousands(data_count.num_total_data_copy)}}<br>
                                                         </v-col>
                                                         <v-col cols="12" md="6">
-                                                            <strong class="success--text">Total de registros validados para procesar: </strong>{{$filters.thousands(data_count.count_data_automatic_link)}}
+                                                            <strong class="success--text">Total de registros validados para procesar: </strong>{{$filters.thousands(data_count.count_data_automatic_link || 0)}}
                                                         </v-col>
                                                     </v-row>
                                                 </v-card>
@@ -376,7 +389,7 @@ export default {
                 },
                 {
                     title: "NOMBRE ARCHIVO",
-                    body: "tipo-mes-año.csv Ejm. retgional-2026-02-26.csv"
+                    body: "tipo-mes-año.csv Ejm. regional-2026-02-26.csv"
                 },
                 {
                     title: "MONTOS",
@@ -393,7 +406,6 @@ export default {
         dialog_delete_process: false,
 
         block_select: false,
-        current_date: new Date().toLocaleDateString('es-BO'),
         exist_processes_imcomplete: false,
         incomplete_processes: [],
         date_process_selected: null
@@ -410,6 +422,11 @@ export default {
             default: {}
         },
         year_selected: null,
+        current_date: {
+            type: Date,
+            required: false,
+            default: new Date().toLocaleDateString('es-BO'),
+        }
     },
 
     mounted() {
@@ -417,13 +434,11 @@ export default {
     },
     computed: {
         dateFormat() {
-            const [day, month, year] = this.current_date.split('/')
-            const date = new Date(year, month - 1, day)
-            return date.toISOString().split('T')[0]
+            return this.current_date
         }
     },
     watch: {
-        dialog: function() {
+        dialog: function() { 
             this.importProgressBar()
         },
         show: function() {

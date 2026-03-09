@@ -56,6 +56,7 @@
                                             {{ process.count_data_contribution_passives }}
                                         </div>
                                         <v-btn
+                                        :disabled="process.count_data_contribution_passives > 0"                                        
                                         icon
                                         small
                                         color="error"
@@ -102,19 +103,19 @@
                             <v-stepper v-model="e1" editable>
                                 <!-- C A B E C E R Á S   P A S O S -->
                                 <v-stepper-header>
-                                    <v-stepper-step :complete="e1 > 1" step="1" editable>
+                                    <v-stepper-step :complete="e1 > 1" step="1">
                                         Subir archivo
                                     </v-stepper-step>
                                     <v-divider></v-divider>
-                                    <v-stepper-step :complete="e1 > 2" step="2" editable>
+                                    <v-stepper-step :complete="e1 > 2" step="2">
                                         Validar datos
                                     </v-stepper-step>
                                     <v-divider></v-divider>
-                                    <v-stepper-step :complete="e1 > 3" step="3" editable>
+                                    <v-stepper-step :complete="e1 > 3" step="3">
                                         Procesar planilla
                                     </v-stepper-step>
                                     <v-divider></v-divider>
-                                    <v-stepper-step :complete="e1 > 4" step="4" editable>
+                                    <v-stepper-step :complete="e1 > 4" step="4">
                                         Importar aportes
                                     </v-stepper-step>
                                 </v-stepper-header>
@@ -225,7 +226,7 @@
                                                 <v-card color="white" class="pa-2">
                                                     <v-row>
                                                         <v-col cols="12" md="6">
-                                                            <strong>Número de aportes importados: </strong>{{$filters.thousands(data_count.num_total_data_contribution)}}<br>
+                                                            <strong>Número de aportes importados: </strong>{{$filters.thousands(data_count.num_total_data_contribution || 0)}}<br>
                                                         </v-col>
                                                     </v-row>
                                                 </v-card>
@@ -430,7 +431,7 @@ export default {
     },
 
     mounted() {
-        this.incompleteProcesses()
+        
     },
     computed: {
         dateFormat() {
@@ -439,6 +440,7 @@ export default {
     },
     watch: {
         dialog: function() { 
+            this.incompleteProcesses()
             this.importProgressBar()
         },
         show: function() {
@@ -670,6 +672,7 @@ export default {
                 })
                 if(res.payload.successfully) {
                     this.data_count.num_total_data_contribution = res.payload.num_total_data_contribution
+                    this.$toast.success(`La importación ${this.dateFormat} fue realizada correctamente.` )
                     this.clearData()
                     this.close()
                     this.nextStep(4)

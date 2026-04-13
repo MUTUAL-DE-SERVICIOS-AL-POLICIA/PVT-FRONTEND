@@ -25,7 +25,14 @@
         "title": "Transcripciones",
         "icon": "mdi-account-outline",
         "permission": "read-import-payroll-transcript"
-      }, {
+      },
+      {
+        "href": "/contribution/PageImportationRegional",
+        "title": "Regional",
+        "icon": "mdi-account-outline",
+        "permission": "read-import-payroll-transcript"
+      }, 
+      {
         "href": "/affiliate/PageImportationAffiliateAvailability",
         "title": "Disponibilidad",
         "icon": "mdi-shield-lock-outline",
@@ -34,7 +41,7 @@
     ]
   },
   {
-    "href": "/contribution/PageContributionImportation",
+    "href": "/contribution/PageMainContributionImportation",
     "title": "Importación de Aportes",
     "icon": "mdi-cash",
     "permission": "read-import-contribution"

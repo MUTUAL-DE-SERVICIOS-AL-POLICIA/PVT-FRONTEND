@@ -43,11 +43,11 @@
                     <v-stepper v-model="e1" editable>
                         <!-- C A B E C E R A S   P A S O S -->
                         <v-stepper-header>
-                            <v-stepper-step :complete="e1 > 1 " step="1">
+                            <v-stepper-step :complete="e1 > 1 " step="1" editable>
                                 Subir archivo
                             </v-stepper-step>
                             <v-divider></v-divider>
-                            <v-stepper-step :complete="e1 > 2" step="2">
+                            <v-stepper-step :complete="e1 > 2" step="2" editable>
                                 Validar Datos
                             </v-stepper-step>
                         </v-stepper-header>
@@ -251,7 +251,7 @@ export default {
                 },
                 {
                     title: "NOMBRE ARCHIVO",
-                    body: "tipo-mes-año.csv Ejemplo: senasir-04-2021.csv"
+                    body: "tipo-mes-año.csv Ejemplo: comando-04-2021.csv"
                 }
             ]
         }

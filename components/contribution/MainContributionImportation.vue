@@ -189,7 +189,7 @@
         <template v-if="item.state_validated_payroll">
           <v-card-title :class="item.state_importation ? 'accent' : 'normal'">
             <v-row justify="center">
-              <h3 class="white--text">Regularizacion {{ item.period_month_name }}</h3>
+              <h3 class="white--text">Reg. {{ item.period_month_name }}</h3>
             </v-row>
           </v-card-title>
           <v-divider inset></v-divider>

@@ -188,7 +188,7 @@
           <template>
             <v-card-title class="info">
               <v-row justify="center">
-                <h3 class="white--text">Regularizacion {{ item.period_month_name }}</h3></v-row
+                <h3 class="white--text">Reg. {{ item.period_month_name }}</h3></v-row
               >
             </v-card-title>
             <v-divider inset></v-divider>

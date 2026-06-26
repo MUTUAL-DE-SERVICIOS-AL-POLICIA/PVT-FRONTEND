@@ -32,7 +32,7 @@
                     </template>
                     <v-select
                         dense
-                        :items="type_payroll == 'reintegro' ? list_months_not_import_re : (type_payroll == 'adicional' ? list_months_not_import_ad : list_months_not_import)"
+                        :items="type_payroll == 'reintegro' ? list_months_not_import_re : (type_payroll == 'regularizacion' ? list_months_not_import_ad : list_months_not_import)"
                         item-text="period_month_name"
                         item-value="period_month"
                         :label="'Periódo para importar'"
@@ -245,7 +245,7 @@ export default {
         types_payroll: [
             { text: 'Mensual', value: 'mensual' },
             { text: 'Reintegro', value: 'reintegro' },
-            { text: 'Adicional', value: 'adicional' }
+            { text: 'Regularizacion', value: 'regularizacion' }
         ],
         loading_select: false,
 

@@ -179,7 +179,7 @@
           </v-card-text>
         </template>
       </v-card>
-      <!--ADICIONALES-->
+      <!--REGULARIZACIÓN-->
       <v-card
         :class="item.state_importation ? 'headline font-weight-bold ma-2 backgroundCard' : 'headline font-weight-bold ma-2'"
         max-width="250px"
@@ -189,7 +189,7 @@
         <template v-if="item.state_validated_payroll">
           <v-card-title :class="item.state_importation ? 'accent' : 'normal'">
             <v-row justify="center">
-              <h3 class="white--text">Adicional {{ item.period_month_name }}</h3>
+              <h3 class="white--text">Reg. {{ item.period_month_name }}</h3>
             </v-row>
           </v-card-title>
           <v-divider inset></v-divider>
@@ -206,7 +206,7 @@
                       <v-btn 
                         class="ma-2 accent white--text btn-period" 
                         v-on="on"
-                        @click="confirmImportContribution(item.period_month, true, 'adicional')"
+                        @click="confirmImportContribution(item.period_month, true, 'regularizacion')"
                         :disabled="item.state_importation"
                       >
                         <v-icon dark left small>mdi-arrow-down</v-icon>Imp. Aportes
@@ -229,7 +229,7 @@
                           fab
                           v-on="on"
                           :loading="loading_rep_state_ad && i == loading_pos_index_ad"
-                          @click.stop="loading_pos_index_ad = i; reportImportReimbursement(item.period_month, 'adicional')"
+                          @click.stop="loading_pos_index_ad = i; reportImportReimbursement(item.period_month, 'regularizacion')"
                         >
                           <v-icon>mdi-file-document</v-icon>
                         </v-btn>
@@ -498,7 +498,7 @@ export default {
         const url = window.URL.createObjectURL(new Blob([res]))
         const link = document.createElement("a")
         link.href = url;
-        let file_name = type_payroll == 'reintegro' ? 'ReporteDetalleReintegrosComando.xls' : 'ReporteDetalleAdicionalesComando.xls';
+        let file_name = type_payroll == 'reintegro' ? 'ReporteDetalleReintegrosComando.xls' : 'ReporteDetalleRegularizacionComando.xls';
         link.setAttribute("download", file_name)
         document.body.appendChild(link)
         link.click()

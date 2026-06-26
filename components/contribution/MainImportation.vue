@@ -178,7 +178,7 @@
             </v-card-text>
           </template>
         </v-card>
-        <!--ADICIONALES-->
+        <!--REGULARIZACION-->
         <v-card
           class="headline font-weight-bold ma-2"
           max-width="250px"
@@ -188,7 +188,7 @@
           <template>
             <v-card-title class="info">
               <v-row justify="center">
-                <h3 class="white--text">Adicional {{ item.period_month_name }}</h3></v-row
+                <h3 class="white--text">Reg. {{ item.period_month_name }}</h3></v-row
               >
             </v-card-title>
             <v-divider inset></v-divider>
@@ -212,7 +212,7 @@
                             fab
                             v-on="on"
                             :loading="loading_rep_state_ad && k == loading_pos_index_ad"
-                            @click.stop="loading_pos_index_ad = k; reportPayroll(item.period_month,item.period_day ? item.period_day : '01','adicional')"
+                            @click.stop="loading_pos_index_ad = k; reportPayroll(item.period_month,item.period_day ? item.period_day : '01','regularizacion')"
                           >
                             <v-icon>mdi-file-document</v-icon>
                           </v-btn>
@@ -390,7 +390,7 @@ export default {
     async reportPayroll(month_selected,day_selected,var_type_payroll){
       this.month_selected = month_selected
       if(var_type_payroll == 'reintegro') this.loading_rep_state_re=true;
-      else if(var_type_payroll == 'adicional') this.loading_rep_state_ad=true;
+      else if(var_type_payroll == 'regularizacion') this.loading_rep_state_ad=true;
       else this.loading_rep_state=true;
 
       try {
